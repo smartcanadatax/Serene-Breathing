@@ -14,15 +14,11 @@ private let crisisResponse = """
 I'm really glad you reached out, and I want you to know you're not alone. \
 What you're feeling matters deeply.
 
-Please contact a crisis line right now — trained people are there 24/7:
+Please contact emergency services or a crisis support line in your country right away — trained people are available 24/7.
 
-• International: befrienders.org
-• Canada: 1-833-456-4566 (24/7)
-• US: Call or text 988
-• UK: 116 123 (Samaritans)
-• Crisis Text: Text HOME to 741741
+If you're in immediate danger, call your local emergency number now.
 
-If you're in immediate danger, please call your local emergency number (911 / 999 / 112).
+You can find crisis contacts for your country at: findahelpline.com
 
 Serene is a wellness tool and cannot replace professional support. Please reach out — you deserve care.
 """
@@ -310,7 +306,7 @@ private struct ChatDisclaimerSheet: View {
                     disclaimerRow(icon: "exclamationmark.triangle.fill", color: Color(red: 1.0, green: 0.75, blue: 0.20),
                                   text: "Do not use this chat for medical, mental health, or emergency situations.")
                     disclaimerRow(icon: "phone.fill", color: Color(red: 0.45, green: 0.90, blue: 0.60),
-                                  text: "If you are in crisis, call your local emergency number or a crisis line (988 in the US, 1-833-456-4566 in Canada).")
+                                  text: "If you are in crisis, call your local emergency number or find a crisis line at findahelpline.com.")
                     disclaimerRow(icon: "lock.fill", color: Color(red: 0.75, green: 0.92, blue: 1.00),
                                   text: "Conversations are processed by Groq (groq.com) and are not stored by Serene Breathing.")
                 }
