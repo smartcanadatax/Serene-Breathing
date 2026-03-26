@@ -40,6 +40,9 @@ struct DailyCheckInView: View {
     @State private var isLoadingCoach   = false
     @State private var lastCoachedMood  = 0
 
+    // Coach chat
+    @State private var showCoachChat = false
+
     // Session launch
     @State private var showMorning   = false
     @State private var showBodyScan  = false
@@ -60,6 +63,29 @@ struct DailyCheckInView: View {
 
     private var canGenerate: Bool { selectedMood > 0 }
 
+    // Morning briefing based on most recent sleep entry (today or yesterday)
+    private var morningBriefing: (icon: String, color: Color, message: String)? {
+        guard let last = journal.sleepEntries.first else { return nil }
+        let daysSince = Calendar.current.dateComponents([.day], from: last.date, to: Date()).day ?? 999
+        guard daysSince <= 1 else { return nil }
+        let hrs = last.computedHours
+        let q   = last.quality
+        if q <= 2 || hrs < 6 {
+            return (
+                "moon.zzz.fill",
+                Color(red: 0.55, green: 0.50, blue: 0.90),
+                "Your sleep was a bit light last night. I've suggested a gentle 5-minute Morning Meditation below to help you start softly."
+            )
+        } else if q >= 4 && hrs >= 7 {
+            return (
+                "sun.max.fill",
+                Color(red: 1.0, green: 0.80, blue: 0.35),
+                "You slept well last night! Great energy ahead. I've recommended a Morning Meditation to set a positive intention for today."
+            )
+        }
+        return nil
+    }
+
     var body: some View {
         ZStack {
             CalmBackground()
@@ -70,11 +96,11 @@ struct DailyCheckInView: View {
                     // Header
                     HStack {
                         Button { dismiss() } label: {
-                            Image(systemName: "xmark")
-                                .font(.system(size: 13, weight: .semibold))
-                                .foregroundColor(.white.opacity(0.70))
-                                .frame(width: 32, height: 32)
-                                .background(Circle().fill(Color.white.opacity(0.15)))
+                            Image(systemName: "chevron.left")
+                                .font(.system(size: 16, weight: .semibold))
+                                .foregroundColor(.white.opacity(0.85))
+                                .frame(width: 44, height: 44)
+                                .contentShape(Rectangle())
                         }
                         Spacer()
                         Text("Daily Check-In")
@@ -85,6 +111,48 @@ struct DailyCheckInView: View {
                     }
                     .padding(.horizontal, 20)
                     .padding(.top, 16)
+
+                    // Morning Briefing (shown when recent sleep data exists)
+                    if let briefing = morningBriefing {
+                        VStack(alignment: .leading, spacing: 10) {
+                            HStack(spacing: 8) {
+                                Image(systemName: briefing.icon)
+                                    .font(.system(size: 13, weight: .semibold))
+                                    .foregroundColor(briefing.color)
+                                Text("MORNING BRIEFING")
+                                    .font(.system(size: 11, weight: .semibold))
+                                    .foregroundColor(briefing.color)
+                                    .tracking(1.0)
+                            }
+                            Text(briefing.message)
+                                .font(.system(size: 13, weight: .light))
+                                .foregroundColor(.white.opacity(0.88))
+                                .lineSpacing(4)
+                                .fixedSize(horizontal: false, vertical: true)
+                            Button {
+                                showMorning = true
+                            } label: {
+                                HStack(spacing: 6) {
+                                    Image(systemName: "play.fill")
+                                        .font(.system(size: 11))
+                                    Text("Open Morning Meditation")
+                                        .font(.system(size: 13, weight: .semibold, design: .rounded))
+                                }
+                                .foregroundColor(briefing.color)
+                                .padding(.top, 2)
+                            }
+                            .buttonStyle(.plain)
+                        }
+                        .padding(16)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .background(
+                            RoundedRectangle(cornerRadius: 16)
+                                .fill(briefing.color.opacity(0.10))
+                                .overlay(RoundedRectangle(cornerRadius: 16)
+                                    .stroke(briefing.color.opacity(0.25), lineWidth: 1))
+                        )
+                        .padding(.horizontal, 20)
+                    }
 
                     // SECTION 1 — Mood
                     sectionCard {
@@ -108,8 +176,8 @@ struct DailyCheckInView: View {
                                                     .frame(width: 5, height: 5)
                                             }
                                         }
-                                        .frame(maxWidth: .infinity)
-                                        .padding(.vertical, 6)
+                                        .frame(maxWidth: .infinity, minHeight: 44)
+                                        .contentShape(Rectangle())
                                         .animation(.spring(response: 0.3), value: selectedMood)
                                     }
                                     .buttonStyle(.plain)
@@ -125,40 +193,50 @@ struct DailyCheckInView: View {
 
                             // Auto AI coach card for stressed/anxious moods
                             if selectedMood > 0 && selectedMood <= 3 {
-                                VStack(alignment: .leading, spacing: 8) {
-                                    HStack(spacing: 6) {
-                                        Image(systemName: "heart.fill")
-                                            .font(.system(size: 11))
-                                            .foregroundColor(.calmAccent)
-                                        Text("SERENE COACH")
-                                            .font(.system(size: 10, weight: .semibold))
-                                            .foregroundColor(.calmAccent)
-                                            .tracking(1.0)
-                                    }
-                                    if isLoadingCoach {
-                                        HStack(spacing: 8) {
-                                            ProgressView().tint(.white).scaleEffect(0.7)
-                                            Text("Here for you…")
-                                                .font(.system(size: 13, weight: .light))
-                                                .foregroundColor(.white.opacity(0.60))
+                                Button { showCoachChat = true } label: {
+                                    VStack(alignment: .leading, spacing: 8) {
+                                        HStack(spacing: 6) {
+                                            Image(systemName: "heart.fill")
+                                                .font(.system(size: 11))
+                                                .foregroundColor(.calmAccent)
+                                            Text("SERENE COACH")
+                                                .font(.system(size: 10, weight: .semibold))
+                                                .foregroundColor(.calmAccent)
+                                                .tracking(1.0)
+                                            Spacer()
+                                            Image(systemName: "chevron.right")
+                                                .font(.system(size: 11, weight: .semibold))
+                                                .foregroundColor(.calmAccent.opacity(0.70))
                                         }
-                                    } else if !coachMessage.isEmpty {
-                                        Text(coachMessage)
-                                            .font(.system(size: 13, weight: .light))
-                                            .foregroundColor(.white.opacity(0.88))
-                                            .lineSpacing(4)
-                                            .fixedSize(horizontal: false, vertical: true)
-                                            .transition(.opacity)
+                                        if isLoadingCoach {
+                                            HStack(spacing: 8) {
+                                                ProgressView().tint(.white).scaleEffect(0.7)
+                                                Text("Here for you…")
+                                                    .font(.system(size: 13, weight: .light))
+                                                    .foregroundColor(.white.opacity(0.60))
+                                            }
+                                        } else if !coachMessage.isEmpty {
+                                            Text(coachMessage)
+                                                .font(.system(size: 13, weight: .light))
+                                                .foregroundColor(.white.opacity(0.88))
+                                                .lineSpacing(4)
+                                                .fixedSize(horizontal: false, vertical: true)
+                                                .transition(.opacity)
+                                        }
+                                        Text("Tap to chat with Serene")
+                                            .font(.system(size: 11, weight: .medium))
+                                            .foregroundColor(.calmAccent.opacity(0.70))
                                     }
+                                    .padding(14)
+                                    .frame(maxWidth: .infinity, alignment: .leading)
+                                    .background(
+                                        RoundedRectangle(cornerRadius: 14)
+                                            .fill(Color.calmAccent.opacity(0.10))
+                                            .overlay(RoundedRectangle(cornerRadius: 14)
+                                                .stroke(Color.calmAccent.opacity(0.25), lineWidth: 1))
+                                    )
                                 }
-                                .padding(14)
-                                .frame(maxWidth: .infinity, alignment: .leading)
-                                .background(
-                                    RoundedRectangle(cornerRadius: 14)
-                                        .fill(Color.calmAccent.opacity(0.10))
-                                        .overlay(RoundedRectangle(cornerRadius: 14)
-                                            .stroke(Color.calmAccent.opacity(0.25), lineWidth: 1))
-                                )
+                                .buttonStyle(.plain)
                                 .transition(.opacity)
                             }
                         }
@@ -176,9 +254,10 @@ struct DailyCheckInView: View {
                                         Image(systemName: level <= sleepQuality ? "star.fill" : "star")
                                             .font(.system(size: 24))
                                             .foregroundColor(level <= sleepQuality ? Color(red: 1.0, green: 0.80, blue: 0.25) : .white.opacity(0.25))
+                                            .frame(maxWidth: .infinity, minHeight: 44)
+                                            .contentShape(Rectangle())
                                     }
                                     .buttonStyle(.plain)
-                                    .frame(maxWidth: .infinity)
                                 }
                             }
 
@@ -196,6 +275,9 @@ struct DailyCheckInView: View {
                                 DatePicker("", selection: $bedtime, displayedComponents: .hourAndMinute)
                                     .labelsHidden()
                                     .colorScheme(.dark)
+                                    .onChange(of: bedtime) { _, v in
+                                        UserDefaults.standard.set(v, forKey: "lastBedtime")
+                                    }
                             }
 
                             HStack {
@@ -209,6 +291,9 @@ struct DailyCheckInView: View {
                                 DatePicker("", selection: $wakeTime, displayedComponents: .hourAndMinute)
                                     .labelsHidden()
                                     .colorScheme(.dark)
+                                    .onChange(of: wakeTime) { _, v in
+                                        UserDefaults.standard.set(v, forKey: "lastWakeTime")
+                                    }
                             }
 
                             HStack {
@@ -331,6 +416,7 @@ struct DailyCheckInView: View {
                 }
             }
         }
+        .fullScreenCover(isPresented: $showCoachChat) { CoachChatView().environmentObject(journal) }
         .fullScreenCover(isPresented: $showMorning)  { MorningMeditationView().environmentObject(journal) }
         .fullScreenCover(isPresented: $showBodyScan) { BodyScanView().environmentObject(journal) }
         .fullScreenCover(isPresented: $showBreath)   { BreathingView() }
@@ -500,20 +586,28 @@ struct DailyCheckInView: View {
     }
 
     private func parseResponse(_ text: String) {
-        if let r = text.range(of: "INSIGHT: ") {
-            let after = String(text[r.upperBound...])
-            if let end = after.range(of: "\nTECHNIQUE:") {
+        let opts: String.CompareOptions = [.caseInsensitive]
+        if let r = text.range(of: "INSIGHT:", options: opts) {
+            // skip optional space after colon
+            var start = r.upperBound
+            if start < text.endIndex && text[start] == " " { start = text.index(after: start) }
+            let after = String(text[start...])
+            if let end = after.range(of: "TECHNIQUE:", options: opts) {
                 insight = String(after[..<end.lowerBound]).trimmingCharacters(in: .whitespacesAndNewlines)
             } else {
                 insight = after.trimmingCharacters(in: .whitespacesAndNewlines)
             }
         }
-        if let r = text.range(of: "TECHNIQUE: ") {
-            let after = String(text[r.upperBound...])
+        if let r = text.range(of: "TECHNIQUE:", options: opts) {
+            var start = r.upperBound
+            if start < text.endIndex && text[start] == " " { start = text.index(after: start) }
+            let after = String(text[start...])
             technique = (after.components(separatedBy: "\n").first ?? "").trimmingCharacters(in: .whitespacesAndNewlines)
         }
-        if let r = text.range(of: "REASON: ") {
-            let after = String(text[r.upperBound...])
+        if let r = text.range(of: "REASON:", options: opts) {
+            var start = r.upperBound
+            if start < text.endIndex && text[start] == " " { start = text.index(after: start) }
+            let after = String(text[start...])
             reason = (after.components(separatedBy: "\n").first ?? "").trimmingCharacters(in: .whitespacesAndNewlines)
         }
         if insight.isEmpty { insight = text.trimmingCharacters(in: .whitespacesAndNewlines) }

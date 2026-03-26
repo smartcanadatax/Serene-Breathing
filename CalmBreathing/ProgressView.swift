@@ -10,10 +10,12 @@ struct ProgressTabView: View {
         case challenge = "Challenge"
         case mood      = "Mood"
         case sleep     = "Sleep"
+        case gratitude = "Gratitude"
     }
 
     @State private var section: Section = .challenge
     @State private var showPaywall = false
+    @State private var showGratitude = false
 
     var body: some View {
         ZStack {
@@ -34,6 +36,7 @@ struct ProgressTabView: View {
                     case .challenge: ChallengeSection()
                     case .mood:      MoodSection()
                     case .sleep:     SleepSection()
+                    case .gratitude: GratitudeSectionView(showJournal: $showGratitude)
                     }
                 }
             }
@@ -62,6 +65,9 @@ struct ProgressTabView: View {
         }
         .fullScreenCover(isPresented: $showPaywall) {
             PaywallView(isPresented: $showPaywall).environmentObject(premium)
+        }
+        .fullScreenCover(isPresented: $showGratitude) {
+            GratitudeJournalView().environmentObject(journal)
         }
     }
 }
@@ -1049,7 +1055,8 @@ struct SleepEntrySheet: View {
                                             .font(.system(size: 10))
                                             .foregroundColor(.white.opacity(0.90))
                                     }
-                                    .frame(maxWidth: .infinity)
+                                    .frame(maxWidth: .infinity, minHeight: 44)
+                                    .contentShape(Rectangle())
                                 }
                                 .buttonStyle(.plain)
                             }
@@ -1479,4 +1486,115 @@ private func disclaimerText(_ text: String) -> some View {
             .fixedSize(horizontal: false, vertical: true)
     }
     .padding(.top, 4)
+}
+
+// MARK: - Gratitude Section
+struct GratitudeSectionView: View {
+    @EnvironmentObject var journal: JournalStore
+    @Binding var showJournal: Bool
+
+    var body: some View {
+        VStack(spacing: 16) {
+
+            // Open journal button
+            Button { showJournal = true } label: {
+                HStack(spacing: 14) {
+                    ZStack {
+                        Circle().fill(Color.calmAccent.opacity(0.20)).frame(width: 52, height: 52)
+                        Image(systemName: "heart.text.square.fill")
+                            .font(.system(size: 22))
+                            .foregroundColor(.calmAccent)
+                    }
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text("Gratitude Journal")
+                            .font(.system(size: 16, weight: .semibold, design: .rounded))
+                            .foregroundColor(.white)
+                        Text(journal.gratitudeEntryToday ? "Logged today ✓" : "Write today's entry")
+                            .font(.system(size: 12))
+                            .foregroundColor(.white.opacity(0.65))
+                    }
+                    Spacer()
+                    Image(systemName: "chevron.right")
+                        .font(.system(size: 13, weight: .semibold))
+                        .foregroundColor(.white.opacity(0.45))
+                }
+                .padding(16)
+                .background(RoundedRectangle(cornerRadius: 18).fill(Color.white.opacity(0.10)))
+            }
+            .buttonStyle(.plain)
+
+            // Privacy notice
+            HStack(spacing: 6) {
+                Image(systemName: "lock.fill")
+                    .font(.system(size: 10))
+                    .foregroundColor(.white.opacity(0.40))
+                Text("Journal entries are stored privately on your device.")
+                    .font(.system(size: 11, weight: .light))
+                    .foregroundColor(.white.opacity(0.40))
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .padding(.horizontal, 4)
+
+            // Streak
+            JournalCard(title: "Gratitude Streak", icon: "flame.fill") {
+                let streak = gratitudeStreak
+                VStack(spacing: 6) {
+                    Text("\(streak)")
+                        .font(.system(size: 48, weight: .thin, design: .rounded))
+                        .foregroundColor(.white)
+                    Text(streak == 1 ? "day in a row" : "days in a row")
+                        .font(.system(size: 13, weight: .light))
+                        .foregroundColor(.white.opacity(0.70))
+                }
+                .frame(maxWidth: .infinity)
+                .padding(.vertical, 8)
+            }
+
+            // Recent entries
+            if !journal.gratitudeEntries.isEmpty {
+                JournalCard(title: "Recent Entries", icon: "list.bullet") {
+                    VStack(spacing: 10) {
+                        ForEach(journal.gratitudeEntries.prefix(5)) { entry in
+                            VStack(alignment: .leading, spacing: 4) {
+                                Text(entry.date, style: .date)
+                                    .font(.system(size: 10, weight: .semibold))
+                                    .foregroundColor(.calmAccent.opacity(0.80))
+                                ForEach(entry.text.components(separatedBy: "\n").filter { !$0.isEmpty }, id: \.self) { line in
+                                    HStack(alignment: .top, spacing: 6) {
+                                        Text("•").foregroundColor(.white.opacity(0.40)).font(.system(size: 12))
+                                        Text(line)
+                                            .font(.system(size: 13, weight: .light))
+                                            .foregroundColor(.white.opacity(0.85))
+                                            .fixedSize(horizontal: false, vertical: true)
+                                    }
+                                }
+                            }
+                            if entry.id != journal.gratitudeEntries.prefix(5).last?.id {
+                                Divider().background(Color.white.opacity(0.10))
+                            }
+                        }
+                    }
+                }
+            }
+
+            DisclaimerFooter().padding(.bottom, 32)
+        }
+        .padding(.horizontal, 20)
+        .padding(.top, 16)
+    }
+
+    private var gratitudeStreak: Int {
+        let cal = Calendar.current
+        let days = journal.gratitudeEntries.map { cal.startOfDay(for: $0.date) }
+        let unique = Array(Set(days)).sorted(by: >)
+        guard !unique.isEmpty else { return 0 }
+        var streak = 0
+        var check = cal.startOfDay(for: Date())
+        if !unique.contains(check) { check = cal.date(byAdding: .day, value: -1, to: check)! }
+        for day in unique {
+            if day == check { streak += 1; check = cal.date(byAdding: .day, value: -1, to: check)! }
+            else { break }
+        }
+        return streak
+    }
 }

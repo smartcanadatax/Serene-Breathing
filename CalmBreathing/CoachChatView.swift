@@ -4,6 +4,7 @@ import SwiftUI
 
 // MARK: - Crisis Keywords
 
+// Self-harm keywords
 private let crisisKeywords: [String] = [
     "suicide", "suicidal", "kill myself", "end my life", "want to die",
     "don't want to live", "dont want to live", "self-harm", "self harm",
@@ -23,6 +24,70 @@ You can find crisis contacts for your country at: findahelpline.com
 Serene is a wellness tool and cannot replace professional support. Please reach out — you deserve care.
 """
 
+// Threat-toward-others keywords
+private let threatKeywords: [String] = [
+    // Kill / murder
+    "kill him", "kill her", "kill them", "kill someone", "kill people",
+    "going to kill", "want to kill", "murder", "gonna kill",
+    // Physical violence
+    "stab him", "stab her", "stab them", "stab someone",
+    "shoot him", "shoot her", "shoot them", "shoot someone",
+    "beat him", "beat her", "beat them", "beat up",
+    "punch him", "punch her", "punch them",
+    "strangle", "choke him", "choke her", "choke them",
+    "attack someone", "attack him", "attack her", "going to attack",
+    // Harm / hurt
+    "want to hurt them", "want to hurt him", "want to hurt her",
+    "going to hurt", "hurt them", "harm them",
+    // Weapons / explosives
+    "bomb", "blow up", "explosive",
+    "poison him", "poison her", "poison them",
+    // Other serious threats
+    "burn them", "burn him", "burn her", "set fire to",
+    "run them over", "run him over", "run her over",
+    "kidnap", "torture", "rape",
+    "make them suffer", "make him suffer", "make her suffer",
+    "destroy them", "jump them",
+    "make them pay", "going to get them"
+]
+
+private let threatResponse = """
+I'm not able to help with thoughts of harming others.
+
+If you're feeling intense anger, that's something a professional can help you work through safely.
+
+For right now, try the Box Breathing session in the app — it can help bring your nervous system back to calm.
+
+If there is any immediate danger, please contact your local emergency services.
+"""
+
+// MARK: - Monthly Message Limit
+
+private let monthlyMessageLimit = 1000
+
+private func currentMonthKey() -> String {
+    let f = DateFormatter()
+    f.dateFormat = "yyyy-MM"
+    return f.string(from: Date())
+}
+
+private func monthlyMessageCount() -> Int {
+    let key = currentMonthKey()
+    let storedKey = UserDefaults.standard.string(forKey: "chatMonthKey") ?? ""
+    if storedKey != key {
+        // New month — reset
+        UserDefaults.standard.set(key, forKey: "chatMonthKey")
+        UserDefaults.standard.set(0, forKey: "chatMessageCount")
+        return 0
+    }
+    return UserDefaults.standard.integer(forKey: "chatMessageCount")
+}
+
+private func incrementMessageCount() {
+    let current = UserDefaults.standard.integer(forKey: "chatMessageCount")
+    UserDefaults.standard.set(current + 1, forKey: "chatMessageCount")
+}
+
 // MARK: - Chat View
 
 struct CoachChatView: View {
@@ -32,7 +97,7 @@ struct CoachChatView: View {
 
     @State private var messages: [CoachChatMessage] = [
         CoachChatMessage(role: "assistant",
-                         content: "Hi, I'm Serene. How are you feeling right now? I'm here to listen and help you find calm.")
+                         content: "Hi! I'm Serene, your wellness coach. How are you doing today?")
     ]
     @State private var inputText    = ""
     @State private var isResponding = false
@@ -48,11 +113,11 @@ struct CoachChatView: View {
                 // MARK: Header
                 HStack {
                     Button { dismiss() } label: {
-                        Image(systemName: "xmark")
-                            .font(.system(size: 13, weight: .semibold))
-                            .foregroundColor(.white.opacity(0.70))
-                            .frame(width: 32, height: 32)
-                            .background(Circle().fill(Color.white.opacity(0.15)))
+                        Image(systemName: "chevron.left")
+                            .font(.system(size: 16, weight: .semibold))
+                            .foregroundColor(.white.opacity(0.85))
+                            .frame(width: 44, height: 44)
+                            .contentShape(Rectangle())
                     }
                     Spacer()
                     VStack(spacing: 2) {
@@ -101,22 +166,34 @@ struct CoachChatView: View {
 
                 // MARK: Input Bar
                 HStack(spacing: 10) {
-                    TextField("Message Serene…", text: $inputText, axis: .vertical)
-                        .font(.system(size: 15))
-                        .foregroundColor(.white)
-                        .tint(.white)
-                        .lineLimit(1...4)
-                        .focused($inputFocused)
-                        .padding(.horizontal, 14)
-                        .padding(.vertical, 10)
-                        .background(
-                            RoundedRectangle(cornerRadius: 22)
-                                .fill(Color.white.opacity(0.15))
-                                .overlay(
-                                    RoundedRectangle(cornerRadius: 22)
-                                        .stroke(Color.white.opacity(0.25), lineWidth: 1)
-                                )
-                        )
+                    ZStack(alignment: .leading) {
+                        if inputText.isEmpty {
+                            Text("Message Serene…")
+                                .font(.system(size: 15))
+                                .foregroundColor(.white.opacity(0.45))
+                                .padding(.horizontal, 14)
+                                .allowsHitTesting(false)
+                        }
+                        TextField("", text: $inputText, axis: .vertical)
+                            .font(.system(size: 15))
+                            .foregroundColor(.white)
+                            .tint(.white)
+                            .lineLimit(1...4)
+                            .focused($inputFocused)
+                            .padding(.horizontal, 14)
+                            .padding(.vertical, 12)
+                    }
+                    .frame(minHeight: 44)
+                    .background(
+                        RoundedRectangle(cornerRadius: 22)
+                            .fill(Color.white.opacity(0.15))
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 22)
+                                    .stroke(Color.white.opacity(0.25), lineWidth: 1)
+                            )
+                    )
+                    .contentShape(Rectangle())
+                    .onTapGesture { inputFocused = true }
 
                     Button { sendMessage() } label: {
                         Image(systemName: "arrow.up.circle.fill")
@@ -131,7 +208,6 @@ struct CoachChatView: View {
                 .background(Color.black.opacity(0.15))
             }
         }
-        .ignoresSafeArea(.container, edges: .top)
         .onAppear {
             if !hasSeenDisclaimer { showDisclaimer = true }
         }
@@ -157,10 +233,21 @@ struct CoachChatView: View {
 
         messages.append(CoachChatMessage(role: "user", content: text))
 
-        // Crisis detection — never send to AI, always respond with safety message
+        // Monthly message limit check
+        if monthlyMessageCount() >= monthlyMessageLimit {
+            messages.append(CoachChatMessage(role: "assistant", content: "You've used all your Serene chat sessions for this month. Your access resets on the 1st of next month. In the meantime, your breathing and meditation sessions are always available."))
+            return
+        }
+        incrementMessageCount()
+
+        // Safety detection — never send to AI, always respond with hardcoded message
         let lower = text.lowercased()
         if crisisKeywords.contains(where: { lower.contains($0) }) {
             messages.append(CoachChatMessage(role: "assistant", content: crisisResponse))
+            return
+        }
+        if threatKeywords.contains(where: { lower.contains($0) }) {
+            messages.append(CoachChatMessage(role: "assistant", content: threatResponse))
             return
         }
         isResponding = true

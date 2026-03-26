@@ -65,6 +65,8 @@ struct HomeView: View {
                             Image(systemName: "xmark")
                                 .font(.system(size: 10, weight: .bold))
                                 .foregroundColor(.white.opacity(0.90))
+                                .frame(width: 44, height: 44)
+                                .contentShape(Rectangle())
                         }
                     }
                     .padding(.horizontal, 14)

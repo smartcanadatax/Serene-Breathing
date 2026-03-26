@@ -162,6 +162,7 @@ class SoundPlayer: ObservableObject {
     @Published var playing: SoundType? = nil
     @Published var sleepTimerMinutes: Int? = nil   // nil = off
     @Published var sleepTimerSecondsLeft: Int = 0
+    @Published var volume: Float = 0.85
 
     // MARK: - Private
     private var ambientPlayer: AVAudioPlayer?
@@ -237,7 +238,12 @@ class SoundPlayer: ObservableObject {
         p.prepareToPlay()
         p.play()
         ambientPlayer = p
-        fadeVolume(player: p, to: 0.85, over: 2.0)
+        fadeVolume(player: p, to: volume, over: 2.0)
+    }
+
+    func setVolume(_ v: Float) {
+        volume = max(0, min(1, v))
+        ambientPlayer?.volume = volume
     }
 
     func stop() {

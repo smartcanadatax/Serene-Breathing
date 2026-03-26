@@ -125,6 +125,34 @@ struct BreathingView: View {
             CalmBackground()
 
             VStack(spacing: 0) {
+                // Nav header
+                HStack {
+                    Button {
+                        stopBreathing()
+                        dismiss()
+                    } label: {
+                        Image(systemName: "chevron.left")
+                            .font(.system(size: 16, weight: .semibold))
+                            .foregroundColor(.white.opacity(0.85))
+                            .frame(width: 44, height: 44)
+                            .contentShape(Rectangle())
+                    }
+                    Spacer()
+                    if !premium.isPremium {
+                        Button { showPaywall = true } label: {
+                            HStack(spacing: 4) {
+                                Image(systemName: "crown.fill").font(.system(size: 11))
+                                Text("Premium").font(.system(size: 12, weight: .semibold))
+                            }
+                            .foregroundColor(.calmDeep)
+                            .padding(.horizontal, 10).padding(.vertical, 5)
+                            .background(Capsule().fill(Color.calmAccent))
+                        }
+                    }
+                }
+                .padding(.horizontal, 16)
+                .padding(.top, 16)
+
                 // Header
                 VStack(spacing: 10) {
                     Text("Breathing Exercise")
@@ -149,6 +177,8 @@ struct BreathingView: View {
                                 }
                                 .padding(.horizontal, 18)
                                 .padding(.vertical, 8)
+                                .frame(minHeight: 44)
+                                .contentShape(Rectangle())
                                 .background(Capsule().fill(selectedPattern == p ? Color.calmAccent : Color.white.opacity(0.12)))
                             }
                         }
@@ -257,34 +287,7 @@ struct BreathingView: View {
             }
             .padding(.horizontal, 24)
         }
-        .navigationBarTitleDisplayMode(.inline)
-        .navigationBarBackButtonHidden(true)
-        .toolbarBackground(.hidden, for: .navigationBar)
-        .toolbar {
-            ToolbarItem(placement: .navigationBarLeading) {
-                Button {
-                    stopBreathing()
-                    dismiss()
-                } label: {
-                    Image(systemName: "chevron.left")
-                        .font(.system(size: 16, weight: .semibold))
-                        .foregroundColor(.white)
-                }
-            }
-            ToolbarItem(placement: .navigationBarTrailing) {
-                if !premium.isPremium {
-                    Button { showPaywall = true } label: {
-                        HStack(spacing: 4) {
-                            Image(systemName: "crown.fill").font(.system(size: 11))
-                            Text("Premium").font(.system(size: 12, weight: .semibold))
-                        }
-                        .foregroundColor(.calmDeep)
-                        .padding(.horizontal, 10).padding(.vertical, 5)
-                        .background(Capsule().fill(Color.calmAccent))
-                    }
-                }
-            }
-        }
+        .navigationBarHidden(true)
         .fullScreenCover(isPresented: $showPaywall) {
             PaywallView(isPresented: $showPaywall).environmentObject(premium)
         }

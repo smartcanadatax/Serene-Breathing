@@ -58,7 +58,9 @@
 		AA200045 /* DailyCheckInService.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB200046 /* DailyCheckInService.swift */; };
 		AA200046 /* DailyCheckInView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB200047 /* DailyCheckInView.swift */; };
 		AA200049 /* CoachChatService.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB20004A /* CoachChatService.swift */; };
+		AA20004C /* GroqConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB20004D /* GroqConfig.swift */; };
 		AA20004A /* CoachChatView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB20004B /* CoachChatView.swift */; };
+		AA20004B /* GratitudeJournalView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB20004C /* GratitudeJournalView.swift */; };
 		AA200047 /* AppLogoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB200048 /* AppLogoView.swift */; };
 		AA200048 /* HapticManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB200049 /* HapticManager.swift */; };
 /* End PBXBuildFile section */
@@ -140,6 +142,8 @@
 		BB200047 /* DailyCheckInView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DailyCheckInView.swift; sourceTree = "<group>"; };
 		BB20004A /* CoachChatService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoachChatService.swift; sourceTree = "<group>"; };
 		BB20004B /* CoachChatView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoachChatView.swift; sourceTree = "<group>"; };
+		BB20004C /* GratitudeJournalView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GratitudeJournalView.swift; sourceTree = "<group>"; };
+		BB20004D /* GroqConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroqConfig.swift; sourceTree = "<group>"; };
 		BB200048 /* AppLogoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppLogoView.swift; sourceTree = "<group>"; };
 		BB200049 /* HapticManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HapticManager.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -215,6 +219,8 @@
 				BB200047 /* DailyCheckInView.swift */,
 				BB20004A /* CoachChatService.swift */,
 				BB20004B /* CoachChatView.swift */,
+				BB20004C /* GratitudeJournalView.swift */,
+				BB20004D /* GroqConfig.swift */,
 				BB200048 /* AppLogoView.swift */,
 				BB200049 /* HapticManager.swift */,
 				BB200027 /* SOSBreathingView.swift */,
@@ -411,7 +417,9 @@
 				AA200045 /* DailyCheckInService.swift in Sources */,
 				AA200046 /* DailyCheckInView.swift in Sources */,
 				AA200049 /* CoachChatService.swift in Sources */,
+				AA20004C /* GroqConfig.swift in Sources */,
 				AA20004A /* CoachChatView.swift in Sources */,
+				AA20004B /* GratitudeJournalView.swift in Sources */,
 				AA200047 /* AppLogoView.swift in Sources */,
 				AA200048 /* HapticManager.swift in Sources */,
 			);

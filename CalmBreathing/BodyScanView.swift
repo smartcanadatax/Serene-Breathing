@@ -58,7 +58,8 @@ struct BodyScanView: View {
                 ScrollView(showsIndicators: false) {
                     introView
                         .padding(.horizontal, 28)
-                        .padding(.vertical, 20)
+                        .padding(.top, 72)
+                        .padding(.bottom, 20)
                 }
             } else {
                 VStack { Spacer(); activeView; Spacer() }
@@ -69,28 +70,36 @@ struct BodyScanView: View {
                 bodyScanCompletionOverlay
                     .transition(.opacity)
             }
-        }
-        .navigationBarTitleDisplayMode(.inline)
-        .toolbarBackground(.hidden, for: .navigationBar)
-        .navigationBarBackButtonHidden(true)
-        .toolbar {
-            ToolbarItem(placement: .navigationBarLeading) {
-                Button {
-                    stopScan()
-                    audioPlayer?.stop()
-                    dismiss()
-                } label: {
-                    Image(systemName: "chevron.left")
-                        .font(.system(size: 16, weight: .semibold))
-                        .foregroundColor(.white)
+
+            // Back button + title header (always visible, hidden only during completion)
+            if !isDone {
+                VStack {
+                    HStack {
+                        Button {
+                            stopScan()
+                            audioPlayer?.stop()
+                            dismiss()
+                        } label: {
+                            Image(systemName: "chevron.left")
+                                .font(.system(size: 16, weight: .semibold))
+                                .foregroundColor(.white.opacity(0.85))
+                                .frame(width: 44, height: 44)
+                                .contentShape(Rectangle())
+                        }
+                        Spacer()
+                        Text("Body Scan")
+                            .font(.system(size: 17, weight: .semibold, design: .rounded))
+                            .foregroundColor(.white)
+                        Spacer()
+                        Color.clear.frame(width: 44, height: 44)
+                    }
+                    .padding(.horizontal, 16)
+                    .padding(.top, 16)
+                    Spacer()
                 }
             }
-            ToolbarItem(placement: .principal) {
-                Text("Body Scan")
-                    .font(.system(size: 17, weight: .semibold, design: .rounded))
-                    .foregroundColor(.white)
-            }
         }
+        .navigationBarHidden(true)
         .onDisappear {
             stopScan()
             audioPlayer?.stop()
@@ -232,13 +241,16 @@ struct BodyScanView: View {
                         Text("How do you feel now?")
                             .font(.system(size: 13, weight: .light))
                             .foregroundColor(.white.opacity(0.65))
-                        HStack(spacing: 14) {
+                        HStack(spacing: 4) {
                             ForEach([1,2,3,5,6], id: \.self) { level in
                                 Button {
                                     journal.addMoodEntry(MoodEntry(mood: level, source: "post-session"))
                                     withAnimation { postMoodLogged = true }
                                 } label: {
-                                    Text(level.moodEmoji).font(.system(size: 28))
+                                    Text(level.moodEmoji)
+                                        .font(.system(size: 28))
+                                        .frame(minWidth: 44, minHeight: 44)
+                                        .contentShape(Rectangle())
                                 }
                                 .buttonStyle(.plain)
                             }

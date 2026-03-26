@@ -185,6 +185,7 @@ extension PersonalizedMeditationEngine: AVSpeechSynthesizerDelegate {
 
 struct PersonalizedMeditationView: View {
     @EnvironmentObject private var premium: PremiumStore
+    @Environment(\.dismiss) private var dismiss
 
     @State private var selectedMood: MeditationMood = .anxious
     @State private var navigateToPlayer = false
@@ -196,6 +197,24 @@ struct PersonalizedMeditationView: View {
 
             ScrollView {
                 VStack(spacing: 28) {
+
+                    // Nav header
+                    HStack {
+                        Button { dismiss() } label: {
+                            Image(systemName: "chevron.left")
+                                .font(.system(size: 16, weight: .semibold))
+                                .foregroundColor(.white.opacity(0.85))
+                                .frame(width: 44, height: 44)
+                                .contentShape(Rectangle())
+                        }
+                        Spacer()
+                        Text("Personalized Meditation")
+                            .font(.system(size: 17, weight: .semibold, design: .rounded))
+                            .foregroundColor(.white)
+                        Spacer()
+                        Color.clear.frame(width: 44, height: 44)
+                    }
+                    .padding(.horizontal, 4)
 
                     // Header
                     VStack(spacing: 8) {
@@ -262,15 +281,7 @@ struct PersonalizedMeditationView: View {
                 .padding(.horizontal, 20)
             }
         }
-        .navigationBarTitleDisplayMode(.inline)
-        .toolbarBackground(.hidden, for: .navigationBar)
-        .toolbar {
-            ToolbarItem(placement: .principal) {
-                Text("Personalized Meditation")
-                    .font(.system(size: 17, weight: .semibold, design: .rounded))
-                    .foregroundColor(.white)
-            }
-        }
+        .navigationBarHidden(true)
         .navigationDestination(isPresented: $navigateToPlayer) {
             PersonalizedMeditationPlayerView(mood: selectedMood, sentences: generatedSentences)
         }

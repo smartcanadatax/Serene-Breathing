@@ -163,6 +163,7 @@ struct MeditationTimerView: View {
     @State private var showSoundSheet = false
     @State private var showThemeSheet = false
     @State private var showTimerSheet = false
+    @AppStorage("meditationVolume") private var savedVolume: Double = 0.85
 
     init(startSilent: Bool = false) {
         _silentBellMode = State(initialValue: startSilent)
@@ -235,6 +236,28 @@ struct MeditationTimerView: View {
                         .multilineTextAlignment(.center)
                         .padding(.top, 8)
                     }
+                }
+
+                // ── Volume Slider (shown when any sound is active) ───────
+                if (selectedSound != nil || selectedAmbientTrack != nil) && !silentBellMode {
+                    HStack(spacing: 10) {
+                        Image(systemName: "speaker.fill")
+                            .font(.system(size: 12))
+                            .foregroundColor(.white.opacity(0.65))
+                        Slider(value: Binding(
+                            get: { savedVolume },
+                            set: { v in
+                                savedVolume = v
+                                soundPlayer.setVolume(Float(v))
+                            }
+                        ), in: 0...1)
+                        .tint(.white)
+                        Image(systemName: "speaker.wave.3.fill")
+                            .font(.system(size: 12))
+                            .foregroundColor(.white.opacity(0.65))
+                    }
+                    .padding(.horizontal, 32)
+                    .padding(.top, 10)
                 }
 
                 Spacer()
@@ -383,6 +406,7 @@ struct MeditationTimerView: View {
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .padding(.horizontal, 14)
                 .padding(.vertical, 11)
+                .contentShape(Rectangle())
             }
             .buttonStyle(.plain)
 
@@ -406,8 +430,10 @@ struct MeditationTimerView: View {
                             .foregroundColor(.black)
                     }
                 }
+                .frame(maxWidth: .infinity, alignment: .leading)
                 .padding(.horizontal, 14)
                 .padding(.vertical, 11)
+                .contentShape(Rectangle())
             }
             .buttonStyle(.plain)
         }
@@ -587,6 +613,7 @@ struct MeditationTimerView: View {
                 ambientEngine.play(ambTrack)
             }
         } else if let sound = selectedSound {
+            soundPlayer.setVolume(Float(savedVolume))
             soundPlayer.play(sound, forceRestart: true)
         }
 

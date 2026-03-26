@@ -2,7 +2,7 @@ import Foundation
 
 struct DailyCheckInService {
 
-    static let apiKey = "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"
+    static let apiKey = GroqConfig.apiKey
     private static let model = "llama-3.3-70b-versatile"
 
     private static let systemPrompt = """
@@ -26,7 +26,7 @@ struct DailyCheckInService {
                     request.setValue("Bearer \(apiKey)", forHTTPHeaderField: "Authorization")
                     request.setValue("application/json", forHTTPHeaderField: "Content-Type")
                     let body: [String: Any] = [
-                        "model": model, "max_tokens": 300, "stream": true,
+                        "model": model, "max_tokens": 500, "stream": true,
                         "messages": [
                             ["role": "system", "content": systemPrompt],
                             ["role": "user",   "content": summary]

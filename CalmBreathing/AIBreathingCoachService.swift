@@ -3,7 +3,7 @@ import Foundation
 struct AIBreathingCoachService {
 
     // Same Groq key — free, no legal issues
-    static var apiKey: String = "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"
+    static var apiKey: String = GroqConfig.apiKey
 
     private static let model = "llama-3.3-70b-versatile"
 

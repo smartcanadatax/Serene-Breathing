@@ -1,0 +1,13 @@
+# Xcode
+.DS_Store
+*.xcuserdata/
+xcuserdata/
+*.xcworkspace/xcuserdata/
+DerivedData/
+*.moved-aside
+*.ipa
+*.dSYM.zip
+*.dSYM
+
+# API Keys — never commit this file
+CalmBreathing/GroqConfig.swift

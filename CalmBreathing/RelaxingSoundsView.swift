@@ -48,6 +48,38 @@ struct RelaxingSoundsView: View {
             CalmBackground()
 
             VStack(spacing: 0) {
+                // Nav header
+                HStack {
+                    Button { dismiss() } label: {
+                        Image(systemName: "chevron.left")
+                            .font(.system(size: 16, weight: .semibold))
+                            .foregroundColor(.white.opacity(0.85))
+                            .frame(width: 44, height: 44)
+                            .contentShape(Rectangle())
+                    }
+                    Spacer()
+                    Text("Sounds Library")
+                        .font(.system(size: 17, weight: .semibold, design: .rounded))
+                        .foregroundColor(.white)
+                    Spacer()
+                    HStack(spacing: 10) {
+                        SleepTimerButton()
+                        if !premium.isPremium {
+                            Button { showPaywallFromNav = true } label: {
+                                HStack(spacing: 4) {
+                                    Image(systemName: "crown.fill").font(.system(size: 11))
+                                    Text("Premium").font(.system(size: 12, weight: .semibold))
+                                }
+                                .foregroundColor(.calmDeep)
+                                .padding(.horizontal, 10).padding(.vertical, 5)
+                                .background(Capsule().fill(Color.calmAccent))
+                            }
+                        }
+                    }
+                }
+                .padding(.horizontal, 16)
+                .padding(.top, 16)
+
                 // Category picker
                 Picker("", selection: $selectedCategory) {
                     ForEach(SoundLibraryCategory.allCases, id: \.self) { cat in
@@ -80,42 +112,7 @@ struct RelaxingSoundsView: View {
                     .transition(.move(edge: .bottom).combined(with: .opacity))
             }
         }
-        .navigationBarTitleDisplayMode(.inline)
-        .navigationBarBackButtonHidden(true)
-        .toolbarBackground(.hidden, for: .navigationBar)
-        .toolbar {
-            ToolbarItem(placement: .navigationBarLeading) {
-                Button { dismiss() } label: {
-                    Image(systemName: "chevron.left")
-                        .font(.system(size: 16, weight: .semibold))
-                        .foregroundColor(.white)
-                }
-            }
-            ToolbarItem(placement: .principal) {
-                Text("Sounds Library")
-                    .font(.system(size: 17, weight: .semibold, design: .rounded))
-                    .foregroundColor(.white)
-            }
-            ToolbarItem(placement: .navigationBarTrailing) {
-                HStack(spacing: 12) {
-                    SleepTimerButton()
-                    if !premium.isPremium {
-                        Button { showPaywallFromNav = true } label: {
-                            HStack(spacing: 4) {
-                                Image(systemName: "crown.fill")
-                                    .font(.system(size: 11))
-                                Text("Premium")
-                                    .font(.system(size: 12, weight: .semibold))
-                            }
-                            .foregroundColor(.calmDeep)
-                            .padding(.horizontal, 10)
-                            .padding(.vertical, 5)
-                            .background(Capsule().fill(Color.calmAccent))
-                        }
-                    }
-                }
-            }
-        }
+        .navigationBarHidden(true)
         .animation(.easeInOut(duration: 0.3), value: soundPlayer.playing)
         .fullScreenCover(isPresented: $showPaywallFromNav) {
             PaywallView(isPresented: $showPaywallFromNav)
@@ -180,6 +177,8 @@ private struct SoundLibraryRow: View {
                         Image(systemName: isFav ? "heart.fill" : "heart")
                             .font(.system(size: 15))
                             .foregroundColor(isFav ? Color(red: 1.0, green: 0.40, blue: 0.55) : .white.opacity(0.30))
+                            .frame(width: 44, height: 44)
+                            .contentShape(Rectangle())
                     }
                     .buttonStyle(.plain)
                 }
@@ -245,6 +244,8 @@ private struct SoundMiniPlayer: View {
                     Image(systemName: "xmark.circle.fill")
                         .font(.system(size: 36))
                         .foregroundColor(.white.opacity(0.40))
+                        .frame(width: 44, height: 44)
+                        .contentShape(Rectangle())
                 }
             }
             .padding(.horizontal, 20)

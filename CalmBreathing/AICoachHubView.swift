@@ -36,6 +36,13 @@ struct AICoachHubView: View {
                             .padding(.horizontal, 16)
                     }
 
+                    // ── Featured: Chat with Serene ──────────────────────
+                    Button { showChat = true } label: {
+                        FeaturedChatCard()
+                    }
+                    .buttonStyle(.plain)
+                    .padding(.horizontal, 24)
+
                     // Daily logging reminder
                     VStack(alignment: .leading, spacing: 8) {
                         Label("Build Your Pattern", systemImage: "calendar.badge.clock")
@@ -52,7 +59,7 @@ struct AICoachHubView: View {
                     .background(RoundedRectangle(cornerRadius: 14).fill(Color.white.opacity(0.12)))
                     .padding(.horizontal, 24)
 
-                    // Daily Check-in card — goes FIRST, before Mood Pattern Coach
+                    // Daily Check-In card
                     Button { showCheckIn = true } label: {
                         AICoachCard(
                             icon: "sun.and.horizon.fill",
@@ -88,18 +95,6 @@ struct AICoachHubView: View {
                     .buttonStyle(.plain)
                     .padding(.horizontal, 24)
 
-                    // Chat with Serene card
-                    Button { showChat = true } label: {
-                        AICoachCard(
-                            icon: "bubble.left.and.bubble.right.fill",
-                            title: "Chat with Serene",
-                            subtitle: "Have a real conversation with your AI wellness coach. Ask anything about stress, sleep, or breathing.",
-                            tag: "Chat · Wellness · Breathing Tips"
-                        )
-                    }
-                    .buttonStyle(.plain)
-                    .padding(.horizontal, 24)
-
                     DisclaimerFooter().padding(.bottom, 80)
                 }
             }
@@ -117,6 +112,81 @@ struct AICoachHubView: View {
         .fullScreenCover(isPresented: $showChat) {
             CoachChatView().environmentObject(journal)
         }
+    }
+}
+
+// MARK: - Featured Chat Card
+
+private struct FeaturedChatCard: View {
+    @State private var isPulsing = false
+
+    var body: some View {
+        ZStack {
+            RoundedRectangle(cornerRadius: 22)
+                .fill(
+                    LinearGradient(
+                        colors: [
+                            Color(red: 0.42, green: 0.22, blue: 0.78),
+                            Color(red: 0.22, green: 0.42, blue: 0.90)
+                        ],
+                        startPoint: .topLeading,
+                        endPoint: .bottomTrailing
+                    )
+                )
+            RoundedRectangle(cornerRadius: 22)
+                .stroke(Color.white.opacity(0.20), lineWidth: 1)
+
+            VStack(alignment: .leading, spacing: 14) {
+                HStack(spacing: 14) {
+                    ZStack {
+                        // Pulse ring
+                        Circle()
+                            .stroke(Color.white.opacity(0.30), lineWidth: 1.5)
+                            .frame(width: 54, height: 54)
+                            .scaleEffect(isPulsing ? 1.55 : 1.0)
+                            .opacity(isPulsing ? 0 : 0.7)
+                            .animation(
+                                .easeOut(duration: 2.2).repeatForever(autoreverses: false),
+                                value: isPulsing
+                            )
+                        Circle()
+                            .fill(Color.white.opacity(0.18))
+                            .frame(width: 54, height: 54)
+                        Image(systemName: "sparkles")
+                            .font(.system(size: 24))
+                            .foregroundColor(.white)
+                    }
+                    .onAppear { isPulsing = true }
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text("Chat with Serene")
+                            .font(.system(size: 17, weight: .semibold, design: .rounded))
+                            .foregroundColor(.white)
+                        Text("AI · Chat · Wellness")
+                            .font(.system(size: 11, weight: .medium))
+                            .foregroundColor(.white.opacity(0.70))
+                    }
+                    Spacer()
+                }
+
+                Text("Talk to your personal AI wellness coach anytime. Get breathing recommendations, mood support, and mindfulness guidance in real time.")
+                    .font(.system(size: 13, weight: .regular))
+                    .foregroundColor(.white.opacity(0.88))
+                    .lineSpacing(4)
+                    .fixedSize(horizontal: false, vertical: true)
+
+                HStack {
+                    Spacer()
+                    Text("Start Chatting →")
+                        .font(.system(size: 14, weight: .semibold, design: .rounded))
+                        .foregroundColor(Color(red: 0.42, green: 0.22, blue: 0.78))
+                        .padding(.horizontal, 18)
+                        .padding(.vertical, 9)
+                        .background(Capsule().fill(Color.white))
+                }
+            }
+            .padding(18)
+        }
+        .shadow(color: Color(red: 0.42, green: 0.22, blue: 0.78).opacity(0.35), radius: 16, x: 0, y: 6)
     }
 }
 
