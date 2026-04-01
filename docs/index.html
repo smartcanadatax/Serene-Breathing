@@ -34,12 +34,16 @@
 
     .app-icon {
       width: 110px; height: 110px;
-      background: linear-gradient(135deg, #7c3aed, #4f8ef7);
       border-radius: 26px;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 52px;
       margin: 0 auto 28px;
       box-shadow: 0 20px 60px rgba(124,58,237,0.45);
+      overflow: hidden;
+      display: block;
+    }
+
+    .app-icon img {
+      width: 100%; height: 100%;
+      display: block;
     }
 
     .hero h1 {
@@ -268,7 +272,7 @@
 
 <!-- HERO -->
 <div class="hero">
-  <div class="app-icon">🍃</div>
+  <div class="app-icon"><img src="appicon.png" alt="Serene Breathing" /></div>
   <h1><span>Serene</span> Breathing</h1>
   <p>Breathing exercises, guided meditation, sleep sounds, and an AI wellness coach — all in one calm app.</p>
   <a href="https://apps.apple.com/app/serene-breathing/id6743345685" class="btn-primary">
