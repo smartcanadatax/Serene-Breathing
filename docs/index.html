@@ -3,80 +3,164 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Serene Breathing — Privacy Policy & Terms</title>
+  <title>Serene Breathing — Meditate · Breathe · Relax</title>
+  <meta name="description" content="Serene Breathing is a calm, beautiful iOS app for breathing exercises, guided meditation, sleep sounds, and AI wellness coaching." />
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
 
     body {
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-      background: linear-gradient(135deg, #7accfa 0%, #4da3eb 50%, #2678d6 100%);
-      min-height: 100vh;
+      background: #0d0d1a;
       color: #fff;
-      padding: 0 0 60px;
     }
 
-    header {
+    /* ── HERO ── */
+    .hero {
+      background: linear-gradient(160deg, #1a1040 0%, #2a1a6e 40%, #1a3a7a 100%);
       text-align: center;
-      padding: 60px 24px 40px;
+      padding: 80px 24px 100px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero::before {
+      content: '';
+      position: absolute;
+      width: 600px; height: 600px;
+      background: radial-gradient(circle, rgba(140,80,255,0.18) 0%, transparent 70%);
+      top: -100px; left: 50%; transform: translateX(-50%);
+      pointer-events: none;
     }
 
     .app-icon {
-      width: 90px;
-      height: 90px;
-      background: rgba(255,255,255,0.18);
-      border-radius: 22px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 44px;
-      margin: 0 auto 20px;
+      width: 110px; height: 110px;
+      background: linear-gradient(135deg, #7c3aed, #4f8ef7);
+      border-radius: 26px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 52px;
+      margin: 0 auto 28px;
+      box-shadow: 0 20px 60px rgba(124,58,237,0.45);
     }
 
-    header h1 {
-      font-size: 32px;
+    .hero h1 {
+      font-size: 48px;
+      font-weight: 300;
+      letter-spacing: -1px;
+      line-height: 1.1;
+      margin-bottom: 16px;
+    }
+
+    .hero h1 span { font-weight: 700; }
+
+    .hero p {
+      font-size: 18px;
+      opacity: 0.72;
+      max-width: 440px;
+      margin: 0 auto 40px;
+      line-height: 1.6;
+    }
+
+    .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      background: #fff;
+      color: #1a1040;
+      font-size: 16px;
+      font-weight: 600;
+      padding: 14px 32px;
+      border-radius: 50px;
+      text-decoration: none;
+      transition: transform 0.2s, box-shadow 0.2s;
+      box-shadow: 0 8px 32px rgba(255,255,255,0.15);
+    }
+
+    .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 12px 40px rgba(255,255,255,0.22); }
+
+    .badge-row {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-top: 48px;
+    }
+
+    .badge {
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 50px;
+      padding: 8px 18px;
+      font-size: 13px;
+      opacity: 0.80;
+    }
+
+    /* ── FEATURES ── */
+    .section {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 80px 24px;
+    }
+
+    .section-label {
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 2px;
+      color: #a78bfa;
+      text-transform: uppercase;
+      margin-bottom: 12px;
+    }
+
+    .section h2 {
+      font-size: 36px;
       font-weight: 300;
       letter-spacing: -0.5px;
+      margin-bottom: 48px;
     }
 
-    header p {
-      font-size: 15px;
-      opacity: 0.80;
-      margin-top: 6px;
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 20px;
     }
 
-    nav {
-      display: flex;
-      justify-content: center;
-      gap: 10px;
-      padding: 0 24px 32px;
-      flex-wrap: wrap;
-    }
-
-    nav a {
-      color: #fff;
-      text-decoration: none;
-      font-size: 14px;
-      font-weight: 500;
-      padding: 8px 20px;
+    .feature-card {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
       border-radius: 20px;
-      background: rgba(255,255,255,0.15);
-      transition: background 0.2s;
+      padding: 28px;
     }
 
-    nav a:hover { background: rgba(255,255,255,0.28); }
-
-    .container {
-      max-width: 720px;
-      margin: 0 auto;
-      padding: 0 24px;
+    .feature-icon {
+      font-size: 32px;
+      margin-bottom: 16px;
     }
 
+    .feature-card h3 {
+      font-size: 17px;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+
+    .feature-card p {
+      font-size: 14px;
+      opacity: 0.60;
+      line-height: 1.6;
+    }
+
+    /* ── DIVIDER ── */
+    .divider {
+      border: none;
+      border-top: 1px solid rgba(255,255,255,0.07);
+      margin: 0;
+    }
+
+    /* ── PRIVACY CARDS ── */
     .card {
-      background: rgba(255,255,255,0.10);
-      border: 1px solid rgba(255,255,255,0.18);
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
       border-radius: 20px;
       padding: 32px;
-      margin-bottom: 24px;
+      margin-bottom: 20px;
     }
 
     .card h2 {
@@ -89,9 +173,9 @@
     }
 
     .card h3 {
-      font-size: 14px;
+      font-size: 13px;
       font-weight: 600;
-      color: #bde8ff;
+      color: #a78bfa;
       text-transform: uppercase;
       letter-spacing: 0.6px;
       margin: 20px 0 8px;
@@ -103,94 +187,174 @@
       font-size: 14px;
       font-weight: 300;
       line-height: 1.7;
-      opacity: 0.85;
+      opacity: 0.75;
     }
 
-    .card ul {
-      padding-left: 18px;
-      margin-top: 6px;
-    }
-
+    .card ul { padding-left: 18px; margin-top: 6px; }
     .card ul li { margin-bottom: 6px; }
 
-    .badge-row {
+    .privacy-badges {
       display: flex;
-      gap: 12px;
+      gap: 10px;
       flex-wrap: wrap;
       margin-top: 8px;
     }
 
-    .badge {
-      background: rgba(255,255,255,0.12);
+    .privacy-badge {
+      background: rgba(167,139,250,0.12);
+      border: 1px solid rgba(167,139,250,0.20);
       border-radius: 10px;
-      padding: 10px 16px;
+      padding: 8px 14px;
       font-size: 13px;
-      font-weight: 400;
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 7px;
+      opacity: 0.90;
     }
-
-    .badge span { font-size: 18px; }
 
     .updated {
       font-size: 12px;
-      opacity: 0.55;
+      opacity: 0.45;
       margin-bottom: 16px;
     }
 
     .music-credit {
-      background: rgba(255,255,255,0.06);
+      background: rgba(255,255,255,0.04);
       border-radius: 10px;
       padding: 10px 14px;
       margin-bottom: 8px;
       font-size: 13px;
       font-weight: 300;
-      opacity: 0.85;
+      opacity: 0.75;
       line-height: 1.5;
     }
 
-    footer {
-      text-align: center;
-      padding: 40px 24px 0;
-      font-size: 12px;
-      opacity: 0.50;
+    /* ── NAV ── */
+    nav {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      padding: 0 24px 20px;
+      flex-wrap: wrap;
     }
 
-    section { scroll-margin-top: 20px; }
+    nav a {
+      color: rgba(255,255,255,0.65);
+      text-decoration: none;
+      font-size: 14px;
+      padding: 7px 18px;
+      border-radius: 20px;
+      border: 1px solid rgba(255,255,255,0.10);
+      transition: background 0.2s;
+    }
+
+    nav a:hover { background: rgba(255,255,255,0.08); color: #fff; }
+
+    /* ── FOOTER ── */
+    footer {
+      text-align: center;
+      padding: 40px 24px 60px;
+      font-size: 12px;
+      opacity: 0.35;
+      border-top: 1px solid rgba(255,255,255,0.06);
+    }
+
+    section { scroll-margin-top: 24px; }
+
+    a { color: #a78bfa; }
   </style>
 </head>
 <body>
 
-<header>
+<!-- HERO -->
+<div class="hero">
   <div class="app-icon">🍃</div>
-  <h1>Serene Breathing</h1>
-  <p>Meditate · Breathe · Relax</p>
-</header>
+  <h1><span>Serene</span> Breathing</h1>
+  <p>Breathing exercises, guided meditation, sleep sounds, and an AI wellness coach — all in one calm app.</p>
+  <a href="https://apps.apple.com/app/serene-breathing/id6743345685" class="btn-primary">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg>
+    Download on the App Store
+  </a>
 
-<nav>
+  <div class="badge-row">
+    <div class="badge">🫁 Breathing Exercises</div>
+    <div class="badge">🧘 Guided Meditation</div>
+    <div class="badge">🌙 Sleep Sounds</div>
+    <div class="badge">🤖 AI Wellness Coach</div>
+    <div class="badge">📵 No Ads · No Account</div>
+  </div>
+</div>
+
+<!-- NAV -->
+<nav style="padding-top:32px;">
+  <a href="#features">Features</a>
   <a href="#privacy">Privacy Policy</a>
-  <a href="#terms">Terms & Conditions</a>
+  <a href="#terms">Terms</a>
   <a href="#disclaimer">Disclaimer</a>
   <a href="#credits">Music Credits</a>
 </nav>
 
-<div class="container">
+<div class="container" style="max-width:900px; margin:0 auto; padding:0 24px;">
 
-  <!-- Privacy at a glance -->
-  <div class="card">
-    <h2>🔒 Privacy at a Glance</h2>
-    <div class="badge-row">
-      <div class="badge"><span>🔒</span> Journal stays on device</div>
-      <div class="badge"><span>📵</span> No ads ever</div>
-      <div class="badge"><span>📱</span> No account required</div>
-      <div class="badge"><span>🤖</span> AI features use Groq API</div>
-      <div class="badge"><span>❤️</span> Apple Health — write only</div>
-      <div class="badge"><span>🚫</span> Never sold to anyone</div>
+  <!-- FEATURES -->
+  <section id="features">
+    <div class="section" style="padding-top:20px; padding-left:0; padding-right:0;">
+      <div class="section-label">What's inside</div>
+      <h2>Everything you need to feel calm</h2>
+
+      <div class="features-grid">
+        <div class="feature-card">
+          <div class="feature-icon">🫁</div>
+          <h3>Breathing Exercises</h3>
+          <p>Box breathing, 4-7-8, Stress Relief, Anxiety Relief, Focus Boost, Calm Down, Pain Relief, and Quick Reset — guided with haptics and voice.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">🧘</div>
+          <h3>Guided Meditation</h3>
+          <p>Morning Meditation, Sleep Meditation, Body Scan, Deep Relax, Inner Calm, Silent Meditation, and AI-personalized sessions.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">🌙</div>
+          <h3>Sleep & Sounds</h3>
+          <p>Nature sounds, ambient music for focus and creativity, and calming sleep stories to help you drift off peacefully.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">🤖</div>
+          <h3>AI Wellness Coach</h3>
+          <p>Chat with Serene, get daily check-in insights, and let the Mood & Sleep Pattern Coaches analyse your week and recommend a session.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">📓</div>
+          <h3>Gratitude Journal</h3>
+          <p>Log daily gratitude entries, track your mood over time, and build a streak — all stored privately on your device.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">❤️</div>
+          <h3>Apple Health</h3>
+          <p>Mindful minutes are automatically written to Apple Health so your wellness data stays in one place.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <hr class="divider" />
+
+  <!-- PRIVACY AT A GLANCE -->
+  <div style="padding: 60px 0 0;">
+    <div class="card">
+      <h2>🔒 Privacy at a Glance</h2>
+      <div class="privacy-badges">
+        <div class="privacy-badge">🔒 Journal stays on device</div>
+        <div class="privacy-badge">📵 No ads ever</div>
+        <div class="privacy-badge">📱 No account required</div>
+        <div class="privacy-badge">🤖 AI features use Groq API</div>
+        <div class="privacy-badge">❤️ Apple Health — write only</div>
+        <div class="privacy-badge">🚫 Never sold to anyone</div>
+      </div>
     </div>
   </div>
 
-  <!-- Privacy Policy -->
+  <!-- PRIVACY POLICY -->
   <section id="privacy">
     <div class="card">
       <h2>🛡️ Privacy Policy</h2>
@@ -206,88 +370,73 @@
       <p>With your permission, Serene Breathing may write mindful session minutes to the Apple Health app on your device. This data is stored locally by Apple's HealthKit framework and is never transmitted to us or any third party. You can revoke Health access at any time in your iPhone Settings → Health → Data Access & Devices. No Health data is ever read or collected by Serene Breathing.</p>
 
       <h3>Gratitude Journal</h3>
-      <p>Your gratitude journal entries are stored entirely on your device. They are never transmitted to any server, never read by us, and never shared with any third party — including AI services. Your private thoughts stay private. No one outside your device can access them.</p>
+      <p>Your gratitude journal entries are stored entirely on your device. They are never transmitted to any server, never read by us, and never shared with any third party — including AI services. Your private thoughts stay private.</p>
 
       <h3>AI Features & Groq API</h3>
-      <p>When you use AI-powered features — including Chat with Serene, Daily Check-In insights, Mood Pattern Coach, Sleep Pattern Coach, and AI Breathing Coach — the text you submit (such as mood summaries, sleep data, and chat messages) is sent over an encrypted connection to <strong>Groq, Inc.</strong> (groq.com) solely to generate a response. This data is processed by Groq's servers and is subject to <a href="https://groq.com/privacy-policy/" style="color:#bde8ff;">Groq's Privacy Policy</a>. We do not log, store, or analyse these interactions on any server of our own. Your gratitude journal, meditation logs, and all other on-device data are never sent to Groq or any other AI service. If you prefer not to share any information with a third-party AI provider, these optional AI features can simply be left unused — all core app features (breathing exercises, meditation timer, sounds, mood log, sleep log, gratitude journal) work entirely on-device without any network connection.</p>
+      <p>When you use AI-powered features — including Chat with Serene, Daily Check-In insights, Mood Pattern Coach, Sleep Pattern Coach, and AI Breathing Coach — the text you submit is sent over an encrypted connection to <strong>Groq, Inc.</strong> (groq.com) solely to generate a response. This data is subject to <a href="https://groq.com/privacy-policy/">Groq's Privacy Policy</a>. We do not log or store these interactions. Your gratitude journal, meditation logs, and all other on-device data are never sent to Groq or any other AI service. All core features work entirely on-device without any network connection.</p>
 
       <h3>No Tracking or Profiling</h3>
-      <p>We do not track your behaviour within the app. We do not build user profiles. We do not use cookies, device fingerprinting, or any other tracking technology. There is no analytics SDK, no crash reporting tool, and no advertising network embedded in this app.</p>
+      <p>We do not track your behaviour within the app. There is no analytics SDK, no crash reporting tool, and no advertising network embedded in this app.</p>
 
       <h3>Notifications</h3>
-      <p>If you enable daily reminders, notification permissions are requested through Apple's standard framework (UNUserNotificationCenter). All notification data remains entirely on your device and is not accessible to us.</p>
+      <p>If you enable daily reminders, all notification data remains entirely on your device and is not accessible to us.</p>
 
       <h3>In-App Purchases & Subscriptions</h3>
-      <p>Premium subscriptions and any purchases are processed entirely by Apple through StoreKit 2. We do not receive, store, or have access to any payment details or billing information. Apple's Privacy Policy governs all payment transactions. Subscription management is handled through your Apple ID settings.</p>
+      <p>Premium subscriptions are processed entirely by Apple through StoreKit 2. We do not receive, store, or have access to any payment details or billing information.</p>
 
-      <h3>Third-Party Services</h3>
-      <p>This app does not integrate with any analytics, advertising, crash reporting, or tracking services. The only third-party service used is <strong>Groq, Inc.</strong>, which powers the optional AI features described above. No data is ever sold to any third party.</p>
-
-      <h3>GDPR (European Users)</h3>
-      <p>Because we collect no personal data, process no personal data, and store nothing on our servers, the General Data Protection Regulation (GDPR) obligations relating to data processing do not apply to our operations. All data remains under your sole control on your device.</p>
-
-      <h3>PIPEDA (Canadian Users)</h3>
-      <p>In accordance with Canada's Personal Information Protection and Electronic Documents Act (PIPEDA), we confirm that no personal information is collected, used, or disclosed by Serene Breathing. All wellness data you record remains solely on your device.</p>
-
-      <h3>CCPA (California Users)</h3>
-      <p>We do not sell personal information. We do not collect personal information. California residents have no data to request, correct, or delete from our systems, as none exists.</p>
+      <h3>GDPR / PIPEDA / CCPA</h3>
+      <p>Because we collect no personal data and store nothing on our servers, data protection obligations relating to data processing do not apply to our operations. All data remains under your sole control on your device. We do not sell personal information.</p>
 
       <h3>Children's Privacy</h3>
-      <p>This app does not knowingly collect information from children under the age of 13. The app contains no user accounts, no sign-in, and no network connectivity. If you believe a child has used the app, there is nothing to delete — no data has been collected.</p>
+      <p>This app does not knowingly collect information from children under the age of 13. No data has ever been collected.</p>
 
       <h3>Data Deletion</h3>
-      <p>Since all data is stored locally on your device, you can delete all app data at any time by deleting the app from your device. There is no server-side data to request deletion of.</p>
-
-      <h3>Changes to This Policy</h3>
-      <p>We may update this Privacy Policy from time to time. Any changes will be reflected on this page with an updated date. Continued use of the app after changes constitutes acceptance of the revised policy.</p>
+      <p>Since all data is stored locally on your device, you can delete all app data at any time by deleting the app. There is no server-side data to request deletion of.</p>
 
       <h3>Contact</h3>
       <p>If you have questions about this Privacy Policy, please contact us through the App Store support link on the app's page.</p>
     </div>
   </section>
 
-  <!-- Terms & Conditions -->
+  <!-- TERMS -->
   <section id="terms">
     <div class="card">
       <h2>📄 Terms & Conditions</h2>
       <p class="updated">Last updated: March 15, 2026</p>
 
       <h3>Acceptance of Terms</h3>
-      <p>By downloading or using Serene Breathing, you agree to be bound by these Terms and Conditions. If you do not agree, please do not use the app.</p>
+      <p>By downloading or using Serene Breathing, you agree to be bound by these Terms and Conditions.</p>
 
       <h3>License</h3>
-      <p>We grant you a limited, non-exclusive, non-transferable, revocable license to use Serene Breathing for personal, non-commercial purposes on Apple devices you own or control, subject to these Terms.</p>
+      <p>We grant you a limited, non-exclusive, non-transferable, revocable license to use Serene Breathing for personal, non-commercial purposes on Apple devices you own or control.</p>
 
       <h3>Permitted Use</h3>
       <p>You may use the app solely for lawful, personal wellness purposes. You may not copy, modify, distribute, sell, or reverse engineer any part of the app.</p>
 
       <h3>Intellectual Property</h3>
-      <p>All content within Serene Breathing — including but not limited to design, graphics, text, and audio — is the property of the developer or used under applicable licenses. Unauthorised reproduction is prohibited.</p>
+      <p>All content within Serene Breathing — including design, graphics, text, and audio — is the property of the developer or used under applicable licenses.</p>
 
       <h3>Premium Subscriptions</h3>
-      <p>Serene Breathing offers optional auto-renewing subscriptions (monthly and yearly) that unlock premium features including: all ambient sounds, Silent Meditation with interval bells, extended timer up to 60 minutes, Sleep Journal, Body Scan meditation, Morning Meditation, Sleep Meditation, Sleep Stories, Personalized Meditation, Daily Practice, SOS Breathing, and Ambient Music. Subscriptions are processed by Apple through your Apple ID. Payment is charged to your Apple ID account upon purchase confirmation. Subscriptions automatically renew unless cancelled at least 24 hours before the end of the current period. You can manage or cancel your subscription at any time in your Apple ID account settings. No refunds are provided for partial subscription periods, in accordance with Apple's standard policies.</p>
+      <p>Serene Breathing offers optional auto-renewing subscriptions (monthly and yearly) that unlock premium features. Subscriptions are processed by Apple through your Apple ID. Subscriptions automatically renew unless cancelled at least 24 hours before the end of the current period. You can manage or cancel your subscription at any time in your Apple ID account settings.</p>
 
       <h3>Free Features</h3>
-      <p>The following features are available to all users at no cost: breathing exercises (box breathing, 4-7-8, custom), three ambient sounds (Ocean, Forest, Ambience), meditation timer up to 10 minutes, mood journal, and meditation streak tracking.</p>
-
-      <h3>Contact</h3>
-      <p>For support or questions about these Terms, please contact us through the App Store support link on the app's page.</p>
+      <p>The following features are available to all users at no cost: breathing exercises (box breathing, 4-7-8, custom), three ambient sounds, meditation timer up to 10 minutes, mood journal, and meditation streak tracking.</p>
 
       <h3>Disclaimer of Warranties</h3>
-      <p>The app is provided "as is" without warranties of any kind. We do not guarantee that the app will be error-free, uninterrupted, or meet your specific requirements.</p>
+      <p>The app is provided "as is" without warranties of any kind.</p>
 
       <h3>Limitation of Liability</h3>
       <p>To the maximum extent permitted by law, the developers of Serene Breathing shall not be liable for any indirect, incidental, special, or consequential damages arising from your use of the app.</p>
 
       <h3>Governing Law</h3>
-      <p>These Terms shall be governed by and construed in accordance with the laws of Ontario, Canada, without regard to its conflict of law provisions.</p>
+      <p>These Terms shall be governed by the laws of Ontario, Canada.</p>
 
-      <h3>Changes to Terms</h3>
-      <p>We reserve the right to modify these Terms at any time. Continued use of the app after changes constitutes your acceptance of the revised Terms.</p>
+      <h3>Contact</h3>
+      <p>For support or questions, please contact us through the App Store support link on the app's page.</p>
     </div>
   </section>
 
-  <!-- Disclaimer -->
+  <!-- DISCLAIMER -->
   <section id="disclaimer">
     <div class="card">
       <h2>⚕️ Medical Disclaimer</h2>
@@ -297,40 +446,30 @@
       <p>Serene Breathing is designed for general wellness and relaxation purposes only. It is not a medical application and is not intended to diagnose, treat, cure, or prevent any medical condition.</p>
 
       <h3>Not a Substitute for Professional Advice</h3>
-      <p>The content provided — including guided meditations, breathing exercises, ambient sounds, mood tracking, sleep journaling, and body scan sessions — does not constitute medical, psychological, or therapeutic advice. Always consult a qualified healthcare professional before beginning any new wellness practice, especially if you have a physical or mental health condition.</p>
+      <p>The content provided does not constitute medical, psychological, or therapeutic advice. Always consult a qualified healthcare professional before beginning any new wellness practice.</p>
 
-      <h3>Breathing Exercises</h3>
-      <p>Breathing exercises, including 4-7-8 and box breathing techniques, are provided for relaxation purposes only. If you have a respiratory condition, heart condition, or any medical concern, consult your doctor before using the breathing features.</p>
-
-      <h3>Mood & Sleep Tracking</h3>
-      <p>The Mood Journal and Sleep Journal are personal reflection tools only. They are not diagnostic instruments, clinical assessments, or substitutes for professional mental health or sleep medicine evaluation.</p>
-
-      <h3>AI Coach (Serene)</h3>
-      <p>The AI Coach feature, including Chat with Serene, Daily Check-In insights, and Pattern Coaches, is powered by a large language model (Groq / Llama) and is provided for general wellness support and motivational purposes only. AI-generated responses are not medical advice, psychological therapy, or crisis intervention. The AI may make errors or provide responses that are not appropriate for your specific situation. Always consult a qualified healthcare or mental health professional for personal guidance. If you are in crisis, please contact emergency services or a crisis helpline immediately — do not rely on this app.</p>
+      <h3>AI Coach</h3>
+      <p>AI-generated responses are not medical advice, psychological therapy, or crisis intervention. If you are in crisis, please contact emergency services or a crisis helpline immediately — do not rely on this app.</p>
 
       <h3>Emergency Situations</h3>
-      <p>If you are experiencing a medical or mental health emergency, please contact emergency services (911) or a crisis helpline immediately. This app is not equipped to handle emergencies.</p>
-
-      <h3>Use at Your Own Risk</h3>
-      <p>You assume full responsibility for your use of this app. The developers shall not be liable for any damages arising from your use of or inability to use the app.</p>
+      <p>If you are experiencing a medical or mental health emergency, please contact emergency services (911) immediately.</p>
     </div>
   </section>
 
-  <!-- Music Credits -->
+  <!-- MUSIC CREDITS -->
   <section id="credits">
     <div class="card">
       <h2>🎵 Music Credits</h2>
-      <p style="font-size:13px; opacity:0.70; margin-bottom:18px;">All third-party audio used in Serene Breathing is licensed under Creative Commons or other applicable free licenses.</p>
-
-<div class="music-credit"><strong>Ocean — Close Sea Waves Loop</strong><br>"Close Sea Waves Loop" by Mixkit · mixkit.co · Mixkit Free License</div>
+      <p style="font-size:13px; opacity:0.55; margin-bottom:18px;">All third-party audio used in Serene Breathing is licensed under Creative Commons or other applicable free licenses.</p>
+      <div class="music-credit"><strong>Ocean — Close Sea Waves Loop</strong><br>"Close Sea Waves Loop" by Mixkit · mixkit.co · Mixkit Free License</div>
       <div class="music-credit"><strong>Forest — Escape Forest</strong><br>"Escape Forest" by FSM Team · free-stock-music.com · CC BY 4.0</div>
       <div class="music-credit"><strong>Ambience — Ambient Music Nature</strong><br>"Ambient Music Nature" by Alex Productions · free-stock-music.com · CC BY 3.0</div>
       <div class="music-credit"><strong>Ohm</strong><br>"Ohm" by Jason Shaw · audionautix.com · CC BY 4.0</div>
-      <div class="music-credit"><strong>Nature Meditate — Meditate with Nature</strong><br>"Meditate with Nature" by ChilledMusic · free-stock-music.com · CC BY 4.0</div>
-      <div class="music-credit"><strong>Rain Sleep — Rain Sleep Meditation</strong><br>"Rain Sleep Meditation" by Holizna · CC0 1.0 Public Domain</div>
+      <div class="music-credit"><strong>Nature Meditate</strong><br>"Meditate with Nature" by ChilledMusic · free-stock-music.com · CC BY 4.0</div>
+      <div class="music-credit"><strong>Rain Sleep</strong><br>"Rain Sleep Meditation" by Holizna · CC0 1.0 Public Domain</div>
       <div class="music-credit"><strong>Peaceful Mind</strong><br>"Peaceful Mind" by Astron · free-stock-music.com · CC BY 4.0</div>
       <div class="music-credit"><strong>Spiritual Yoga</strong><br>"Spiritual Yoga" by ChilledMusic · free-stock-music.com · CC BY 4.0</div>
-      <div class="music-credit"><strong>Zen Water — Zen Water Healing</strong><br>"Zen Water Healing" by ChilledMusic · free-stock-music.com · CC BY 4.0</div>
+      <div class="music-credit"><strong>Zen Water</strong><br>"Zen Water Healing" by ChilledMusic · free-stock-music.com · CC BY 4.0</div>
       <div class="music-credit"><strong>Downpour</strong><br>"Downpour" by Keys of Moon · keysofmoon.com · CC BY 4.0</div>
     </div>
   </section>
@@ -339,7 +478,7 @@
 
 <footer>
   <p>© 2026 1000936219 Ontario Inc. · Serene Breathing · All rights reserved.</p>
-  <p style="margin-top:6px;">Made with care for your calm.</p>
+  <p style="margin-top:6px;">serenebreathing.online</p>
 </footer>
 
 </body>
