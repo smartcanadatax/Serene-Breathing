@@ -170,14 +170,8 @@ struct HomeView: View {
                     // Meditation group
                     FeatureGroup(title: "Meditation", subtitle: "Guided & timed sessions", icon: "brain.head.profile", isExpanded: $expandMeditation) {
                         VStack(spacing: 10) {
-                            if premium.isPremium {
-                                NavigationLink(destination: MorningMeditationView()) {
-                                    HomeButton(icon: "sunrise.fill", title: "Morning Meditation", subtitle: "Start your day with clarity")
-                                }
-                            } else {
-                                Button { showPaywall = true } label: {
-                                    HomeButton(icon: "sunrise.fill", title: "Morning Meditation", subtitle: "Start your day with clarity", locked: true)
-                                }.buttonStyle(.plain)
+                            NavigationLink(destination: MorningMeditationView()) {
+                                HomeButton(icon: "sunrise.fill", title: "Morning Meditation", subtitle: "Start your day with clarity")
                             }
                             if premium.isPremium {
                                 NavigationLink(destination: SleepMeditationView()) {
@@ -209,8 +203,14 @@ struct HomeView: View {
                                     HomeButton(icon: "sparkles", title: "Personalized Meditation", subtitle: "Personalized session just for you", locked: true)
                                 }.buttonStyle(.plain)
                             }
-                            NavigationLink(destination: BodyScanView()) {
-                                HomeButton(icon: "figure.mind.and.body", title: "Body Scan", subtitle: "Guided head-to-toe relaxation")
+                            if premium.isPremium {
+                                NavigationLink(destination: BodyScanView()) {
+                                    HomeButton(icon: "figure.mind.and.body", title: "Body Scan", subtitle: "Guided head-to-toe relaxation")
+                                }
+                            } else {
+                                Button { showPaywall = true } label: {
+                                    HomeButton(icon: "figure.mind.and.body", title: "Body Scan", subtitle: "Guided head-to-toe relaxation", locked: true)
+                                }.buttonStyle(.plain)
                             }
                             if premium.isPremium {
                                 NavigationLink(destination: SleepStoriesView()) {

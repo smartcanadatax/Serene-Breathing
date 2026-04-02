@@ -63,7 +63,7 @@ If there is any immediate danger, please contact your local emergency services.
 
 // MARK: - Monthly Message Limit
 
-private let monthlyMessageLimit = 1000
+private let monthlyMessageLimit = 3
 
 private func currentMonthKey() -> String {
     let f = DateFormatter()
@@ -235,7 +235,7 @@ struct CoachChatView: View {
 
         // Monthly message limit check
         if monthlyMessageCount() >= monthlyMessageLimit {
-            messages.append(CoachChatMessage(role: "assistant", content: "You've used all your Serene chat sessions for this month. Your access resets on the 1st of next month. In the meantime, your breathing and meditation sessions are always available."))
+            messages.append(CoachChatMessage(role: "assistant", content: "You've used your 3 free chat messages for this month. Upgrade to Premium for unlimited conversations with Serene. Your breathing and meditation sessions are always available."))
             return
         }
         incrementMessageCount()

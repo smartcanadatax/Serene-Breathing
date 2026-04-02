@@ -162,15 +162,24 @@ struct BreathingView: View {
                     // Pattern picker pills
                     HStack(spacing: 8) {
                         ForEach(BreathingPattern.allCases, id: \.self) { p in
+                            let isLocked = p != .box && !premium.isPremium
                             Button {
                                 if !isRunning {
-                                    selectedPattern = p
+                                    if isLocked { showPaywall = true }
+                                    else { selectedPattern = p }
                                 }
                             } label: {
                                 VStack(spacing: 2) {
-                                    Text(p.rawValue)
-                                        .font(.system(size: 13, weight: selectedPattern == p ? .semibold : .regular))
-                                        .foregroundColor(selectedPattern == p ? .calmDeep : .white)
+                                    HStack(spacing: 4) {
+                                        Text(p.rawValue)
+                                            .font(.system(size: 13, weight: selectedPattern == p ? .semibold : .regular))
+                                            .foregroundColor(selectedPattern == p ? .calmDeep : (isLocked ? .white.opacity(0.45) : .white))
+                                        if isLocked {
+                                            Image(systemName: "lock.fill")
+                                                .font(.system(size: 9))
+                                                .foregroundColor(.white.opacity(0.45))
+                                        }
+                                    }
                                     Text(p.description)
                                         .font(.system(size: 10, weight: .light))
                                         .foregroundColor(selectedPattern == p ? .calmDeep.opacity(0.75) : .white.opacity(0.60))
@@ -179,7 +188,7 @@ struct BreathingView: View {
                                 .padding(.vertical, 8)
                                 .frame(minHeight: 44)
                                 .contentShape(Rectangle())
-                                .background(Capsule().fill(selectedPattern == p ? Color.calmAccent : Color.white.opacity(0.12)))
+                                .background(Capsule().fill(selectedPattern == p ? Color.calmAccent : Color.white.opacity(isLocked ? 0.06 : 0.12)))
                             }
                         }
                     }

@@ -7,6 +7,7 @@ struct AICoachHubView: View {
     @State private var showSleep    = false
     @State private var showCheckIn  = false
     @State private var showChat     = false
+    @State private var showPaywall  = false
 
     var body: some View {
         ZStack {
@@ -60,36 +61,39 @@ struct AICoachHubView: View {
                     .padding(.horizontal, 24)
 
                     // Daily Check-In card
-                    Button { showCheckIn = true } label: {
+                    Button { if premium.isPremium { showCheckIn = true } else { showPaywall = true } } label: {
                         AICoachCard(
                             icon: "sun.and.horizon.fill",
                             title: "Daily Check-In",
                             subtitle: "Log your mood and sleep, then get a personalized AI insight and session recommendation for your day.",
-                            tag: "Mood · Sleep · Daily Insight"
+                            tag: "Mood · Sleep · Daily Insight",
+                            locked: !premium.isPremium
                         )
                     }
                     .buttonStyle(.plain)
                     .padding(.horizontal, 24)
 
                     // Mood Pattern Coach card
-                    Button { showMood = true } label: {
+                    Button { if premium.isPremium { showMood = true } else { showPaywall = true } } label: {
                         AICoachCard(
                             icon: "chart.line.uptrend.xyaxis",
                             title: "Mood Pattern Coach",
                             subtitle: "Analyzes your last 7 days of mood data and creates a personalized breathing session for your patterns.",
-                            tag: "Mood · Stress · Anxiety"
+                            tag: "Mood · Stress · Anxiety",
+                            locked: !premium.isPremium
                         )
                     }
                     .buttonStyle(.plain)
                     .padding(.horizontal, 24)
 
                     // Sleep Pattern Coach card
-                    Button { showSleep = true } label: {
+                    Button { if premium.isPremium { showSleep = true } else { showPaywall = true } } label: {
                         AICoachCard(
                             icon: "moon.zzz.fill",
                             title: "Sleep Pattern Coach",
                             subtitle: "Analyzes your last 7 nights of sleep data and generates a tailored wind-down session.",
-                            tag: "Sleep · Rest · Recovery"
+                            tag: "Sleep · Rest · Recovery",
+                            locked: !premium.isPremium
                         )
                     }
                     .buttonStyle(.plain)
@@ -111,6 +115,9 @@ struct AICoachHubView: View {
         }
         .fullScreenCover(isPresented: $showChat) {
             CoachChatView().environmentObject(journal)
+        }
+        .fullScreenCover(isPresented: $showPaywall) {
+            PaywallView(isPresented: $showPaywall).environmentObject(premium)
         }
     }
 }
@@ -197,6 +204,7 @@ private struct AICoachCard: View {
     let title: String
     let subtitle: String
     let tag: String
+    var locked: Bool = false
 
     var body: some View {
         VStack(alignment: .leading, spacing: 14) {
@@ -207,7 +215,7 @@ private struct AICoachCard: View {
                         .frame(width: 52, height: 52)
                     Image(systemName: icon)
                         .font(.system(size: 22))
-                        .foregroundColor(.white)
+                        .foregroundColor(locked ? .white.opacity(0.40) : .white)
                 }
                 VStack(alignment: .leading, spacing: 4) {
                     Text(title)
@@ -218,7 +226,7 @@ private struct AICoachCard: View {
                         .foregroundColor(.calmMid)
                 }
                 Spacer()
-                Image(systemName: "chevron.right")
+                Image(systemName: locked ? "lock.fill" : "chevron.right")
                     .font(.system(size: 13, weight: .semibold))
                     .foregroundColor(.calmMid.opacity(0.60))
             }

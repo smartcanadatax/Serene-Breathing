@@ -8,7 +8,7 @@ class PremiumStore: ObservableObject {
     static let monthlyID = "com.serenebreathing.app.premium.monthly"
     static let yearlyID  = "com.serenebreathing.app.premium.yearly"
 
-    @Published var isPremium    = true // TESTING — set back to false before release
+    @Published var isPremium    = false
     @Published var products:    [Product] = []
     @Published var isPurchasing = false
     @Published var errorMessage: String?
@@ -68,8 +68,6 @@ class PremiumStore: ObservableObject {
 
     // MARK: - Status check
     func updatePremiumStatus() async {
-        // TESTING — remove this line before release
-        isPremium = true; return
         var active = false
         for await result in Transaction.currentEntitlements {
             if case .verified(let tx) = result,
