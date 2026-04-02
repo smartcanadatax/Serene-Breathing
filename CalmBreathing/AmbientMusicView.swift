@@ -141,7 +141,7 @@ struct AmbientMusicView: View {
                 .padding(.bottom, 8)
 
                 ScrollView(showsIndicators: false) {
-                    VStack(spacing: 10) {
+                    LazyVStack(spacing: 10) {
                         ForEach(tracks) { track in
                             TrackRow(track: track, engine: engine)
                         }

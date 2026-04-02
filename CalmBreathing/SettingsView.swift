@@ -51,7 +51,7 @@ struct SettingsView: View {
             CalmBackground()
 
             ScrollView {
-                VStack(spacing: 20) {
+                LazyVStack(spacing: 20) {
 
                     // MARK: Reminders
                     settingsSection(header: "Daily Reminder") {

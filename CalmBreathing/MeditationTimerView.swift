@@ -807,7 +807,7 @@ private struct SettingsSheet: View {
                 .padding(.bottom, 16)
 
                 ScrollView(showsIndicators: false) {
-                    VStack(spacing: 16) {
+                    LazyVStack(spacing: 16) {
 
                         // ── Visual Theme ────────────────────────────────
                         settingsCard {
@@ -1032,7 +1032,7 @@ private struct SoundPickerSheet: View {
                 .padding(.bottom, 12)
 
                 ScrollView(showsIndicators: false) {
-                    VStack(spacing: 8) {
+                    LazyVStack(spacing: 8) {
 
                         // ── Silence / Bell ───────────────────────────────
                         sectionHeader("Basic")

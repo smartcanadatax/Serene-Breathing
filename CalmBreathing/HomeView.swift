@@ -21,7 +21,7 @@ struct HomeView: View {
             CalmBackground()
 
             ScrollView(showsIndicators: false) {
-            VStack(spacing: 0) {
+            LazyVStack(spacing: 0) {
                 Spacer(minLength: 8)
 
                 // App branding

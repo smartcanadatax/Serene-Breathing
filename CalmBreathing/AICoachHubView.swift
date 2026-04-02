@@ -13,7 +13,7 @@ struct AICoachHubView: View {
             CalmBackground()
 
             ScrollView(showsIndicators: false) {
-                VStack(spacing: 28) {
+                LazyVStack(spacing: 28) {
                     Spacer(minLength: 32)
 
                     // Header

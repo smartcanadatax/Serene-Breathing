@@ -52,7 +52,7 @@ struct AISleepStoryView: View {
 
     private var inputView: some View {
         ScrollView(showsIndicators: false) {
-            VStack(spacing: 28) {
+            LazyVStack(spacing: 28) {
                 Spacer(minLength: 24)
 
                 VStack(spacing: 10) {
@@ -162,7 +162,7 @@ struct AISleepStoryView: View {
             .padding(.bottom, 8)
 
             ScrollView(showsIndicators: false) {
-                VStack(spacing: 24) {
+                LazyVStack(spacing: 24) {
                     if !storyTitle.isEmpty {
                         Text(storyTitle)
                             .font(.system(size: 20, weight: .semibold, design: .rounded))
@@ -362,7 +362,7 @@ struct SleepStoriesView: View {
 
     private var storyListView: some View {
         ScrollView(showsIndicators: false) {
-            VStack(spacing: 0) {
+            LazyVStack(spacing: 0) {
                 // Header
                 VStack(spacing: 10) {
                     ZStack {

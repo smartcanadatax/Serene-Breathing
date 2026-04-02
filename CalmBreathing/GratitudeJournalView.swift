@@ -23,7 +23,7 @@ struct GratitudeJournalView: View {
             CalmBackground()
 
             ScrollView(showsIndicators: false) {
-                VStack(spacing: 24) {
+                LazyVStack(spacing: 24) {
 
                     // MARK: Header
                     HStack {

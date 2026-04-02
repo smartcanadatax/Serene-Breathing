@@ -92,7 +92,7 @@ struct RelaxingSoundsView: View {
                 .padding(.bottom, 8)
 
                 ScrollView(showsIndicators: false) {
-                    VStack(spacing: 10) {
+                    LazyVStack(spacing: 10) {
                         ForEach(tracks) { sound in
                             SoundLibraryRow(sound: sound)
                         }
