@@ -530,3 +530,89 @@ struct BreathingView: View {
     }
 }
 
+// MARK: - Breathing Hub
+struct BreathingHubView: View {
+    @EnvironmentObject var premium: PremiumStore
+    @State private var showPaywall = false
+    private let brandPurple = Color(red: 0.541, green: 0.357, blue: 0.804)
+
+    var body: some View {
+        ZStack {
+            CalmBackground()
+            ScrollView(showsIndicators: false) {
+                VStack(spacing: 14) {
+                    // Breathing Exercise
+                    NavigationLink(destination: BreathingView()) {
+                        HubRow(icon: "lungs.fill", title: "Breathing Exercise",
+                               subtitle: "Box · 4-7-8 · Custom patterns", purple: brandPurple)
+                    }
+
+                    // Quick Relief
+                    if premium.isPremium {
+                        NavigationLink(destination: QuickReliefHubView()) {
+                            HubRow(icon: "bolt.heart.fill", title: "Quick Relief",
+                                   subtitle: "Stress · Anxiety · Focus · Pain Relief", purple: brandPurple)
+                        }
+                    } else {
+                        Button { showPaywall = true } label: {
+                            HubRow(icon: "bolt.heart.fill", title: "Quick Relief",
+                                   subtitle: "Stress · Anxiety · Focus · Pain Relief", purple: brandPurple, locked: true)
+                        }.buttonStyle(.plain)
+                    }
+                }
+                .padding(.horizontal, 24)
+                .padding(.top, 16)
+            }
+        }
+        .navigationTitle("Breathe")
+        .navigationBarTitleDisplayMode(.large)
+        .sheet(isPresented: $showPaywall) { PaywallView() }
+    }
+}
+
+private struct HubRow: View {
+    let icon: String
+    let title: String
+    let subtitle: String
+    let purple: Color
+    var locked: Bool = false
+
+    var body: some View {
+        HStack(spacing: 16) {
+            ZStack {
+                Circle().fill(Color.white).frame(width: 50, height: 50)
+                    .shadow(color: purple.opacity(0.15), radius: 4, x: 0, y: 2)
+                Image(systemName: icon)
+                    .font(.system(size: 20))
+                    .foregroundColor(locked ? purple.opacity(0.35) : purple)
+            }
+            VStack(alignment: .leading, spacing: 3) {
+                HStack(spacing: 5) {
+                    Text(title)
+                        .font(.system(size: 16, weight: .semibold, design: .rounded))
+                        .foregroundColor(locked ? .calmDeep.opacity(0.45) : .calmDeep)
+                    if locked {
+                        Image(systemName: "lock.fill")
+                            .font(.system(size: 11))
+                            .foregroundColor(.calmMid.opacity(0.50))
+                    }
+                }
+                Text(subtitle)
+                    .font(.system(size: 12, weight: .regular))
+                    .foregroundColor(.calmMid.opacity(0.75))
+            }
+            Spacer()
+            Image(systemName: "chevron.right")
+                .font(.system(size: 12, weight: .semibold))
+                .foregroundColor(.calmMid.opacity(0.45))
+        }
+        .padding(.horizontal, 18)
+        .padding(.vertical, 15)
+        .background(
+            RoundedRectangle(cornerRadius: 20)
+                .fill(Color.white.opacity(0.85))
+                .shadow(color: Color.black.opacity(0.06), radius: 6, x: 0, y: 2)
+        )
+    }
+}
+

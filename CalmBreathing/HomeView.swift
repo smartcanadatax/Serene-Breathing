@@ -26,12 +26,17 @@ struct HomeView: View {
 
                 // App branding
                 VStack(spacing: 4) {
-                    Text("Serene Breathing")
-                        .font(.system(.largeTitle, design: .rounded).weight(.bold))
-                        .foregroundColor(.calmDeep)
-                    Text("Meditation & Relax")
-                        .font(.system(.subheadline, design: .rounded).weight(.medium))
+                    Text("Serene")
+                        .font(.system(size: 40, weight: .bold, design: .serif).italic())
+                        .foregroundColor(Color(red: 0.541, green: 0.357, blue: 0.804))
+                    Text("BREATHING")
+                        .font(.system(size: 12, weight: .medium, design: .rounded))
+                        .kerning(5)
+                        .foregroundColor(Color(red: 0.541, green: 0.357, blue: 0.804).opacity(0.85))
+                    Text("Meditation · Breathing · Stress Relief")
+                        .font(.system(size: 12, weight: .regular, design: .rounded))
                         .foregroundColor(.calmMid)
+                        .padding(.top, 2)
                 }
 
                 // Daily reminder banner (inline — won't overlap branding)
@@ -94,70 +99,30 @@ struct HomeView: View {
 
                 Spacer(minLength: 16)
 
-                // Mood check-in
-                if !(journal.moodEntries.first.map { Calendar.current.isDateInToday($0.date) } ?? false) {
-                    VStack(spacing: 10) {
-                        Text("How are you feeling today?")
-                            .font(.system(size: 14, weight: .semibold, design: .rounded))
-                            .foregroundColor(.white)
-                        HStack(spacing: 12) {
-                            ForEach(1...5, id: \.self) { val in
-                                let moodVal = [1, 3, 4, 6, 7][val - 1]
-                                Button {
-                                    selectedMood = moodVal
-                                    journal.addMoodEntry(MoodEntry(mood: moodVal))
-                                } label: {
-                                    Text(moodVal.moodEmoji)
-                                        .font(.system(size: 28))
-                                        .padding(6)
-                                        .background(Circle().fill(selectedMood == moodVal ? Color.white.opacity(0.25) : Color.clear))
-                                }
-                            }
-                        }
-                        if selectedMood != nil {
-                            Text("Logged! ✓")
-                                .font(.system(size: 12, weight: .medium))
-                                .foregroundColor(.calmAccent)
-                        }
-                    }
-                    .padding(.horizontal, 16)
-                    .padding(.vertical, 14)
-                    .frame(maxWidth: .infinity)
-                    .background(
-                        RoundedRectangle(cornerRadius: 14)
-                            .fill(Color.white.opacity(0.08))
-                            .overlay(RoundedRectangle(cornerRadius: 14)
-                                .stroke(Color.white.opacity(0.12), lineWidth: 1))
-                    )
-                    .padding(.horizontal, 24)
-                    .padding(.bottom, 4)
-                }
 
                 // SOS Button
                 Button { showSOS = true } label: {
-                    HStack(spacing: 10) {
-                        Text("✨")
-                            .font(.system(size: 26))
-                        VStack(alignment: .leading, spacing: 2) {
+                    HStack(spacing: 16) {
+                        AppLogoView(size: 44)
+                        VStack(alignment: .leading, spacing: 3) {
                             Text("Need Calm Now?")
-                                .font(.system(size: 20, weight: .semibold, design: .rounded))
+                                .font(.system(size: 16, weight: .semibold, design: .rounded))
+                                .foregroundColor(.calmDeep)
                             Text("2-min breathing to ease anxiety instantly")
                                 .font(.system(size: 12, weight: .regular))
-                                .opacity(0.95)
+                                .foregroundColor(.calmMid.opacity(0.75))
                         }
                         Spacer()
                         Image(systemName: "chevron.right")
                             .font(.system(size: 12, weight: .semibold))
-                            .opacity(0.60)
+                            .foregroundColor(.calmMid.opacity(0.45))
                     }
-                    .foregroundColor(.white)
                     .padding(.horizontal, 18)
                     .padding(.vertical, 14)
                     .background(
-                        RoundedRectangle(cornerRadius: 16)
-                            .fill(Color(red: 0.30, green: 0.88, blue: 0.98).opacity(0.18))
-                            .overlay(RoundedRectangle(cornerRadius: 16)
-                                .stroke(Color(red: 0.30, green: 0.88, blue: 0.98).opacity(0.35), lineWidth: 1))
+                        RoundedRectangle(cornerRadius: 20)
+                            .fill(Color.white.opacity(0.85))
+                            .shadow(color: Color.black.opacity(0.06), radius: 6, x: 0, y: 2)
                     )
                 }
                 .buttonStyle(.plain)
@@ -221,15 +186,45 @@ struct HomeView: View {
                                     HomeButton(icon: "book.fill", title: "Sleep Stories", subtitle: "Calming narrated stories for sleep", locked: true)
                                 }.buttonStyle(.plain)
                             }
+                            if premium.isPremium {
+                                NavigationLink(destination: DeepRelaxView()) {
+                                    HomeButton(icon: "sparkles.rectangle.stack.fill", title: "Deep Relax", subtitle: "Immersive video relaxation")
+                                }
+                            } else {
+                                Button { showPaywall = true } label: {
+                                    HomeButton(icon: "sparkles.rectangle.stack.fill", title: "Deep Relax", subtitle: "Immersive video relaxation", locked: true)
+                                }.buttonStyle(.plain)
+                            }
+                            if premium.isPremium {
+                                NavigationLink(destination: StillWatersView()) {
+                                    HomeButton(icon: "drop.fill", title: "Still Waters", subtitle: "Guided calm meditation")
+                                }
+                            } else {
+                                Button { showPaywall = true } label: {
+                                    HomeButton(icon: "drop.fill", title: "Still Waters", subtitle: "Guided calm meditation", locked: true)
+                                }.buttonStyle(.plain)
+                            }
                         }
                     }
 
                     // Breathing group
-                    FeatureGroup(title: "Breathing", subtitle: "Box · 4-7-8 · Custom patterns", icon: "lungs.fill", isExpanded: $expandBreathing) {
-                        NavigationLink(destination: BreathingView()) {
-                            HomeButton(icon: "lungs.fill", title: "Breathing Exercise", subtitle: "Box · 4-7-8 · Custom")
+                    FeatureGroup(title: "Breathing", subtitle: "Box · 4-7-8 · Custom · Quick Relief", icon: "lungs.fill", isExpanded: $expandBreathing) {
+                        VStack(spacing: 10) {
+                            NavigationLink(destination: BreathingView()) {
+                                HomeButton(icon: "lungs.fill", title: "Breathing Exercise", subtitle: "Box · 4-7-8 · Custom")
+                            }
+                            if premium.isPremium {
+                                NavigationLink(destination: QuickReliefHubView()) {
+                                    HomeButton(icon: "bolt.heart.fill", title: "Quick Relief", subtitle: "Stress · Anxiety · Focus · Pain Relief")
+                                }
+                            } else {
+                                Button { showPaywall = true } label: {
+                                    HomeButton(icon: "bolt.heart.fill", title: "Quick Relief", subtitle: "Stress · Anxiety · Focus · Pain Relief", locked: true)
+                                }.buttonStyle(.plain)
+                            }
                         }
                     }
+
 
                     // Sounds group
                     FeatureGroup(title: "Sounds & Music", subtitle: "Nature sounds & ambient music", icon: "waveform", isExpanded: $expandSounds) {
@@ -606,16 +601,19 @@ struct HomeButton: View {
     let subtitle: String
     var locked: Bool = false
 
+    private let brandPurple = Color(red: 0.541, green: 0.357, blue: 0.804)
+
     var body: some View {
         HStack(spacing: 16) {
             // Icon badge
             ZStack {
                 Circle()
-                    .fill(Color.calmDeep.opacity(locked ? 0.05 : 0.10))
+                    .fill(Color.white)
                     .frame(width: 50, height: 50)
+                    .shadow(color: brandPurple.opacity(0.15), radius: 4, x: 0, y: 2)
                 Image(systemName: icon)
                     .font(.system(size: 20))
-                    .foregroundColor(locked ? .calmDeep.opacity(0.40) : .calmDeep)
+                    .foregroundColor(locked ? brandPurple.opacity(0.35) : brandPurple)
             }
 
             // Labels
@@ -645,8 +643,8 @@ struct HomeButton: View {
         .padding(.vertical, 15)
         .background(
             RoundedRectangle(cornerRadius: 20)
-                .fill(Color.white)
-                .shadow(color: Color.black.opacity(0.07), radius: 6, x: 0, y: 2)
+                .fill(Color.white.opacity(0.85))
+                .shadow(color: Color.black.opacity(0.06), radius: 6, x: 0, y: 2)
         )
     }
 }

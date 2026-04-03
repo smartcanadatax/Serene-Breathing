@@ -150,7 +150,7 @@ struct StillWatersView: View {
                 Spacer()
                 HStack {
                     Spacer()
-                    LotusOrbView(isAnimating: isRunning, cycleDuration: 2.5)
+                    LotusOrbView(isAnimating: isRunning)
                         .frame(width: 80, height: 80)
                         .opacity(0.75)
                         .padding(.trailing, 24)

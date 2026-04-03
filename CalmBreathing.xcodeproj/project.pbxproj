@@ -10,7 +10,7 @@
 		474D30E82F74B8D100A61CE8 /* SereneBreathingWatch Watch App.app in Embed Watch Content */ = {isa = PBXBuildFile; fileRef = 474D30DE2F74B8D000A61CE8 /* SereneBreathingWatch Watch App.app */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		474D30EE2F74BA6200A61CE8 /* PhoneSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 474D30ED2F74BA6200A61CE8 /* PhoneSession.swift */; };
 		474D30F12F74BBF600A61CE8 /* WatchConnectivity.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 474D30F02F74BBF600A61CE8 /* WatchConnectivity.framework */; };
-		474D30F32F74BBF600A61CE8 /* WatchConnectivity.framework in Frameworks (Watch) */ = {isa = PBXBuildFile; fileRef = 474D30F02F74BBF600A61CE8 /* WatchConnectivity.framework */; };
+		474D30F32F74BBF600A61CE8 /* WatchConnectivity.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 474D30F02F74BBF600A61CE8 /* WatchConnectivity.framework */; };
 		AA200001 /* SereneBreathingApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB200001 /* SereneBreathingApp.swift */; };
 		AA200002 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB200002 /* ContentView.swift */; };
 		AA200003 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB200003 /* HomeView.swift */; };
@@ -57,12 +57,16 @@
 		AA200044 /* MeditationOrbView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB200045 /* MeditationOrbView.swift */; };
 		AA200045 /* DailyCheckInService.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB200046 /* DailyCheckInService.swift */; };
 		AA200046 /* DailyCheckInView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB200047 /* DailyCheckInView.swift */; };
-		AA200049 /* CoachChatService.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB20004A /* CoachChatService.swift */; };
-		AA20004C /* GroqConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB20004D /* GroqConfig.swift */; };
-		AA20004A /* CoachChatView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB20004B /* CoachChatView.swift */; };
-		AA20004B /* GratitudeJournalView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB20004C /* GratitudeJournalView.swift */; };
 		AA200047 /* AppLogoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB200048 /* AppLogoView.swift */; };
 		AA200048 /* HapticManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB200049 /* HapticManager.swift */; };
+		AA200049 /* CoachChatService.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB20004A /* CoachChatService.swift */; };
+		AA20004A /* CoachChatView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB20004B /* CoachChatView.swift */; };
+		AA20004B /* GratitudeJournalView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB20004C /* GratitudeJournalView.swift */; };
+		AA20004C /* GroqConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB20004D /* GroqConfig.swift */; };
+		AA20004D /* DeepRelaxView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB20004E /* DeepRelaxView.swift */; };
+		AA20004E /* StillWatersView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB20004F /* StillWatersView.swift */; };
+		AA20004F /* QuickReliefView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB200050 /* QuickReliefView.swift */; };
+		AA200051 /* LaunchAnimationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB200052 /* LaunchAnimationView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -140,12 +144,16 @@
 		BB200045 /* MeditationOrbView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MeditationOrbView.swift; sourceTree = "<group>"; };
 		BB200046 /* DailyCheckInService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DailyCheckInService.swift; sourceTree = "<group>"; };
 		BB200047 /* DailyCheckInView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DailyCheckInView.swift; sourceTree = "<group>"; };
+		BB200048 /* AppLogoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppLogoView.swift; sourceTree = "<group>"; };
+		BB200049 /* HapticManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HapticManager.swift; sourceTree = "<group>"; };
 		BB20004A /* CoachChatService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoachChatService.swift; sourceTree = "<group>"; };
 		BB20004B /* CoachChatView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoachChatView.swift; sourceTree = "<group>"; };
 		BB20004C /* GratitudeJournalView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GratitudeJournalView.swift; sourceTree = "<group>"; };
 		BB20004D /* GroqConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroqConfig.swift; sourceTree = "<group>"; };
-		BB200048 /* AppLogoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppLogoView.swift; sourceTree = "<group>"; };
-		BB200049 /* HapticManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HapticManager.swift; sourceTree = "<group>"; };
+		BB20004E /* DeepRelaxView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeepRelaxView.swift; sourceTree = "<group>"; };
+		BB20004F /* StillWatersView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StillWatersView.swift; sourceTree = "<group>"; };
+		BB200050 /* QuickReliefView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuickReliefView.swift; sourceTree = "<group>"; };
+		BB200052 /* LaunchAnimationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LaunchAnimationView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -157,7 +165,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				474D30F32F74BBF600A61CE8 /* WatchConnectivity.framework in Frameworks (Watch) */,
+				474D30F32F74BBF600A61CE8 /* WatchConnectivity.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -221,6 +229,10 @@
 				BB20004B /* CoachChatView.swift */,
 				BB20004C /* GratitudeJournalView.swift */,
 				BB20004D /* GroqConfig.swift */,
+				BB20004E /* DeepRelaxView.swift */,
+				BB20004F /* StillWatersView.swift */,
+				BB200050 /* QuickReliefView.swift */,
+				BB200052 /* LaunchAnimationView.swift */,
 				BB200048 /* AppLogoView.swift */,
 				BB200049 /* HapticManager.swift */,
 				BB200027 /* SOSBreathingView.swift */,
@@ -327,7 +339,6 @@
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				en,
-				Base,
 			);
 			mainGroup = DD200003;
 			productRefGroup = DD200002 /* Products */;
@@ -422,6 +433,10 @@
 				AA20004B /* GratitudeJournalView.swift in Sources */,
 				AA200047 /* AppLogoView.swift in Sources */,
 				AA200048 /* HapticManager.swift in Sources */,
+				AA20004D /* DeepRelaxView.swift in Sources */,
+				AA20004E /* StillWatersView.swift in Sources */,
+				AA20004F /* QuickReliefView.swift in Sources */,
+				AA200051 /* LaunchAnimationView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -470,7 +485,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = XBBABT9X98;
+				DEVELOPMENT_TEAM = Q6FAV95A27;
 				ENABLE_PREVIEWS = YES;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
@@ -486,8 +501,9 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_CFBundleDisplayName = SereneBreathingWatch;
+				INFOPLIST_KEY_CFBundleIconName = AppIcon;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
-				INFOPLIST_KEY_WKCompanionAppBundleIdentifier = com.serenebreathing.app;
+				INFOPLIST_KEY_WKCompanionAppBundleIdentifier = com.serenebreathing.ios;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -495,7 +511,7 @@
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MARKETING_VERSION = 1.0;
 				MTL_FAST_MATH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = com.serenebreathing.app.watchkitapp;
+				PRODUCT_BUNDLE_IDENTIFIER = com.serenebreathing.ios.watch;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = watchos;
 				SKIP_INSTALL = YES;
@@ -544,7 +560,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = XBBABT9X98;
+				DEVELOPMENT_TEAM = Q6FAV95A27;
 				ENABLE_PREVIEWS = YES;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_USER_SCRIPT_SANDBOXING = YES;
@@ -558,8 +574,9 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_CFBundleDisplayName = SereneBreathingWatch;
+				INFOPLIST_KEY_CFBundleIconName = AppIcon;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
-				INFOPLIST_KEY_WKCompanionAppBundleIdentifier = com.serenebreathing.app;
+				INFOPLIST_KEY_WKCompanionAppBundleIdentifier = com.serenebreathing.ios;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -568,7 +585,7 @@
 				MARKETING_VERSION = 1.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = com.serenebreathing.app.watchkitapp;
+				PRODUCT_BUNDLE_IDENTIFIER = com.serenebreathing.ios.watch;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = watchos;
 				SKIP_INSTALL = YES;
@@ -628,19 +645,20 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = XBBABT9X98;
+				DEVELOPMENT_TEAM = Q6FAV95A27;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = UIInterfaceOrientationPortrait;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.serenebreathing.app;
+				PRODUCT_BUNDLE_IDENTIFIER = com.serenebreathing.ios;
 				PRODUCT_NAME = "Serene Breathing";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
@@ -655,19 +673,20 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = XBBABT9X98;
+				DEVELOPMENT_TEAM = Q6FAV95A27;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = UIInterfaceOrientationPortrait;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.serenebreathing.app;
+				PRODUCT_BUNDLE_IDENTIFIER = com.serenebreathing.ios;
 				PRODUCT_NAME = "Serene Breathing";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;

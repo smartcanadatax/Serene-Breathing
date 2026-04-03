@@ -11,3 +11,4 @@ DerivedData/
 
 # API Keys — never commit this file
 CalmBreathing/GroqConfig.swift
+CalmBreathing/Audio/*.mp4

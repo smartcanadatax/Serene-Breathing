@@ -2,16 +2,16 @@ import SwiftUI
 
 // MARK: - App Colour Palette
 extension Color {
-    /// Dark navy — primary text & button labels
-    static let calmDeep   = Color(red: 0.04, green: 0.14, blue: 0.36)
+    /// Dark navy — primary text
+    static let calmDeep   = Color(red: 0.08, green: 0.12, blue: 0.28)
     /// Medium navy — secondary text
-    static let calmMid    = Color(red: 0.10, green: 0.30, blue: 0.60)
-    /// Light ice blue — accent highlights & buttons
-    static let calmAccent = Color(red: 0.75, green: 0.92, blue: 1.00)
-    /// Soft periwinkle — secondary accent
-    static let calmPurple = Color(red: 0.55, green: 0.82, blue: 1.00)
-    /// Cyan — exhale phase
-    static let calmTeal   = Color(red: 0.30, green: 0.88, blue: 0.98)
+    static let calmMid    = Color(red: 0.20, green: 0.28, blue: 0.50)
+    /// Brand purple — icons, accents, highlights
+    static let calmAccent = Color(red: 0.541, green: 0.357, blue: 0.804)
+    /// Mid brand purple — secondary accent
+    static let calmPurple = Color(red: 0.647, green: 0.427, blue: 0.788)
+    /// Soft purple — exhale phase
+    static let calmTeal   = Color(red: 0.796, green: 0.659, blue: 0.902)
 }
 
 // MARK: - Shared Background
@@ -19,12 +19,12 @@ struct CalmBackground: View {
     var body: some View {
         LinearGradient(
             colors: [
-                Color(red: 0.48, green: 0.80, blue: 0.98),
-                Color(red: 0.30, green: 0.64, blue: 0.92),
-                Color(red: 0.15, green: 0.48, blue: 0.84)
+                Color(red: 0.46, green: 0.64, blue: 0.92),
+                Color(red: 0.36, green: 0.54, blue: 0.86),
+                Color(red: 0.28, green: 0.46, blue: 0.80)
             ],
-            startPoint: .topLeading,
-            endPoint: .bottomTrailing
+            startPoint: .top,
+            endPoint: .bottom
         )
         .ignoresSafeArea()
     }
@@ -64,7 +64,7 @@ struct ContentView: View {
                     }
 
                     NavigationStack {
-                        BreathingView()
+                        BreathingHubView()
                     }
                     .tabItem {
                         Label("Breathe", systemImage: "lungs.fill")
@@ -81,7 +81,7 @@ struct ContentView: View {
                         MeditationTimerView()
                     }
                     .tabItem {
-                        Label("Timer", systemImage: "timer")
+                        Label("Session", systemImage: "timer")
                     }
 
                     NavigationStack {
@@ -90,13 +90,6 @@ struct ContentView: View {
                     }
                     .tabItem {
                         Label("AI Coach", systemImage: "sparkles")
-                    }
-
-                    NavigationStack {
-                        ProgressTabView()
-                    }
-                    .tabItem {
-                        Label("Progress", systemImage: "chart.bar.fill")
                     }
                 }
                 .tint(.white)

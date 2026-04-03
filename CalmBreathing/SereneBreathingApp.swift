@@ -9,6 +9,7 @@ struct SereneBreathingApp: App {
     @StateObject private var premium       = PremiumStore()
     @AppStorage("darkMode") private var darkMode = false
     @AppStorage("hasAgreedToTerms") private var hasAgreedToTerms = false
+    @State private var showLaunch = true
 
     init() {
         _ = PhoneSession.shared   // activate WatchConnectivity on launch
@@ -39,7 +40,11 @@ struct SereneBreathingApp: App {
     
     var body: some Scene {
         WindowGroup {
-            if hasAgreedToTerms {
+            if showLaunch {
+                LaunchAnimationView {
+                    withAnimation { showLaunch = false }
+                }
+            } else if hasAgreedToTerms {
                 ContentView()
                     .environmentObject(soundPlayer)
                     .environmentObject(userPrefs)

@@ -2,6 +2,20 @@ import SwiftUI
 import AVFoundation
 import UIKit
 
+// MARK: - Background Music Option
+struct BgMusicOption: Hashable, Equatable {
+    let name: String
+    let filename: String
+}
+
+private let breathingMusicOptions: [BgMusicOption] = [
+    BgMusicOption(name: "None",       filename: ""),
+    BgMusicOption(name: "Ohm",        filename: "ohm"),
+    BgMusicOption(name: "Forest",     filename: "forest"),
+    BgMusicOption(name: "Zen Water",  filename: "zen_water"),
+    BgMusicOption(name: "Ambience",   filename: "ambience"),
+]
+
 // MARK: - Exercise Config
 
 struct QuickReliefExercise: Identifiable {
@@ -606,5 +620,63 @@ private extension HapticManager {
         case "Hold":   hold()
         default: break
         }
+    }
+}
+
+// MARK: - Hub (exercise picker)
+struct QuickReliefHubView: View {
+    private let purple = Color(red: 0.541, green: 0.357, blue: 0.804)
+
+    var body: some View {
+        ZStack {
+            CalmBackground()
+            ScrollView(showsIndicators: false) {
+                VStack(spacing: 14) {
+                    Text("Quick Relief")
+                        .font(.system(size: 28, weight: .bold, design: .rounded))
+                        .foregroundColor(.white)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .padding(.top, 8)
+
+                    Text("Choose a breathing exercise")
+                        .font(.system(size: 14, weight: .regular, design: .rounded))
+                        .foregroundColor(.white.opacity(0.65))
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .padding(.bottom, 4)
+
+                    ForEach(QuickReliefExercise.all) { exercise in
+                        NavigationLink(destination: QuickReliefView(exercise: exercise)) {
+                            HStack(spacing: 14) {
+                                Image(systemName: exercise.icon)
+                                    .font(.system(size: 22))
+                                    .foregroundColor(.white)
+                                    .frame(width: 44, height: 44)
+                                    .background(Circle().fill(purple.opacity(0.35)))
+                                VStack(alignment: .leading, spacing: 3) {
+                                    Text(exercise.name)
+                                        .font(.system(size: 16, weight: .semibold, design: .rounded))
+                                        .foregroundColor(.white)
+                                    Text(exercise.subtitle)
+                                        .font(.system(size: 13, weight: .regular, design: .rounded))
+                                        .foregroundColor(.white.opacity(0.65))
+                                }
+                                Spacer()
+                                Image(systemName: "chevron.right")
+                                    .font(.system(size: 13, weight: .semibold))
+                                    .foregroundColor(.white.opacity(0.40))
+                            }
+                            .padding(.horizontal, 16)
+                            .padding(.vertical, 14)
+                            .background(RoundedRectangle(cornerRadius: 16).fill(Color.white.opacity(0.10)))
+                        }
+                        .buttonStyle(.plain)
+                    }
+                }
+                .padding(.horizontal, 24)
+                .padding(.bottom, 32)
+            }
+        }
+        .navigationTitle("")
+        .navigationBarTitleDisplayMode(.inline)
     }
 }
