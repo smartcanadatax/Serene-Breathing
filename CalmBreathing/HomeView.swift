@@ -28,11 +28,11 @@ struct HomeView: View {
                 VStack(spacing: 4) {
                     Text("Serene")
                         .font(.system(size: 40, weight: .bold, design: .serif).italic())
-                        .foregroundColor(Color(red: 0.541, green: 0.357, blue: 0.804))
+                        .foregroundColor(Color(red: 0.88, green: 0.76, blue: 0.98))
                     Text("BREATHING")
                         .font(.system(size: 12, weight: .medium, design: .rounded))
                         .kerning(5)
-                        .foregroundColor(Color(red: 0.541, green: 0.357, blue: 0.804).opacity(0.85))
+                        .foregroundColor(Color(red: 0.88, green: 0.76, blue: 0.98).opacity(0.85))
                     Text("Meditation · Breathing · Stress Relief")
                         .font(.system(size: 12, weight: .regular, design: .rounded))
                         .foregroundColor(.calmMid)
@@ -244,15 +244,7 @@ struct HomeView: View {
                         }
                     }
 
-                    NavigationLink(destination: ProgressTabView()) {
-                        HomeButton(icon: "chart.bar.fill", title: "Progress", subtitle: "Stats & streaks")
-                    }
-                    NavigationLink(destination: AICoachHubView()) {
-                        HomeButton(icon: "sparkles", title: "AI Coach", subtitle: "Mood & sleep insights")
-                    }
-                    NavigationLink(destination: SettingsView()) {
-                        HomeButton(icon: "gearshape", title: "Settings", subtitle: "Reminders & preferences")
-                    }
+
                 }
                 .padding(.horizontal, 24)
 
@@ -588,7 +580,7 @@ struct FeatureGroup<Content: View>: View {
         }
         .background(
             RoundedRectangle(cornerRadius: 20)
-                .fill(Color.white)
+                .fill(Color.white.opacity(0.75))
                 .shadow(color: Color.black.opacity(0.08), radius: 8, x: 0, y: 3)
         )
     }

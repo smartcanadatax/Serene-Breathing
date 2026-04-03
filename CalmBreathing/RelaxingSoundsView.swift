@@ -19,9 +19,11 @@ enum SoundLibraryCategory: String, CaseIterable {
 extension SoundPlayer.SoundType {
     var libraryCategory: SoundLibraryCategory {
         switch self {
-        case .ocean, .forest, .meditationRiver, .ambience, .downpour:
+        case .ocean, .forest, .meditationRiver, .ambience, .downpour,
+             .immersiveNature, .relaxingNature:
             return .nature
-        case .rainSleep, .sleepMeditation, .relaxSleep, .yogaRelaxing:
+        case .rainSleep, .sleepMeditation, .relaxSleep, .yogaRelaxing,
+             .stillWaters, .deepSleepBg, .sleepCMajor, .veryDeepSleep:
             return .sleep
         default:
             return .meditation

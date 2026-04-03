@@ -41,6 +41,14 @@ class SoundPlayer: ObservableObject {
         case downpour              = "Downpour"
         case planetFrequencies     = "Planet Frequencies"
         case sereneMindfulness     = "Serene Mindfulness"
+        // New nature
+        case immersiveNature       = "Immersive Nature"
+        case relaxingNature        = "Relaxing Nature"
+        // New sleep
+        case stillWaters           = "Still Waters"
+        case deepSleepBg           = "Deep Sleep"
+        case sleepCMajor           = "Sleep in C Major"
+        case veryDeepSleep         = "Very Deep Sleep"
 
         var id: String { rawValue }
 
@@ -84,6 +92,12 @@ class SoundPlayer: ObservableObject {
             case .downpour:              return "cloud.heavyrain.fill"
             case .planetFrequencies:     return "globe"
             case .sereneMindfulness:     return "sparkles"
+            case .immersiveNature:       return "tree.fill"
+            case .relaxingNature:        return "leaf.fill"
+            case .stillWaters:           return "drop.fill"
+            case .deepSleepBg:           return "bed.double.fill"
+            case .sleepCMajor:           return "music.note"
+            case .veryDeepSleep:         return "moon.zzz.fill"
             }
         }
 
@@ -119,6 +133,12 @@ class SoundPlayer: ObservableObject {
             case .downpour:              return "Dramatic rain atmosphere"
             case .planetFrequencies:     return "Uranus frequency 207.36 Hz"
             case .sereneMindfulness:     return "Serene mindfulness journey"
+            case .immersiveNature:       return "Immersive nature soundscape"
+            case .relaxingNature:        return "Relaxing music with nature"
+            case .stillWaters:           return "Peaceful still water sounds"
+            case .deepSleepBg:           return "Background music for deep sleep"
+            case .sleepCMajor:           return "Sleep music in C major"
+            case .veryDeepSleep:         return "Very deep sleep tones"
             }
         }
 
@@ -154,6 +174,12 @@ class SoundPlayer: ObservableObject {
             case .downpour:              return Color(red: 0.15, green: 0.20, blue: 0.40)
             case .planetFrequencies:     return Color(red: 0.30, green: 0.10, blue: 0.55)
             case .sereneMindfulness:     return Color(red: 0.20, green: 0.35, blue: 0.60)
+            case .immersiveNature:       return Color(red: 0.08, green: 0.40, blue: 0.25)
+            case .relaxingNature:        return Color(red: 0.10, green: 0.42, blue: 0.28)
+            case .stillWaters:           return Color(red: 0.05, green: 0.35, blue: 0.55)
+            case .deepSleepBg:           return Color(red: 0.06, green: 0.12, blue: 0.40)
+            case .sleepCMajor:           return Color(red: 0.15, green: 0.18, blue: 0.48)
+            case .veryDeepSleep:         return Color(red: 0.08, green: 0.10, blue: 0.35)
             }
         }
     }
@@ -226,7 +252,13 @@ class SoundPlayer: ObservableObject {
             case .meditationFree:        return ("meditation_free",    "mp3")
             case .downpour:              return ("downpour",                "mp3")
             case .planetFrequencies:     return ("planet_frequencies_uranus", "mp3")
-            case .sereneMindfulness:     return ("serene_mindfulness",        "mp3")
+            case .sereneMindfulness:     return ("serene_mindfulness",   "mp3")
+            case .immersiveNature:       return ("immersive_nature",     "mp3")
+            case .relaxingNature:        return ("relaxing_nature",      "mp3")
+            case .stillWaters:           return ("still_waters",         "mp3")
+            case .deepSleepBg:           return ("deep_sleep_bg",        "mp3")
+            case .sleepCMajor:           return ("sleep_c_major",        "mp3")
+            case .veryDeepSleep:         return ("very_deep_sleep",      "mp3")
             }
         }()
 

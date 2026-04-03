@@ -67,6 +67,7 @@
 		AA20004E /* StillWatersView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB20004F /* StillWatersView.swift */; };
 		AA20004F /* QuickReliefView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB200050 /* QuickReliefView.swift */; };
 		AA200051 /* LaunchAnimationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB200052 /* LaunchAnimationView.swift */; };
+		AA200053 /* MeditationHubView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB200053 /* MeditationHubView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -154,6 +155,7 @@
 		BB20004F /* StillWatersView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StillWatersView.swift; sourceTree = "<group>"; };
 		BB200050 /* QuickReliefView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuickReliefView.swift; sourceTree = "<group>"; };
 		BB200052 /* LaunchAnimationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LaunchAnimationView.swift; sourceTree = "<group>"; };
+		BB200053 /* MeditationHubView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MeditationHubView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -233,6 +235,7 @@
 				BB20004F /* StillWatersView.swift */,
 				BB200050 /* QuickReliefView.swift */,
 				BB200052 /* LaunchAnimationView.swift */,
+				BB200053 /* MeditationHubView.swift */,
 				BB200048 /* AppLogoView.swift */,
 				BB200049 /* HapticManager.swift */,
 				BB200027 /* SOSBreathingView.swift */,
@@ -437,6 +440,7 @@
 				AA20004E /* StillWatersView.swift in Sources */,
 				AA20004F /* QuickReliefView.swift in Sources */,
 				AA200051 /* LaunchAnimationView.swift in Sources */,
+				AA200053 /* MeditationHubView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

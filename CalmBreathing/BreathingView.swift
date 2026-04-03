@@ -566,7 +566,7 @@ struct BreathingHubView: View {
         }
         .navigationTitle("Breathe")
         .navigationBarTitleDisplayMode(.large)
-        .sheet(isPresented: $showPaywall) { PaywallView() }
+        .sheet(isPresented: $showPaywall) { PaywallView(isPresented: $showPaywall) }
     }
 }
 

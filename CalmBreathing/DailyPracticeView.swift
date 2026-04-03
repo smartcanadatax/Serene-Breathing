@@ -797,9 +797,7 @@ struct DailyPracticeCard: View {
                 }
                 Spacer()
                 VStack(spacing: 4) {
-                    Image(systemName: "wind")
-                        .font(.system(size: 18))
-                        .foregroundColor(Color(red: 0.30, green: 0.55, blue: 0.80))
+                    AppLogoView(size: 52)
                     Image(systemName: "chevron.right")
                         .font(.system(size: 10, weight: .semibold))
                         .foregroundColor(Color(red: 0.50, green: 0.65, blue: 0.80))
@@ -809,8 +807,8 @@ struct DailyPracticeCard: View {
             .frame(maxWidth: .infinity, alignment: .leading)
             .background(
                 RoundedRectangle(cornerRadius: 16)
-                    .fill(Color.white)
-                    .shadow(color: Color.black.opacity(0.08), radius: 8, x: 0, y: 3)
+                    .fill(Color.white.opacity(0.75))
+                    .shadow(color: Color.black.opacity(0.06), radius: 6, x: 0, y: 2)
             )
         }
         .buttonStyle(.plain)

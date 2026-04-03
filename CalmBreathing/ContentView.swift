@@ -78,10 +78,10 @@ struct ContentView: View {
                     }
 
                     NavigationStack {
-                        MeditationTimerView()
+                        MeditationHubView()
                     }
                     .tabItem {
-                        Label("Session", systemImage: "timer")
+                        Label("Session", systemImage: "moon.stars.fill")
                     }
 
                     NavigationStack {
