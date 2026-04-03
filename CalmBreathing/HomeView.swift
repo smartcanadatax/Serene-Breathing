@@ -7,6 +7,7 @@ struct HomeView: View {
     @EnvironmentObject var premium:   PremiumStore
     @EnvironmentObject var journal:   JournalStore
     @State private var showReminderBanner   = false
+    @State private var debugTapCount        = 0
     @State private var showPaywall          = false
     @State private var showSOS              = false
     @State private var gratitudeText        = ""
@@ -28,11 +29,14 @@ struct HomeView: View {
                 VStack(spacing: 4) {
                     Text("Serene")
                         .font(.system(size: 40, weight: .bold, design: .serif).italic())
-                        .foregroundColor(Color(red: 0.88, green: 0.76, blue: 0.98))
+                        .foregroundColor(Color(red: 0.541, green: 0.357, blue: 0.804))
+                        .onTapGesture(count: 5) {
+                            premium.forceUnlock()
+                        }
                     Text("BREATHING")
                         .font(.system(size: 12, weight: .medium, design: .rounded))
                         .kerning(5)
-                        .foregroundColor(Color(red: 0.88, green: 0.76, blue: 0.98).opacity(0.85))
+                        .foregroundColor(Color(red: 0.541, green: 0.357, blue: 0.804).opacity(0.75))
                     Text("Meditation · Breathing · Stress Relief")
                         .font(.system(size: 12, weight: .regular, design: .rounded))
                         .foregroundColor(.calmMid)

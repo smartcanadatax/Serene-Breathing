@@ -66,6 +66,11 @@ class PremiumStore: ObservableObject {
         }
     }
 
+    // MARK: - Debug override (testing only)
+    func forceUnlock() {
+        isPremium = true
+    }
+
     // MARK: - Status check
     func updatePremiumStatus() async {
         var active = false
