@@ -18,6 +18,10 @@ struct MoodPatternCoachView: View {
     @State private var isGenerating  = false
     @State private var showSession   = false
     @State private var errorText:    String?
+    @State private var showBreathing = false
+    @State private var showMorning   = false
+    @State private var showSleepMed  = false
+    @State private var showBodyScan  = false
 
     // Last 14 days of mood entries
     private var recentMoods: [MoodEntry] {
@@ -280,11 +284,42 @@ struct MoodPatternCoachView: View {
                     .background(RoundedRectangle(cornerRadius: 18).fill(Color.white.opacity(0.45)))
                     .padding(.horizontal, 24)
 
+                    // Start Session Button
+                    if !technique.isEmpty {
+                        Button { openSuggestedSession(technique) } label: {
+                            HStack(spacing: 10) {
+                                Image(systemName: "play.fill")
+                                    .font(.system(size: 14))
+                                Text("Start Recommended Session")
+                                    .font(.system(size: 15, weight: .semibold, design: .rounded))
+                            }
+                            .foregroundColor(.white)
+                            .padding(.horizontal, 32)
+                            .padding(.vertical, 14)
+                            .background(Capsule().fill(Color(red: 0.541, green: 0.357, blue: 0.804)))
+                            .shadow(color: Color(red: 0.541, green: 0.357, blue: 0.804).opacity(0.35), radius: 10)
+                        }
+                        .padding(.horizontal, 24)
+                    }
+
                     DisclaimerFooter().padding(.bottom, 16)
                 }
                 .padding(.top, 8)
             }
         }
+        .fullScreenCover(isPresented: $showBreathing) { BreathingView() }
+        .fullScreenCover(isPresented: $showMorning)   { MorningMeditationView().environmentObject(journal) }
+        .fullScreenCover(isPresented: $showSleepMed)  { SleepMeditationView().environmentObject(journal) }
+        .fullScreenCover(isPresented: $showBodyScan)  { BodyScanView().environmentObject(journal) }
+    }
+
+    private func openSuggestedSession(_ text: String) {
+        let lower = text.lowercased()
+        if lower.contains("breathing") || lower.contains("breath") { showBreathing = true }
+        else if lower.contains("morning")                           { showMorning   = true }
+        else if lower.contains("sleep")                             { showSleepMed  = true }
+        else if lower.contains("body")                              { showBodyScan  = true }
+        else                                                         { showBreathing = true }
     }
 
     // MARK: - Logic
