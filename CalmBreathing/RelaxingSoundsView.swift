@@ -23,7 +23,8 @@ extension SoundPlayer.SoundType {
              .immersiveNature, .relaxingNature:
             return .nature
         case .rainSleep, .sleepMeditation, .relaxSleep, .yogaRelaxing,
-             .stillWaters, .deepSleepBg, .sleepCMajor, .veryDeepSleep:
+             .stillWaters, .deepSleepBg, .sleepCMajor, .veryDeepSleep,
+             .slowAmbient, .spaceAmbient, .dreamscape, .cinematicAmbient, .relaxingRain:
             return .sleep
         default:
             return .meditation

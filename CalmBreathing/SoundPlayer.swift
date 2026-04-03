@@ -49,6 +49,25 @@ class SoundPlayer: ObservableObject {
         case deepSleepBg           = "Deep Sleep"
         case sleepCMajor           = "Sleep in C Major"
         case veryDeepSleep         = "Very Deep Sleep"
+        // Quietphase ambient
+        case calmAmbient           = "Calm Ambient"
+        case zenAmbient            = "Zen Ambient"
+        case meditationFlow        = "Meditation Flow"
+        case slowAmbient           = "Slow Ambient"
+        case yogaAmbient           = "Yoga Ambient"
+        // The Mountain ambient
+        case inspiringJourney      = "Inspiring Journey"
+        case mountainNature        = "Mountain Nature"
+        case mountainCalm          = "Mountain Calm"
+        case mountainYoga          = "Mountain Yoga"
+        // Other new ambient
+        case ambientSerenity       = "Ambient Serenity"
+        case spaceAmbient          = "Space Ambient"
+        case dreamscape            = "Dreamscape"
+        case cinematicCalm         = "Cinematic Calm"
+        case ambientBliss          = "Ambient Bliss"
+        case cinematicAmbient      = "Cinematic Ambient"
+        case relaxingRain          = "Relaxing Rain"
 
         var id: String { rawValue }
 
@@ -98,6 +117,22 @@ class SoundPlayer: ObservableObject {
             case .deepSleepBg:           return "bed.double.fill"
             case .sleepCMajor:           return "music.note"
             case .veryDeepSleep:         return "moon.zzz.fill"
+            case .calmAmbient:           return "cloud.fill"
+            case .zenAmbient:            return "sparkles"
+            case .meditationFlow:        return "waveform"
+            case .slowAmbient:           return "tortoise.fill"
+            case .yogaAmbient:           return "figure.yoga"
+            case .inspiringJourney:      return "star.fill"
+            case .mountainNature:        return "mountain.2.fill"
+            case .mountainCalm:          return "leaf.fill"
+            case .mountainYoga:          return "figure.mind.and.body"
+            case .ambientSerenity:       return "rays"
+            case .spaceAmbient:          return "moon.stars.fill"
+            case .dreamscape:            return "cloud.moon.fill"
+            case .cinematicCalm:         return "film.fill"
+            case .ambientBliss:          return "heart.fill"
+            case .cinematicAmbient:      return "music.note.list"
+            case .relaxingRain:          return "cloud.rain.fill"
             }
         }
 
@@ -139,6 +174,22 @@ class SoundPlayer: ObservableObject {
             case .deepSleepBg:           return "Background music for deep sleep"
             case .sleepCMajor:           return "Sleep music in C major"
             case .veryDeepSleep:         return "Very deep sleep tones"
+            case .calmAmbient:           return "Peaceful calm ambience"
+            case .zenAmbient:            return "Zen & mindful tones"
+            case .meditationFlow:        return "Flowing meditation music"
+            case .slowAmbient:           return "Slow & restorative sounds"
+            case .yogaAmbient:           return "Ambient yoga atmosphere"
+            case .inspiringJourney:      return "Uplifting ambient journey"
+            case .mountainNature:        return "Mountain nature sounds"
+            case .mountainCalm:          return "Calm mountain retreat"
+            case .mountainYoga:          return "Yoga & mountain serenity"
+            case .ambientSerenity:       return "Serene ambient music"
+            case .spaceAmbient:          return "Spacious deep ambient"
+            case .dreamscape:            return "Dark ambient dreamscape"
+            case .cinematicCalm:         return "Slow cinematic textures"
+            case .ambientBliss:          return "Blissful ambient meditation"
+            case .cinematicAmbient:      return "Cinematic ambient tones"
+            case .relaxingRain:          return "Relaxing rain & music"
             }
         }
 
@@ -180,6 +231,22 @@ class SoundPlayer: ObservableObject {
             case .deepSleepBg:           return Color(red: 0.06, green: 0.12, blue: 0.40)
             case .sleepCMajor:           return Color(red: 0.15, green: 0.18, blue: 0.48)
             case .veryDeepSleep:         return Color(red: 0.08, green: 0.10, blue: 0.35)
+            case .calmAmbient:           return Color(red: 0.20, green: 0.40, blue: 0.60)
+            case .zenAmbient:            return Color(red: 0.30, green: 0.20, blue: 0.60)
+            case .meditationFlow:        return Color(red: 0.25, green: 0.30, blue: 0.65)
+            case .slowAmbient:           return Color(red: 0.15, green: 0.35, blue: 0.55)
+            case .yogaAmbient:           return Color(red: 0.35, green: 0.45, blue: 0.25)
+            case .inspiringJourney:      return Color(red: 0.45, green: 0.30, blue: 0.60)
+            case .mountainNature:        return Color(red: 0.10, green: 0.40, blue: 0.30)
+            case .mountainCalm:          return Color(red: 0.12, green: 0.38, blue: 0.28)
+            case .mountainYoga:          return Color(red: 0.30, green: 0.42, blue: 0.22)
+            case .ambientSerenity:       return Color(red: 0.25, green: 0.20, blue: 0.55)
+            case .spaceAmbient:          return Color(red: 0.08, green: 0.12, blue: 0.45)
+            case .dreamscape:            return Color(red: 0.12, green: 0.08, blue: 0.40)
+            case .cinematicCalm:         return Color(red: 0.35, green: 0.25, blue: 0.50)
+            case .ambientBliss:          return Color(red: 0.50, green: 0.22, blue: 0.40)
+            case .cinematicAmbient:      return Color(red: 0.20, green: 0.18, blue: 0.50)
+            case .relaxingRain:          return Color(red: 0.15, green: 0.25, blue: 0.50)
             }
         }
     }
@@ -259,6 +326,22 @@ class SoundPlayer: ObservableObject {
             case .deepSleepBg:           return ("deep_sleep_bg",        "mp3")
             case .sleepCMajor:           return ("sleep_c_major",        "mp3")
             case .veryDeepSleep:         return ("very_deep_sleep",      "mp3")
+            case .calmAmbient:           return ("quietphase-ambient-calm-491578", "mp3")
+            case .zenAmbient:            return ("quietphase-ambient-zen-489706", "mp3")
+            case .meditationFlow:        return ("quietphase-meditation-ambient-484356", "mp3")
+            case .slowAmbient:           return ("quietphase-slow-ambient-490875", "mp3")
+            case .yogaAmbient:           return ("quietphase-yoga-ambient-485882", "mp3")
+            case .inspiringJourney:      return ("the_mountain-ambient-inspiring-music-141464", "mp3")
+            case .mountainNature:        return ("the_mountain-ambient-nature-132350", "mp3")
+            case .mountainCalm:          return ("the_mountain-calm-ambient-146122", "mp3")
+            case .mountainYoga:          return ("the_mountain-yoga-meditation-165602", "mp3")
+            case .ambientSerenity:       return ("paulyudin-ambient-ambient-music-482398", "mp3")
+            case .spaceAmbient:          return ("monume-space-ambient-498030", "mp3")
+            case .dreamscape:            return ("mondamusic-dark-ambient-soundscape-dreamscape-2-487315", "mp3")
+            case .cinematicCalm:         return ("desifreemusic-emotional-ambient-piece-with-slow-cinematic-textures-370144", "mp3")
+            case .ambientBliss:          return ("playstarz_music-ambient-meditation-486609", "mp3")
+            case .cinematicAmbient:      return ("yevhenastafiev-cinematic-ambient-481810", "mp3")
+            case .relaxingRain:          return ("clavier-music-relaxing-ambient-music-rain-354479", "mp3")
             }
         }()
 
