@@ -9,21 +9,21 @@ struct BodyScanView: View {
     @State private var postMoodLogged = false
 
     private let prompts: [String] = [
-        "Find a comfortable position. Allow your eyes to close gently. Take a moment to arrive here, fully present.",
+        "Find a comfortable position, either lying down or seated. Allow your eyes to close gently. Take a moment to arrive here, fully present.",
         "Take a deep breath in through your nose. And slowly release it through your mouth.",
-        "Once more, breathe in. And let it all go. One more time — breathe in slowly. And breathe out completely.",
-        "We'll gently move attention through the body. There is nothing to fix or change. Simply notice. Simply be aware.",
-        "Bring your awareness to the top of your head. Notice any sensations — warmth, tingling, or stillness.",
-        "Move your attention to your forehead. Let the muscles soften and smooth. Your eyebrows, your temples — completely relaxed.",
-        "Your eyes, your cheeks, your jaw. Allow the jaw to drop slightly. No need to hold it tight.",
-        "Your lips, your tongue. Let everything in your face be completely still.",
-        "Bring awareness to your neck. Notice any tension here and simply breathe into it. With each exhale, let the neck soften.",
+        "Once more, breathe in. And let it all go. One more time, breathe in slowly. And breathe out completely.",
+        "We are going to gently move attention through the body. There is nothing to fix or change. Simply notice. Simply be aware.",
+        "Bring your awareness to the top of your head. Notice any sensations there — warmth, tingling, or stillness. Whatever you feel is perfectly fine.",
+        "Now move your attention down to your forehead. Let the muscles of your forehead soften and smooth. Your eyebrows. Your temples. Completely relaxed.",
+        "Your eyes. Let them rest softly in their sockets. Your cheeks. Your jaw. Allow the jaw to drop slightly. No need to hold it tight.",
+        "Your lips. Your tongue. Let everything in your face be completely still.",
+        "Now bring awareness to your neck. Notice any tension here and simply breathe into it. With each exhale, let the neck soften a little more.",
         "Move your attention to your shoulders. So much tension lives here. Let them drop. Let them fall. Heavier with every breath out.",
-        "Your upper arms, elbows, forearms, wrists, and hands. Each finger. Heavy. Warm. Completely relaxed.",
-        "Bring attention to your chest. Feel it rise and fall. Your upper back and shoulder blades — let them widen and soften.",
-        "Bring awareness to your belly. Notice it rising and falling. Your lower back — breathe into any tightness, and let it release.",
-        "Move attention to your hips, pelvis, and tailbone. Your thighs, knees, calves, ankles, the soles of your feet, each toe.",
-        "Feel your whole body at once. You are exactly where you need to be. Take one final deep breath in — and release everything.",
+        "Your upper arms. Your elbows. Your forearms. Your wrists. Your hands. Each finger. Heavy. Warm. Completely relaxed.",
+        "Now bring your attention to your chest. Feel it rise gently with each inhale, and fall with each exhale. No effort needed. Just breathing. Your upper back, your shoulder blades — let them widen and soften.",
+        "Bring awareness to your belly. Notice it rising. And falling. Rising. Falling. Your lower back — if there is any tightness, breathe into it gently. With each exhale, let it soften.",
+        "Move your attention down to your hips. Your pelvis. Your tailbone. Heavy and supported. Your upper legs, your thighs. Your knees, your shins, your calves. Your ankles, your heels. The soles of your feet. Each toe, one by one. Completely still. Completely at rest.",
+        "Now take a moment to feel your whole body at once — from the top of your head to the tips of your toes. One connected, relaxed, living body. You are exactly where you need to be. At peace. At rest. Whole. Take one final deep breath in. And release everything. When you are ready, gently return.",
     ]
 
     @State private var currentIndex = 0
