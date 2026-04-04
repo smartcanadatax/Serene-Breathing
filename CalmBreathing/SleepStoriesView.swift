@@ -480,10 +480,13 @@ private struct StoryPlayerView: View {
                     .rotationEffect(.degrees(-90))
                     .animation(.linear(duration: 0.5), value: progress)
 
+                LotusOrbView(isAnimating: true)
+                    .frame(width: 160, height: 160)
+
                 VStack(spacing: 8) {
                     Image(systemName: story.icon)
                         .font(.system(size: 36))
-                        .foregroundColor(.calmAccent)
+                        .foregroundColor(.white)
                     Text(story.title)
                         .font(.system(size: 13, weight: .medium, design: .rounded))
                         .foregroundColor(.white.opacity(0.80))

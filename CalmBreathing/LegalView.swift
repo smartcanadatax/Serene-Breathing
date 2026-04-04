@@ -8,6 +8,7 @@ struct LegalView: View {
         case terms       = "Terms & Conditions"
     }
 
+    @Environment(\.dismiss) private var dismiss
     @State private var selected: Section = .disclaimer
 
     var body: some View {
@@ -17,13 +18,19 @@ struct LegalView: View {
             VStack(spacing: 0) {
                 // Nav bar
                 HStack {
-                    Color.clear.frame(width: 36, height: 36)
+                    Button { dismiss() } label: {
+                        Image(systemName: "chevron.left")
+                            .font(.system(size: 16, weight: .semibold))
+                            .foregroundColor(.white.opacity(0.85))
+                            .frame(width: 44, height: 44)
+                            .contentShape(Rectangle())
+                    }
                     Spacer()
                     Text("Legal")
                         .font(.system(size: 17, weight: .semibold, design: .rounded))
                         .foregroundColor(.white)
                     Spacer()
-                    Color.clear.frame(width: 36, height: 36)
+                    Color.clear.frame(width: 44, height: 44)
                 }
                 .padding(.horizontal, 16)
                 .padding(.top, 16)

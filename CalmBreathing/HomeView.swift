@@ -107,7 +107,7 @@ struct HomeView: View {
                     HStack(spacing: 16) {
                         LotusOrbView(isAnimating: true)
                             .frame(width: 44, height: 44)
-                            .brightness(-0.07)
+                            .brightness(-0.25)
                         VStack(alignment: .leading, spacing: 3) {
                             Text("Need Calm Now?")
                                 .font(.system(size: 16, weight: .semibold, design: .rounded))

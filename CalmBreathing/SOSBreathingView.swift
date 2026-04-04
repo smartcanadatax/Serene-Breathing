@@ -134,16 +134,11 @@ struct SOSBreathingView: View {
         VStack(spacing: 0) {
             Spacer()
 
-            // Animated logo
+            // Animated orb
             VStack(spacing: 12) {
-                Image("AppLogo")
-                    .resizable()
-                    .scaledToFit()
-                    .saturation(0.5)
-                    .brightness(0.25)
+                LotusOrbView(isAnimating: isRunning)
                     .frame(width: 240, height: 240)
                     .scaleEffect(reduceMotion ? 1.0 : scale)
-                    .opacity(reduceMotion ? 0.90 : (0.55 + Double(scale) * 0.45))
                     .animation(reduceMotion ? nil : .easeInOut(duration: Double(phase.duration)), value: scale)
 
                 VStack(spacing: 4) {

@@ -213,16 +213,11 @@ struct BreathingView: View {
 
                 Spacer()
 
-                // Animated logo
+                // Animated orb
                 VStack(spacing: 16) {
-                    Image("AppLogo")
-                        .resizable()
-                        .scaledToFit()
-                        .saturation(0.5)
-                        .brightness(0.25)
+                    LotusOrbView(isAnimating: isRunning)
                         .frame(width: 240, height: 240)
                         .scaleEffect(reduceMotion ? 1.0 : scale)
-                        .opacity(reduceMotion ? 0.90 : (0.55 + Double(scale) * 0.45))
                         .animation(.easeInOut(duration: animationDuration), value: scale)
                         .accessibilityLabel(isRunning ? "\(phase.label), \(countdown) seconds" : "Tap to begin breathing exercise")
 

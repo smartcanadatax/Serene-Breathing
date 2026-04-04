@@ -261,6 +261,11 @@ struct MeditationTimerView: View {
 
                 Spacer()
 
+                // ── Breathing Ring ───────────────────────────────────────
+                LotusOrbView(isAnimating: isRunning)
+                    .frame(width: 240, height: 240)
+                    .id(isRunning)
+
                 VStack(spacing: 6) {
                     Text(timeString)
                         .font(.system(size: 46, weight: .regular, design: .rounded))

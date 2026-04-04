@@ -8,7 +8,7 @@ struct SoundsHubView: View {
     @EnvironmentObject var userPrefs:   UserPreferencesStore
     @StateObject private var ambientEngine = AmbientMusicEngine()
 
-    @State private var topTab: Int = 0                          // 0 = Library, 1 = Music
+    @State private var topTab: Int = 0
     @State private var soundCategory: SoundLibraryCategory = .nature
     @State private var ambientCategory: AmbientCategory = .focus
     @State private var showPaywall = false
@@ -33,64 +33,77 @@ struct SoundsHubView: View {
                         .font(.system(size: 17, weight: .semibold, design: .rounded))
                         .foregroundColor(.white)
                     Spacer()
-                    HStack(spacing: 10) {
-                        SleepTimerButton()
-                    }
-                    .frame(width: 36, height: 36)
-                    .background(Circle().fill(Color.white.opacity(0.25)))
+                    SleepTimerButton()
+                        .frame(width: 36, height: 36)
+                        .background(Circle().fill(Color.white.opacity(0.25)))
                 }
                 .padding(.horizontal, 16)
                 .padding(.top, 16)
-                .padding(.bottom, 10)
+                .padding(.bottom, 14)
 
-                // Single row: top tabs + sub-category chips
+                // Sounds / Ambient pill toggle
+                HStack(spacing: 0) {
+                    ForEach([("Sounds", 0), ("Ambient", 1)], id: \.1) { label, idx in
+                        Button {
+                            withAnimation(.easeInOut(duration: 0.2)) { topTab = idx }
+                        } label: {
+                            Text(label)
+                                .font(.system(size: 15, weight: topTab == idx ? .semibold : .regular, design: .rounded))
+                                .foregroundColor(topTab == idx ? .calmDeep : .white.opacity(0.75))
+                                .frame(maxWidth: .infinity)
+                                .padding(.vertical, 10)
+                                .background(
+                                    RoundedRectangle(cornerRadius: 10)
+                                        .fill(topTab == idx ? Color.white : Color.clear)
+                                )
+                        }
+                        .buttonStyle(.plain)
+                    }
+                }
+                .padding(4)
+                .background(RoundedRectangle(cornerRadius: 13).fill(Color.white.opacity(0.15)))
+                .padding(.horizontal, 20)
+                .padding(.bottom, 12)
+
+                // Category chips
                 ScrollView(.horizontal, showsIndicators: false) {
                     HStack(spacing: 8) {
-                        // Library / Music toggle chips
-                        chipButton("Sounds", selected: topTab == 0) { topTab = 0 }
-                        chipButton("Ambient", selected: topTab == 1) { topTab = 1 }
-
-                        Rectangle()
-                            .fill(Color.white.opacity(0.25))
-                            .frame(width: 1, height: 20)
-                            .padding(.horizontal, 2)
-
-                        // Sub-category chips
                         if topTab == 0 {
                             ForEach(SoundLibraryCategory.allCases, id: \.self) { cat in
-                                chipButton(cat.rawValue, selected: soundCategory == cat) { soundCategory = cat }
+                                categoryChip(cat.rawValue, icon: cat.icon, selected: soundCategory == cat) { soundCategory = cat }
                             }
                         } else {
                             ForEach(AmbientCategory.allCases, id: \.self) { cat in
-                                chipButton(cat.rawValue, selected: ambientCategory == cat) { ambientCategory = cat }
+                                categoryChip(cat.rawValue, icon: cat.icon, selected: ambientCategory == cat) { ambientCategory = cat }
                             }
                         }
                     }
                     .padding(.horizontal, 20)
-                    .padding(.bottom, 10)
                 }
+                .padding(.bottom, 10)
 
+                // Grid content
                 if topTab == 0 {
                     ScrollView(showsIndicators: false) {
-                        LazyVStack(spacing: 8) {
+                        LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 10) {
                             ForEach(libraryTracks) { sound in
-                                SoundLibraryRow(sound: sound)
+                                SoundGridCard(sound: sound)
                             }
                         }
-                        .padding(.horizontal, 20)
-                        .padding(.top, 2)
+                        .padding(.horizontal, 16)
+                        .padding(.top, 4)
                         DisclaimerFooter()
                             .padding(.bottom, soundPlayer.playing != nil ? 100 : 32)
                     }
                 } else {
                     ScrollView(showsIndicators: false) {
-                        LazyVStack(spacing: 8) {
+                        LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 10) {
                             ForEach(ambientTracks) { track in
-                                TrackRow(track: track, engine: ambientEngine)
+                                AmbientGridCard(track: track, engine: ambientEngine)
                             }
                         }
-                        .padding(.horizontal, 20)
-                        .padding(.top, 2)
+                        .padding(.horizontal, 16)
+                        .padding(.top, 4)
                         DisclaimerFooter()
                             .padding(.bottom, ambientEngine.currentTrack != nil ? 100 : 32)
                     }
@@ -117,15 +130,149 @@ struct SoundsHubView: View {
         }
     }
 
-    // MARK: - Chip Button
-    private func chipButton(_ label: String, selected: Bool, action: @escaping () -> Void) -> some View {
+    private func categoryChip(_ label: String, icon: String, selected: Bool, action: @escaping () -> Void) -> some View {
         Button(action: action) {
-            Text(label)
-                .font(.system(size: 13, weight: selected ? .semibold : .regular, design: .rounded))
-                .foregroundColor(selected ? .calmDeep : .white.opacity(0.80))
-                .padding(.horizontal, 14)
-                .padding(.vertical, 7)
-                .background(Capsule().fill(selected ? Color.white : Color.white.opacity(0.15)))
+            HStack(spacing: 5) {
+                Image(systemName: icon)
+                    .font(.system(size: 11, weight: .semibold))
+                Text(label)
+                    .font(.system(size: 13, weight: selected ? .semibold : .regular, design: .rounded))
+            }
+            .foregroundColor(selected ? .calmDeep : .white.opacity(0.80))
+            .padding(.horizontal, 14)
+            .padding(.vertical, 8)
+            .background(Capsule().fill(selected ? Color.white : Color.white.opacity(0.15)))
+        }
+        .buttonStyle(.plain)
+    }
+}
+
+// MARK: - Sound Grid Card
+
+private struct SoundGridCard: View {
+    @EnvironmentObject var soundPlayer: SoundPlayer
+    @EnvironmentObject var userPrefs:   UserPreferencesStore
+    @EnvironmentObject var premium:     PremiumStore
+    let sound: SoundPlayer.SoundType
+
+    @State private var showPaywall = false
+
+    private var isActive: Bool { soundPlayer.playing == sound }
+    private var isLocked: Bool { !sound.isFree && !premium.isPremium }
+    private var isFav:    Bool { userPrefs.isFavorite(sound) }
+    private let brandPurple = Color(red: 0.541, green: 0.357, blue: 0.804)
+
+    var body: some View {
+        Button {
+            if isLocked { showPaywall = true }
+            else if isActive { soundPlayer.stop() }
+            else { soundPlayer.play(sound); userPrefs.recordUsed(sound) }
+        } label: {
+            VStack(alignment: .leading, spacing: 10) {
+                HStack(alignment: .top) {
+                    ZStack {
+                        Circle()
+                            .fill(isActive ? brandPurple.opacity(0.20) : Color.white.opacity(0.12))
+                            .frame(width: 40, height: 40)
+                        Image(systemName: isLocked ? "lock.fill" : (isActive ? "pause.fill" : "play.fill"))
+                            .font(.system(size: 14, weight: .semibold))
+                            .foregroundColor(isLocked ? brandPurple.opacity(0.35) : (isActive ? brandPurple : .white.opacity(0.80)))
+                    }
+                    Spacer()
+                    if isActive {
+                        AmbientSoundWaveView(active: true)
+                            .frame(width: 24)
+                            .padding(.top, 12)
+                    } else if !isLocked {
+                        Button {
+                            userPrefs.toggleFavorite(sound)
+                        } label: {
+                            Image(systemName: isFav ? "heart.fill" : "heart")
+                                .font(.system(size: 13))
+                                .foregroundColor(isFav ? Color(red: 1.0, green: 0.40, blue: 0.55) : .white.opacity(0.30))
+                                .frame(width: 28, height: 28)
+                                .contentShape(Rectangle())
+                        }
+                        .buttonStyle(.plain)
+                    }
+                }
+                VStack(alignment: .leading, spacing: 3) {
+                    Text(sound.rawValue)
+                        .font(.system(size: 13, weight: .semibold, design: .rounded))
+                        .foregroundColor(isLocked ? .white.opacity(0.40) : .white)
+                        .lineLimit(1)
+                    Text(isLocked ? "Premium" : sound.subtitle)
+                        .font(.system(size: 11, weight: .regular))
+                        .foregroundColor(isLocked ? brandPurple.opacity(0.50) : .white.opacity(0.55))
+                        .lineLimit(1)
+                }
+            }
+            .padding(12)
+            .background(
+                RoundedRectangle(cornerRadius: 14)
+                    .fill(isActive ? brandPurple.opacity(0.20) : Color.white.opacity(0.08))
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 14)
+                            .stroke(isActive ? brandPurple.opacity(0.45) : Color.white.opacity(0.10), lineWidth: 1)
+                    )
+            )
+        }
+        .buttonStyle(.plain)
+        .fullScreenCover(isPresented: $showPaywall) {
+            PaywallView(isPresented: $showPaywall).environmentObject(premium)
+        }
+    }
+}
+
+// MARK: - Ambient Grid Card
+
+private struct AmbientGridCard: View {
+    let track: AmbientTrack
+    @ObservedObject var engine: AmbientMusicEngine
+
+    private var isActive:  Bool { engine.currentTrack?.id == track.id }
+    private var isPlaying: Bool { isActive && engine.isPlaying }
+    private let brandPurple = Color(red: 0.541, green: 0.357, blue: 0.804)
+
+    var body: some View {
+        Button { engine.play(track) } label: {
+            VStack(alignment: .leading, spacing: 10) {
+                HStack(alignment: .top) {
+                    ZStack {
+                        Circle()
+                            .fill(isActive ? brandPurple.opacity(0.20) : Color.white.opacity(0.12))
+                            .frame(width: 40, height: 40)
+                        Image(systemName: isPlaying ? "pause.fill" : "play.fill")
+                            .font(.system(size: 14, weight: .semibold))
+                            .foregroundColor(isActive ? brandPurple : .white.opacity(0.80))
+                    }
+                    Spacer()
+                    if isActive {
+                        AmbientSoundWaveView(active: isPlaying)
+                            .frame(width: 24)
+                            .padding(.top, 12)
+                    }
+                }
+                VStack(alignment: .leading, spacing: 3) {
+                    Text(track.title)
+                        .font(.system(size: 13, weight: .semibold, design: .rounded))
+                        .foregroundColor(.white)
+                        .lineLimit(1)
+                    Text(track.subtitle)
+                        .font(.system(size: 11, weight: .regular))
+                        .foregroundColor(.white.opacity(0.55))
+                        .lineLimit(1)
+                }
+            }
+            .padding(12)
+            .background(
+                RoundedRectangle(cornerRadius: 14)
+                    .fill(isActive ? brandPurple.opacity(0.20) : Color.white.opacity(0.08))
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 14)
+                            .stroke(isActive ? brandPurple.opacity(0.45) : Color.white.opacity(0.10), lineWidth: 1)
+                    )
+            )
         }
         .buttonStyle(.plain)
     }

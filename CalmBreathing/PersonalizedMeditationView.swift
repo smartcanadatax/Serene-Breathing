@@ -370,9 +370,8 @@ struct PersonalizedMeditationPlayerView: View {
                         .frame(width: orbPulse ? 200 : 180, height: orbPulse ? 200 : 180)
                         .animation(.easeInOut(duration: 2.8).repeatForever(autoreverses: true), value: orbPulse)
 
-                    Circle()
-                        .fill(Color.calmAccent.opacity(0.22))
-                        .frame(width: 110, height: 110)
+                    LotusOrbView(isAnimating: engine.isPlaying)
+                        .frame(width: 150, height: 150)
 
                     // Mood icon badge
                     Image(systemName: mood.icon)
@@ -380,7 +379,7 @@ struct PersonalizedMeditationPlayerView: View {
                         .foregroundColor(.white)
                         .padding(8)
                         .background(Circle().fill(Color.calmAccent.opacity(0.85)))
-                        .offset(x: 48, y: 48)
+                        .offset(x: 56, y: 56)
                 }
                 .padding(.bottom, 36)
 

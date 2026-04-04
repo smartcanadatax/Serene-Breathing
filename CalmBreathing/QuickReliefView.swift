@@ -322,9 +322,8 @@ struct QuickReliefView: View {
         VStack(spacing: 32) {
             // Breathing logo
             VStack(spacing: 16) {
-                Circle()
-                    .fill(Color.calmAccent.opacity(0.18))
-                    .frame(width: 120, height: 120)
+                LotusOrbView(isAnimating: isRunning)
+                    .frame(width: 180, height: 180)
                     .scaleEffect(scale)
 
                 VStack(spacing: 6) {

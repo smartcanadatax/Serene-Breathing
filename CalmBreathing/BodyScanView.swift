@@ -193,6 +193,9 @@ struct BodyScanView: View {
     // MARK: - Active
     private var activeView: some View {
         VStack(spacing: 32) {
+            LotusOrbView(isAnimating: isRunning)
+                .frame(width: 240, height: 240)
+
             Text("\(currentIndex + 1) of \(prompts.count)")
                 .font(.system(size: 13, weight: .medium))
                 .foregroundColor(.white.opacity(0.55))
