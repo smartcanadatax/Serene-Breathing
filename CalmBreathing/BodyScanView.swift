@@ -312,6 +312,7 @@ struct BodyScanView: View {
 
     // MARK: - Logic
     private func startScan() {
+        HapticManager.start()
         isRunning = true
         currentIndex = 0
         progress = 0
@@ -364,6 +365,7 @@ struct BodyScanView: View {
                 if !player.isPlaying && time > 1 && !self.isInterrupted {
                     self.isRunning = false
                     self.isDone = true
+                    HapticManager.complete()
                     UIApplication.shared.isIdleTimerDisabled = false
                     self.syncTimer?.invalidate()
                     self.syncTimer = nil

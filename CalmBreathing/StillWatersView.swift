@@ -343,6 +343,7 @@ struct StillWatersView: View {
     // MARK: - Logic
 
     private func startSession() {
+        HapticManager.start()
         isRunning = true
         currentIndex = 0
         progress = 0
@@ -389,6 +390,7 @@ struct StillWatersView: View {
                 if !player.isPlaying && !self.isInterrupted && self.lastAudioTime > 1 {
                     self.isRunning = false
                     self.isDone = true
+                    HapticManager.complete()
                     self.lastAudioTime = 0
                     self.syncTimer?.invalidate()
                     self.syncTimer = nil

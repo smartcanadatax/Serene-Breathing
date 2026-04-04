@@ -479,6 +479,7 @@ struct PersonalizedMeditationPlayerView: View {
             if newValue >= 1.0 && hasStarted {
                 engine.markFinished()
                 orbPulse = false
+                HapticManager.complete()
                 withAnimation(.easeIn(duration: 0.6)) {
                     showCompletion = true
                 }

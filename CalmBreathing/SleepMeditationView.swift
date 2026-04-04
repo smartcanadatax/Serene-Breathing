@@ -288,6 +288,7 @@ struct SleepMeditationView: View {
     // MARK: - Logic
 
     private func startSession() {
+        HapticManager.start()
         isRunning = true
         currentIndex = 0
         progress = 0
@@ -333,6 +334,7 @@ struct SleepMeditationView: View {
                 if !player.isPlaying && time > 1 && !self.isInterrupted {
                     self.isRunning = false
                     self.isDone = true
+                    HapticManager.complete()
                     self.syncTimer?.invalidate()
                     self.syncTimer = nil
                     UIApplication.shared.isIdleTimerDisabled = false
