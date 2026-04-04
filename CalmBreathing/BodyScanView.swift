@@ -238,11 +238,11 @@ struct BodyScanView: View {
                     .font(.system(size: 48, weight: .ultraLight))
                     .foregroundColor(.calmAccent)
 
-                Text("Session Complete")
+                Text("Well Done")
                     .font(.system(size: 24, weight: .semibold, design: .rounded))
                     .foregroundColor(.white)
 
-                Text("Well done. Take a moment to notice how relaxed your body feels.")
+                Text("You completed your Body Scan Meditation. Take a moment to notice how relaxed your body feels.")
                     .font(.system(size: 15, weight: .light))
                     .foregroundColor(.white.opacity(0.80))
                     .multilineTextAlignment(.center)
