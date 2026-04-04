@@ -162,7 +162,6 @@ struct MeditationTimerView: View {
     @State private var selectedAmbientCategory: AmbientCategory = .focus
     @State private var showSoundSheet = false
     @State private var showThemeSheet = false
-    @State private var showTimerSheet = false
     @AppStorage("meditationVolume") private var savedVolume: Double = 0.85
 
     init(startSilent: Bool = false) {
@@ -262,19 +261,14 @@ struct MeditationTimerView: View {
 
                 Spacer()
 
-                // ── Breathing Ring ───────────────────────────────────────
-                LotusOrbView(isAnimating: isRunning)
-                    .frame(width: 240, height: 240)
-                    .id(isRunning)
-
                 VStack(spacing: 6) {
                     Text(timeString)
-                        .font(.system(size: 46, weight: .thin, design: .rounded))
+                        .font(.system(size: 46, weight: .regular, design: .rounded))
                         .foregroundColor(.white)
                         .monospacedDigit()
 
                     Text(statusLabel)
-                        .font(.system(size: 13, weight: .light))
+                        .font(.system(size: 13, weight: .regular))
                         .foregroundColor(.white.opacity(0.92))
                 }
                 .padding(.top, 72)
@@ -294,20 +288,28 @@ struct MeditationTimerView: View {
                     Button(action: toggleTimer) {
                         Image(systemName: isRunning ? "pause.fill" : "play.fill")
                             .font(.system(size: 26))
-                            .foregroundColor(.calmDeep)
+                            .foregroundColor(.calmAccent)
                             .frame(width: 72, height: 72)
                             .background(
                                 Circle()
-                                    .fill(Color.calmAccent)
-                                    .shadow(color: .calmAccent.opacity(0.40), radius: 14)
+                                    .fill(Color.white)
+                                    .shadow(color: .black.opacity(0.15), radius: 14)
                             )
                     }
 
-                    Color.clear.frame(width: 54, height: 54)
+                    Button {
+                        showSoundSheet = true
+                    } label: {
+                        Image(systemName: "music.note")
+                            .font(.system(size: 19))
+                            .foregroundColor(.white.opacity(0.95))
+                            .frame(width: 54, height: 54)
+                            .background(Circle().fill(Color.white.opacity(0.08)))
+                    }
                 }
 
                 Text(focusGuidanceText)
-                    .font(.system(size: 13, weight: .light))
+                    .font(.system(size: 13, weight: .regular))
                     .foregroundColor(.white.opacity(0.75))
                     .multilineTextAlignment(.center)
                     .lineSpacing(4)
@@ -343,11 +345,6 @@ struct MeditationTimerView: View {
             }
             ToolbarItem(placement: .navigationBarTrailing) {
                 HStack(spacing: 10) {
-                    Button { showThemeSheet = true } label: {
-                        Image(systemName: "slider.horizontal.3")
-                            .font(.system(size: 17, weight: .medium))
-                            .foregroundColor(.white)
-                    }
                     if !premium.isPremium {
                         Button { showPaywall = true } label: {
                             HStack(spacing: 4) {
@@ -379,6 +376,32 @@ struct MeditationTimerView: View {
             PaywallView(isPresented: $showPaywall)
                 .environmentObject(premium)
         }
+        .onChange(of: selectedSoundRaw) { _, _ in
+            guard isRunning, !silentBellMode else { return }
+            ambientEngine.stop()
+            if let sound = selectedSound {
+                soundPlayer.setVolume(Float(savedVolume))
+                soundPlayer.play(sound, forceRestart: true)
+            } else {
+                soundPlayer.stop()
+            }
+        }
+        .onChange(of: selectedAmbientTrack?.id) { _, newID in
+            guard isRunning, !silentBellMode else { return }
+            soundPlayer.stop()
+            if let track = selectedAmbientTrack {
+                ambientEngine.play(track)
+            } else {
+                ambientEngine.stop()
+            }
+        }
+        .onChange(of: silentBellMode) { _, isSilent in
+            guard isRunning else { return }
+            if isSilent {
+                soundPlayer.stop()
+                ambientEngine.stop()
+            }
+        }
         .sheet(isPresented: $showSoundSheet) {
             SoundPickerSheet(
                 selectedSound: Binding(
@@ -395,54 +418,47 @@ struct MeditationTimerView: View {
     // MARK: - Compact Settings Bar
     private var settingsBar: some View {
         HStack(spacing: 0) {
-            // Left: Configure Sounds & Themes
-            Button { showThemeSheet = true } label: {
-                HStack(spacing: 6) {
-                    Image(systemName: "gearshape.fill")
-                        .font(.system(size: 12))
-                        .foregroundColor(.black.opacity(0.70))
-                    VStack(alignment: .leading, spacing: 1) {
-                        Text("Settings")
-                            .font(.system(size: 10, weight: .semibold, design: .rounded))
-                            .foregroundColor(.black.opacity(0.65))
-                        Text("Configure Sounds & Themes")
-                            .font(.system(size: 12, weight: .medium, design: .rounded))
-                            .foregroundColor(.black)
+            Image(systemName: "timer")
+                .font(.system(size: 13))
+                .foregroundColor(.black.opacity(0.55))
+                .padding(.leading, 14)
+
+            ScrollView(.horizontal, showsIndicators: false) {
+                HStack(spacing: 8) {
+                    ForEach(durations, id: \.self) { mins in
+                        let locked = mins > 10 && !premium.isPremium
+                        Button {
+                            if locked {
+                                showPaywall = true
+                            } else {
+                                selectedDuration = mins
+                                if !isRunning { timeRemaining = mins * 60 }
+                            }
+                        } label: {
+                            HStack(spacing: 4) {
+                                Text("\(mins) min")
+                                    .font(.system(size: 13, weight: selectedDuration == mins ? .semibold : .regular, design: .rounded))
+                                    .foregroundColor(locked ? .black.opacity(0.28) : .black.opacity(0.75))
+                                if locked {
+                                    Image(systemName: "lock.fill")
+                                        .font(.system(size: 9))
+                                        .foregroundColor(.black.opacity(0.25))
+                                }
+                            }
+                            .padding(.horizontal, 12)
+                            .padding(.vertical, 6)
+                            .background(
+                                Capsule()
+                                    .fill(selectedDuration == mins ? Color.white : Color.black.opacity(0.06))
+                                    .shadow(color: selectedDuration == mins ? Color.black.opacity(0.12) : Color.clear, radius: 4, x: 0, y: 2)
+                            )
+                        }
+                        .buttonStyle(.plain)
                     }
                 }
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .padding(.horizontal, 14)
-                .padding(.vertical, 11)
-                .contentShape(Rectangle())
+                .padding(.horizontal, 10)
+                .padding(.vertical, 8)
             }
-            .buttonStyle(.plain)
-
-            // Divider
-            Rectangle()
-                .fill(Color.black.opacity(0.10))
-                .frame(width: 1, height: 36)
-
-            // Right: Timer
-            Button { showTimerSheet = true } label: {
-                HStack(spacing: 6) {
-                    Image(systemName: "timer")
-                        .font(.system(size: 12))
-                        .foregroundColor(.black.opacity(0.70))
-                    VStack(alignment: .leading, spacing: 1) {
-                        Text("Timer")
-                            .font(.system(size: 10, weight: .semibold, design: .rounded))
-                            .foregroundColor(.black.opacity(0.65))
-                        Text("\(selectedDuration) min")
-                            .font(.system(size: 12, weight: .medium, design: .rounded))
-                            .foregroundColor(.black)
-                    }
-                }
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .padding(.horizontal, 14)
-                .padding(.vertical, 11)
-                .contentShape(Rectangle())
-            }
-            .buttonStyle(.plain)
         }
         .background(
             RoundedRectangle(cornerRadius: 14)
@@ -457,14 +473,6 @@ struct MeditationTimerView: View {
                     set: { selectedSoundRaw = $0?.rawValue ?? "" }
                 ),
                 selectedAmbientTrack: $selectedAmbientTrack
-            )
-            .environmentObject(premium)
-        }
-        .sheet(isPresented: $showTimerSheet) {
-            TimerPickerSheet(
-                selectedDuration: $selectedDuration,
-                timeRemaining: $timeRemaining,
-                durations: durations
             )
             .environmentObject(premium)
         }
@@ -716,7 +724,7 @@ extension MeditationTimerView {
                 HStack(alignment: .top, spacing: 10) {
                     Text(promptMood.moodEmoji).font(.system(size: 18))
                     Text(supportiveMessage(for: promptMood))
-                        .font(.system(size: 12, weight: .light))
+                        .font(.system(size: 12, weight: .regular))
                         .foregroundColor(.white)
                         .lineSpacing(3)
                         .fixedSize(horizontal: false, vertical: true)
@@ -731,7 +739,7 @@ extension MeditationTimerView {
                 .animation(.easeInOut(duration: 0.25), value: promptMood)
 
                 TextField("Add a note (optional)", text: $promptNote)
-                    .font(.system(size: 14, weight: .light))
+                    .font(.system(size: 14, weight: .regular))
                     .foregroundColor(.white)
                     .padding(12)
                     .background(RoundedRectangle(cornerRadius: 12).fill(Color.white.opacity(0.09)))

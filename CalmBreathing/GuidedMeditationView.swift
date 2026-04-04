@@ -167,7 +167,7 @@ struct GuidedMeditationView: View {
                     .font(.system(size: 12, weight: .semibold))
                     .foregroundColor(.white)
                 Text("Go to Settings → Accessibility → Spoken Content → Voices → English → Ava → Download")
-                    .font(.system(size: 10, weight: .light))
+                    .font(.system(size: 10, weight: .regular))
                     .foregroundColor(.white)
                     .fixedSize(horizontal: false, vertical: true)
             }
@@ -216,10 +216,10 @@ struct GuidedMeditationView: View {
             // Guide name + tagline
             VStack(spacing: 6) {
                 Text("Aria")
-                    .font(.system(size: 30, weight: .ultraLight, design: .rounded))
+                    .font(.system(size: 30, weight: .regular, design: .rounded))
                     .foregroundColor(.white)
                 Text("Your Personal Meditation Guide")
-                    .font(.system(size: 14, weight: .light))
+                    .font(.system(size: 14, weight: .regular))
                     .foregroundColor(.calmAccent.opacity(0.7))
             }
             .padding(.top, 12)
@@ -240,10 +240,10 @@ struct GuidedMeditationView: View {
                         } label: {
                             VStack(spacing: 4) {
                                 Text("\(mins)")
-                                    .font(.system(size: 26, weight: .ultraLight, design: .rounded))
+                                    .font(.system(size: 26, weight: .regular, design: .rounded))
                                     .foregroundColor(selectedMinutes == mins ? .calmDeep : .white)
                                 Text("min")
-                                    .font(.system(size: 12, weight: .light))
+                                    .font(.system(size: 12, weight: .regular))
                                     .foregroundColor(selectedMinutes == mins ? .calmDeep : .white.opacity(0.55))
                             }
                             .frame(width: 88, height: 72)
@@ -262,7 +262,7 @@ struct GuidedMeditationView: View {
 
                 // Session description
                 Text(sessionDescription)
-                    .font(.system(size: 13, weight: .light))
+                    .font(.system(size: 13, weight: .regular))
                     .foregroundColor(.white.opacity(0.92))
                     .multilineTextAlignment(.center)
                     .padding(.horizontal, 32)
@@ -424,11 +424,11 @@ struct ActiveSessionView: View {
                 }
 
                 Text("Beautiful Work")
-                    .font(.system(size: 30, weight: .ultraLight, design: .rounded))
+                    .font(.system(size: 30, weight: .regular, design: .rounded))
                     .foregroundColor(.white)
 
                 Text("You have completed your meditation.\nTake a moment to simply rest in how you feel.\nYou deserve this peace.")
-                    .font(.system(size: 14, weight: .light))
+                    .font(.system(size: 14, weight: .regular))
                     .foregroundColor(.white.opacity(0.68))
                     .multilineTextAlignment(.center)
                     .lineSpacing(4)

@@ -15,6 +15,20 @@ struct LegalView: View {
             CalmBackground()
 
             VStack(spacing: 0) {
+                // Nav bar
+                HStack {
+                    Color.clear.frame(width: 36, height: 36)
+                    Spacer()
+                    Text("Legal")
+                        .font(.system(size: 17, weight: .semibold, design: .rounded))
+                        .foregroundColor(.white)
+                    Spacer()
+                    Color.clear.frame(width: 36, height: 36)
+                }
+                .padding(.horizontal, 16)
+                .padding(.top, 16)
+                .padding(.bottom, 10)
+
                 // Segment picker
                 Picker("", selection: $selected) {
                     ForEach(Section.allCases, id: \.self) { s in
@@ -23,25 +37,17 @@ struct LegalView: View {
                 }
                 .pickerStyle(.segmented)
                 .padding(.horizontal, 20)
-                .padding(.top, 12)
-                .padding(.bottom, 16)
+                .padding(.bottom, 12)
 
-                ScrollView {
+                ScrollView(showsIndicators: false) {
                     legalText(for: selected)
                         .padding(.horizontal, 20)
                         .padding(.bottom, 40)
                 }
             }
+            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
         }
-        .navigationBarTitleDisplayMode(.inline)
-        .toolbarBackground(.hidden, for: .navigationBar)
-        .toolbar {
-            ToolbarItem(placement: .principal) {
-                Text("Legal")
-                    .font(.system(size: 17, weight: .light, design: .rounded))
-                    .foregroundColor(.white)
-            }
-        }
+        .navigationBarHidden(true)
     }
 
     // MARK: - Content
@@ -152,7 +158,7 @@ struct TermsGateView: View {
                         .fill(Color.white.opacity(0.12))
                         .frame(width: 90, height: 90)
                     Image(systemName: "doc.text.fill")
-                        .font(.system(size: 40, weight: .ultraLight))
+                        .font(.system(size: 40, weight: .regular))
                         .foregroundColor(.calmAccent)
                 }
 
@@ -162,7 +168,7 @@ struct TermsGateView: View {
                         .font(.system(size: 26, weight: .semibold, design: .rounded))
                         .foregroundColor(.white)
                     Text("Before you begin, please review how we protect your data and the terms of use.")
-                        .font(.system(size: 14, weight: .light))
+                        .font(.system(size: 14, weight: .regular))
                         .foregroundColor(.white.opacity(0.80))
                         .multilineTextAlignment(.center)
                         .lineSpacing(4)
@@ -198,7 +204,7 @@ struct TermsGateView: View {
 
                 // Agreement note
                 Text("By tapping \"I Agree & Continue\" you confirm that you have read and agree to the Terms & Conditions and Privacy Policy.")
-                    .font(.system(size: 11, weight: .light))
+                    .font(.system(size: 11, weight: .regular))
                     .foregroundColor(.white.opacity(0.55))
                     .multilineTextAlignment(.center)
                     .padding(.horizontal, 24)
@@ -236,7 +242,7 @@ struct TermsGateView: View {
                     .font(.system(size: 14, weight: .semibold, design: .rounded))
                     .foregroundColor(.white)
                 Text(body)
-                    .font(.system(size: 13, weight: .light))
+                    .font(.system(size: 13, weight: .regular))
                     .foregroundColor(.white.opacity(0.75))
                     .lineSpacing(3)
                     .fixedSize(horizontal: false, vertical: true)
@@ -262,7 +268,9 @@ private struct LegalCard<Content: View>: View {
         .padding(20)
         .background(
             RoundedRectangle(cornerRadius: 18)
-                .fill(Color.white.opacity(0.07))
+                .fill(Color.white.opacity(0.08))
+                .overlay(RoundedRectangle(cornerRadius: 18)
+                    .stroke(Color.white.opacity(0.10), lineWidth: 1))
         )
         .padding(.top, 4)
     }
@@ -274,7 +282,7 @@ private struct LegalHeading: View {
     var body: some View {
         Text(text)
             .font(.system(size: 14, weight: .semibold, design: .rounded))
-            .foregroundColor(.calmAccent)
+            .foregroundColor(.white)
             .padding(.top, 6)
     }
 }
@@ -284,8 +292,8 @@ private struct LegalBody: View {
     init(_ text: String) { self.text = text }
     var body: some View {
         Text(text)
-            .font(.system(size: 13, weight: .light))
-            .foregroundColor(.white.opacity(0.72))
+            .font(.system(size: 13, weight: .regular))
+            .foregroundColor(.white.opacity(0.80))
             .lineSpacing(4)
             .fixedSize(horizontal: false, vertical: true)
     }

@@ -219,12 +219,7 @@ extension PersonalizedMeditationEngine: AVSpeechSynthesizerDelegate {
 // MARK: - Setup View
 
 struct PersonalizedMeditationView: View {
-    @EnvironmentObject private var premium: PremiumStore
     @Environment(\.dismiss) private var dismiss
-
-    @State private var selectedMood: MeditationMood? = nil
-    @State private var navigateToPlayer = false
-    @State private var generatedSentences: [ScriptSentence] = []
 
     var body: some View {
         ZStack {
@@ -238,10 +233,10 @@ struct PersonalizedMeditationView: View {
                     // Header
                     VStack(spacing: 8) {
                         Image(systemName: "sparkles")
-                            .font(.system(size: 32, weight: .ultraLight))
+                            .font(.system(size: 32, weight: .regular))
                             .foregroundColor(.calmAccent)
                         Text("Tell us how you feel — we'll guide you from there.")
-                            .font(.system(size: 14, weight: .light))
+                            .font(.system(size: 14, weight: .regular))
                             .foregroundColor(.white.opacity(0.72))
                             .multilineTextAlignment(.center)
                     }
@@ -254,30 +249,26 @@ struct PersonalizedMeditationView: View {
                             .foregroundColor(.white.opacity(0.55))
                             .padding(.leading, 4)
                         Text("Tap your mood to begin")
-                            .font(.system(size: 12, weight: .light))
+                            .font(.system(size: 12, weight: .regular))
                             .foregroundColor(.white.opacity(0.45))
                             .padding(.leading, 4)
 
                         LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 10) {
                             ForEach(MeditationMood.allCases) { mood in
-                                MoodCard(mood: mood, isSelected: selectedMood == mood)
-                                    .onTapGesture {
-                                        selectedMood = mood
-
-                                        let sections = PersonalizedMeditationGenerator.generate(
-                                            mood: mood,
-                                            length: .short
-                                        )
-                                        generatedSentences = sections.flatMap { $0.sentences }
-                                        navigateToPlayer = true
-                                    }
+                                NavigationLink {
+                                    let sections = PersonalizedMeditationGenerator.generate(mood: mood, length: .short)
+                                    PersonalizedMeditationPlayerView(mood: mood, sentences: sections.flatMap { $0.sentences })
+                                } label: {
+                                    MoodCard(mood: mood, isSelected: false)
+                                }
+                                .buttonStyle(.plain)
                             }
                         }
                     }
 
                     // Disclaimer
                     Text("For relaxation purposes only. Not a substitute for medical or mental health advice. If you have any health conditions, consult a doctor before use.")
-                        .font(.system(size: 11, weight: .regular))
+                        .font(.system(size: 11, weight: .medium))
                         .foregroundColor(.white.opacity(0.75))
                         .multilineTextAlignment(.center)
                         .padding(.horizontal, 8)
@@ -308,12 +299,6 @@ struct PersonalizedMeditationView: View {
             }
         }
         .navigationBarHidden(true)
-        .navigationDestination(isPresented: $navigateToPlayer) {
-            if let mood = selectedMood {
-                PersonalizedMeditationPlayerView(mood: mood, sentences: generatedSentences)
-                    .onDisappear { selectedMood = nil }
-            }
-        }
     }
 }
 
@@ -332,7 +317,7 @@ private struct MoodCard: View {
                 .font(.system(size: 15, weight: .semibold, design: .rounded))
                 .foregroundColor(.calmDeep)
             Text(mood.tagline)
-                .font(.system(size: 11, weight: .light))
+                .font(.system(size: 11, weight: .regular))
                 .foregroundColor(.calmMid.opacity(0.75))
                 .multilineTextAlignment(.center)
                 .lineLimit(2)
@@ -378,15 +363,16 @@ struct PersonalizedMeditationPlayerView: View {
             VStack(spacing: 0) {
                 Spacer()
 
-                // Orb
+                // Pulse ring
                 ZStack {
                     Circle()
                         .fill(Color.calmAccent.opacity(0.12))
                         .frame(width: orbPulse ? 200 : 180, height: orbPulse ? 200 : 180)
                         .animation(.easeInOut(duration: 2.8).repeatForever(autoreverses: true), value: orbPulse)
 
-                    LotusOrbView(isAnimating: engine.isPlaying)
-                        .frame(width: 150, height: 150)
+                    Circle()
+                        .fill(Color.calmAccent.opacity(0.22))
+                        .frame(width: 110, height: 110)
 
                     // Mood icon badge
                     Image(systemName: mood.icon)
@@ -400,7 +386,7 @@ struct PersonalizedMeditationPlayerView: View {
 
                 // Sentence display
                 Text(currentText)
-                    .font(.system(size: 17, weight: .light, design: .rounded))
+                    .font(.system(size: 17, weight: .regular, design: .rounded))
                     .foregroundColor(.white.opacity(0.90))
                     .multilineTextAlignment(.center)
                     .lineSpacing(6)
@@ -432,15 +418,22 @@ struct PersonalizedMeditationPlayerView: View {
                             orbPulse   = true
                         }
                     } label: {
-                        Image(systemName: engine.isPlaying ? "pause.circle.fill" : "play.circle.fill")
-                            .font(.system(size: 64))
-                            .foregroundColor(Color(red: 0.87, green: 0.89, blue: 0.96))
+                        ZStack {
+                            Circle()
+                                .fill(Color.white)
+                                .frame(width: 72, height: 72)
+                                .shadow(color: Color.black.opacity(0.15), radius: 14)
+                            Image(systemName: engine.isPlaying ? "pause.fill" : "play.fill")
+                                .font(.system(size: 26))
+                                .foregroundColor(.calmAccent)
+                        }
                     }
 
                     Color.clear.frame(width: 36, height: 36)
                 }
                 .padding(.bottom, 48)
             }
+            .opacity(showCompletion ? 0 : 1)
 
             // Fixed title header
             VStack {
@@ -466,6 +459,7 @@ struct PersonalizedMeditationPlayerView: View {
                 .padding(.top, 16)
                 Spacer()
             }
+            .opacity(showCompletion ? 0 : 1)
 
             if showCompletion {
                 CompletionOverlay(mood: mood, onDone: { dismiss() }, onMoodLogged: { level in
@@ -571,19 +565,19 @@ private struct CompletionOverlay: View {
 
     var body: some View {
         ZStack {
-            CalmBackground()
+            Color.black.opacity(0.72).ignoresSafeArea()
 
             VStack(spacing: 24) {
                 Image(systemName: "sparkles")
-                    .font(.system(size: 48, weight: .ultraLight))
+                    .font(.system(size: 48, weight: .regular))
                     .foregroundColor(.calmAccent)
 
-                Text("Session Complete")
+                Text("Well Done")
                     .font(.system(size: 24, weight: .semibold, design: .rounded))
                     .foregroundColor(.white)
 
                 Text(message)
-                    .font(.system(size: 15, weight: .light))
+                    .font(.system(size: 15, weight: .regular))
                     .foregroundColor(.white.opacity(0.80))
                     .multilineTextAlignment(.center)
                     .lineSpacing(5)
@@ -593,7 +587,7 @@ private struct CompletionOverlay: View {
                 VStack(spacing: 8) {
                     if !moodLogged {
                         Text("How do you feel now?")
-                            .font(.system(size: 13, weight: .light))
+                            .font(.system(size: 13, weight: .regular))
                             .foregroundColor(.white.opacity(0.65))
                         HStack(spacing: 14) {
                             ForEach([1,2,3,5,6], id: \.self) { level in
@@ -613,7 +607,7 @@ private struct CompletionOverlay: View {
                                 .font(.system(size: 14))
                                 .foregroundColor(.calmAccent)
                             Text("Mood saved")
-                                .font(.system(size: 13, weight: .light))
+                                .font(.system(size: 13, weight: .regular))
                                 .foregroundColor(.white.opacity(0.65))
                         }
                         .transition(.opacity)

@@ -16,6 +16,8 @@ struct ProgressTabView: View {
     @State private var section: Section = .challenge
     @State private var showPaywall = false
     @State private var showGratitude = false
+    @State private var showDailyPrompt = false
+    @AppStorage("lastDailyPromptDate") private var lastPromptDateString = ""
 
     var body: some View {
         ZStack {
@@ -68,6 +70,136 @@ struct ProgressTabView: View {
         }
         .fullScreenCover(isPresented: $showGratitude) {
             GratitudeJournalView().environmentObject(journal)
+        }
+        .sheet(isPresented: $showDailyPrompt) {
+            DailyJournalPromptSheet()
+                .environmentObject(journal)
+                .presentationDetents([.medium])
+                .presentationDragIndicator(.visible)
+        }
+        .onAppear {
+            let today = Calendar.current.startOfDay(for: Date())
+            let todayStr = ISO8601DateFormatter().string(from: today)
+            guard todayStr != lastPromptDateString else { return }
+            if !journal.hasMoodEntryToday || !journal.hasSleepEntryToday {
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.4) {
+                    showDailyPrompt = true
+                    lastPromptDateString = todayStr
+                }
+            }
+        }
+    }
+}
+
+// MARK: - Daily Journal Prompt Sheet
+private struct DailyJournalPromptSheet: View {
+    @Environment(\.dismiss) private var dismiss
+    @EnvironmentObject var journal: JournalStore
+
+    @State private var selectedMood: Int = 0
+    @State private var sleepQuality: Int = 3
+    @State private var moodDone = false
+    @State private var sleepDone = false
+
+    var body: some View {
+        ZStack {
+            Color(red: 0.13, green: 0.10, blue: 0.22).ignoresSafeArea()
+
+            VStack(spacing: 24) {
+                VStack(spacing: 6) {
+                    Text("Daily Check-In")
+                        .font(.system(size: 20, weight: .semibold, design: .rounded))
+                        .foregroundColor(.white)
+                    Text("Track your mood and sleep to see patterns over time.")
+                        .font(.system(size: 13, weight: .regular))
+                        .foregroundColor(.white.opacity(0.70))
+                        .multilineTextAlignment(.center)
+                        .padding(.horizontal, 16)
+                }
+                .padding(.top, 8)
+
+                // Mood
+                if !journal.hasMoodEntryToday {
+                    VStack(spacing: 10) {
+                        Text("How are you feeling today?")
+                            .font(.system(size: 14, weight: .semibold, design: .rounded))
+                            .foregroundColor(.white)
+                        HStack(spacing: 6) {
+                            ForEach([1,2,3,5,6], id: \.self) { level in
+                                Button {
+                                    selectedMood = level
+                                    journal.addMoodEntry(MoodEntry(mood: level, source: "daily-prompt"))
+                                    withAnimation { moodDone = true }
+                                } label: {
+                                    Text(level.moodEmoji)
+                                        .font(.system(size: 30))
+                                        .frame(minWidth: 44, minHeight: 44)
+                                        .contentShape(Rectangle())
+                                }
+                                .buttonStyle(.plain)
+                                .opacity(moodDone ? (selectedMood == level ? 1 : 0.35) : 1)
+                            }
+                        }
+                        if moodDone {
+                            Label("Mood saved", systemImage: "checkmark.circle.fill")
+                                .font(.system(size: 12, weight: .regular))
+                                .foregroundColor(.calmAccent)
+                        }
+                    }
+                    .padding(16)
+                    .background(RoundedRectangle(cornerRadius: 16).fill(Color.white.opacity(0.07)))
+                    .padding(.horizontal, 20)
+                }
+
+                // Sleep
+                if !journal.hasSleepEntryToday {
+                    VStack(spacing: 10) {
+                        Text("How did you sleep last night?")
+                            .font(.system(size: 14, weight: .semibold, design: .rounded))
+                            .foregroundColor(.white)
+                        HStack(spacing: 8) {
+                            ForEach(1...5, id: \.self) { q in
+                                Button {
+                                    sleepQuality = q
+                                    journal.addSleepEntry(SleepEntry(quality: q, note: "", bedtime: nil, wakeTime: nil, dreamType: 0, dreamNote: ""))
+                                    withAnimation { sleepDone = true }
+                                } label: {
+                                    VStack(spacing: 4) {
+                                        Image(systemName: q <= sleepQuality ? "star.fill" : "star")
+                                            .font(.system(size: 22))
+                                            .foregroundColor(q <= sleepQuality ? .calmAccent : .white.opacity(0.30))
+                                    }
+                                    .frame(minWidth: 44, minHeight: 44)
+                                    .contentShape(Rectangle())
+                                }
+                                .buttonStyle(.plain)
+                                .disabled(sleepDone)
+                            }
+                        }
+                        if sleepDone {
+                            Label("Sleep saved", systemImage: "checkmark.circle.fill")
+                                .font(.system(size: 12, weight: .regular))
+                                .foregroundColor(.calmAccent)
+                        }
+                    }
+                    .padding(16)
+                    .background(RoundedRectangle(cornerRadius: 16).fill(Color.white.opacity(0.07)))
+                    .padding(.horizontal, 20)
+                }
+
+                Button {
+                    dismiss()
+                } label: {
+                    Text("Done")
+                        .font(.system(size: 16, weight: .semibold, design: .rounded))
+                        .foregroundColor(.calmDeep)
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 14)
+                        .background(Capsule().fill(Color.calmAccent))
+                }
+                .padding(.horizontal, 20)
+                .padding(.bottom, 8)
+            }
         }
     }
 }
@@ -131,7 +263,7 @@ struct ChallengeSection: View {
                     VStack(spacing: 6) {
                         HStack {
                             Text("\(doneInTier) of \(tierSize) days completed")
-                                .font(.system(size: 13, weight: .light))
+                                .font(.system(size: 13, weight: .regular))
                                 .foregroundColor(.white)
                             Spacer()
                             Text("\(Int(tierPct * 100))%")
@@ -194,7 +326,7 @@ struct ChallengeSection: View {
                         HStack(spacing: 8) {
                             Image(systemName: "checkmark.circle.fill").font(.system(size: 14))
                             Text("You've already marked a day today. Come back tomorrow.")
-                                .font(.system(size: 12, weight: .regular))
+                                .font(.system(size: 12, weight: .medium))
                         }
                         .foregroundColor(.white.opacity(0.70))
                         .multilineTextAlignment(.center)
@@ -247,7 +379,7 @@ struct ChallengeSection: View {
                                         .font(.system(size: 20, weight: .semibold, design: .rounded))
                                         .foregroundColor(badge.color)
                                     Text(badge.description)
-                                        .font(.system(size: 12, weight: .light))
+                                        .font(.system(size: 12, weight: .regular))
                                         .foregroundColor(.white.opacity(0.95))
                                 }
                                 Spacer()
@@ -301,7 +433,7 @@ struct ChallengeSection: View {
                                     .font(.system(size: 14, weight: .semibold, design: .rounded))
                                     .foregroundColor(earned ? badge.color : .white.opacity(0.30))
                                 Text(badge.description)
-                                    .font(.system(size: 11, weight: .light))
+                                    .font(.system(size: 11, weight: .regular))
                                     .foregroundColor(.white.opacity(earned ? 0.75 : 0.25))
                             }
                             Spacer()
@@ -330,7 +462,7 @@ struct ChallengeSection: View {
                                     .foregroundColor(next.color)
                                 Spacer()
                                 Text("\(journal.daysToNextBadge) days to go")
-                                    .font(.system(size: 12, weight: .light))
+                                    .font(.system(size: 12, weight: .regular))
                                     .foregroundColor(.white.opacity(0.92))
                             }
                             GeometryReader { geo in
@@ -355,7 +487,7 @@ struct ChallengeSection: View {
             if journal.currentStreak > 0 {
                 JournalCard(title: "Keep Going", icon: "star.fill") {
                     Text(streakMessage)
-                        .font(.system(size: 14, weight: .light))
+                        .font(.system(size: 14, weight: .regular))
                         .foregroundColor(.white)
                         .lineSpacing(4)
                 }
@@ -441,7 +573,7 @@ struct MoodSection: View {
                                 .font(.system(size: 13, weight: .semibold))
                                 .foregroundColor(.white)
                             Text("Upgrade to view full history & trends")
-                                .font(.system(size: 11, weight: .light))
+                                .font(.system(size: 11, weight: .regular))
                                 .foregroundColor(.white.opacity(0.70))
                         }
                         Spacer()
@@ -480,7 +612,7 @@ struct MoodSection: View {
                                 .font(.system(size: 18, weight: .medium, design: .rounded))
                                 .foregroundColor(.white)
                             Text(String(format: "%.1f / 7.0 across \(entries.count) entries", avgVal))
-                                .font(.system(size: 12, weight: .light))
+                                .font(.system(size: 12, weight: .regular))
                                 .foregroundColor(.white.opacity(0.95))
                         }
                         Spacer()
@@ -516,7 +648,7 @@ struct MoodSection: View {
                                             .foregroundColor(.white)
                                         if entry.source == "post-session" {
                                             Text("after session")
-                                                .font(.system(size: 10, weight: .light))
+                                                .font(.system(size: 10, weight: .regular))
                                                 .foregroundColor(.calmAccent.opacity(0.80))
                                                 .padding(.horizontal, 6)
                                                 .padding(.vertical, 2)
@@ -530,7 +662,7 @@ struct MoodSection: View {
                                         HStack(spacing: 4) {
                                             ForEach(entry.tags, id: \.self) { tag in
                                                 Text(tag)
-                                                    .font(.system(size: 10, weight: .regular))
+                                                    .font(.system(size: 10, weight: .medium))
                                                     .foregroundColor(.white.opacity(0.75))
                                                     .padding(.horizontal, 7)
                                                     .padding(.vertical, 3)
@@ -559,7 +691,7 @@ struct MoodSection: View {
                                 .font(.system(size: 14, weight: .semibold))
                                 .foregroundColor(latest.mood.moodColor)
                             Text(supportiveMessage(for: latest.mood))
-                                .font(.system(size: 13, weight: .light))
+                                .font(.system(size: 13, weight: .regular))
                                 .foregroundColor(.white.opacity(0.78))
                                 .lineSpacing(4)
                                 .fixedSize(horizontal: false, vertical: true)
@@ -618,7 +750,7 @@ struct SleepSection: View {
                         .font(.system(size: 17, weight: .semibold, design: .rounded))
                         .foregroundColor(.white)
                     Text("Track your sleep quality, hours, and patterns over time.")
-                        .font(.system(size: 13, weight: .light))
+                        .font(.system(size: 13, weight: .regular))
                         .foregroundColor(.white.opacity(0.75))
                         .multilineTextAlignment(.center)
                     Button { showPaywall = true } label: {
@@ -697,7 +829,7 @@ struct SleepSection: View {
                         HStack(alignment: .top, spacing: 12) {
                             Text(insight.emoji).font(.system(size: 28))
                             Text(insight.message)
-                                .font(.system(size: 13, weight: .light))
+                                .font(.system(size: 13, weight: .regular))
                                 .foregroundColor(.white)
                                 .lineSpacing(4)
                                 .fixedSize(horizontal: false, vertical: true)
@@ -732,7 +864,7 @@ struct SleepSection: View {
                                                 .foregroundColor(.white)
                                             if entry.dreamType > 0 {
                                                 Text(entry.dreamType == 1 ? "Light dreams" : "Vivid dreams")
-                                                    .font(.system(size: 10, weight: .light))
+                                                    .font(.system(size: 10, weight: .regular))
                                                     .foregroundColor(.white.opacity(0.65))
                                                     .padding(.horizontal, 7)
                                                     .padding(.vertical, 2)
@@ -855,7 +987,7 @@ struct MoodEntrySheet: View {
                 CalmBackground()
                 VStack(spacing: 28) {
                     Text("How are you feeling?")
-                        .font(.system(size: 22, weight: .ultraLight, design: .rounded))
+                        .font(.system(size: 22, weight: .regular, design: .rounded))
                         .foregroundColor(.white)
                         .padding(.top, 16)
 
@@ -883,7 +1015,7 @@ struct MoodEntrySheet: View {
                     HStack(alignment: .top, spacing: 12) {
                         Text(selectedMood.moodEmoji).font(.system(size: 22))
                         Text(supportiveMessage(for: selectedMood))
-                            .font(.system(size: 13, weight: .light))
+                            .font(.system(size: 13, weight: .regular))
                             .foregroundColor(.white.opacity(0.82))
                             .lineSpacing(4)
                             .fixedSize(horizontal: false, vertical: true)
@@ -911,12 +1043,12 @@ struct MoodEntrySheet: View {
                                     else        { selectedTags.append(tag) }
                                 } label: {
                                     Text(tag)
-                                        .font(.system(size: 13, weight: .regular))
+                                        .font(.system(size: 13, weight: .medium))
                                         .foregroundColor(selected ? .calmDeep : .white.opacity(0.80))
                                         .frame(maxWidth: .infinity)
                                         .padding(.vertical, 8)
                                         .background(
-                                            Capsule().fill(selected ? Color.calmAccent : Color.white.opacity(0.08))
+                                            Capsule().fill(selected ? Color.white : Color.white.opacity(0.08))
                                         )
                                 }
                                 .buttonStyle(.plain)
@@ -931,7 +1063,7 @@ struct MoodEntrySheet: View {
                             .foregroundColor(.white.opacity(0.90))
                             .tracking(1.0)
                         TextField("How was your session?", text: $note)
-                            .font(.system(size: 15, weight: .light))
+                            .font(.system(size: 15, weight: .regular))
                             .foregroundColor(.white)
                             .padding(14)
                             .background(RoundedRectangle(cornerRadius: 14).fill(Color.white.opacity(0.08)))
@@ -955,7 +1087,7 @@ struct MoodEntrySheet: View {
             .toolbar {
                 ToolbarItem(placement: .principal) {
                     Text("Mood Journal")
-                        .font(.system(size: 17, weight: .light, design: .rounded))
+                        .font(.system(size: 17, weight: .regular, design: .rounded))
                         .foregroundColor(.white)
                 }
             }
@@ -989,7 +1121,7 @@ struct SleepEntrySheet: View {
                 CalmBackground()
                 VStack(spacing: 24) {
                     Text("How did you sleep?")
-                        .font(.system(size: 22, weight: .ultraLight, design: .rounded))
+                        .font(.system(size: 22, weight: .regular, design: .rounded))
                         .foregroundColor(.white)
                         .padding(.top, 16)
 
@@ -1000,7 +1132,7 @@ struct SleepEntrySheet: View {
                                 .foregroundColor(Color(red: 0.55, green: 0.50, blue: 0.90))
                                 .frame(width: 20)
                             Text("Bedtime")
-                                .font(.system(size: 14, weight: .light))
+                                .font(.system(size: 14, weight: .regular))
                                 .foregroundColor(.white)
                             Spacer()
                             DatePicker("", selection: $bedtime, displayedComponents: .hourAndMinute)
@@ -1013,7 +1145,7 @@ struct SleepEntrySheet: View {
                                 .foregroundColor(Color(red: 1.0, green: 0.80, blue: 0.35))
                                 .frame(width: 20)
                             Text("Wake time")
-                                .font(.system(size: 14, weight: .light))
+                                .font(.system(size: 14, weight: .regular))
                                 .foregroundColor(.white)
                             Spacer()
                             DatePicker("", selection: $wakeTime, displayedComponents: .hourAndMinute)
@@ -1026,7 +1158,7 @@ struct SleepEntrySheet: View {
                                 .foregroundColor(.calmAccent)
                                 .frame(width: 20)
                             Text("Total sleep")
-                                .font(.system(size: 14, weight: .light))
+                                .font(.system(size: 14, weight: .regular))
                                 .foregroundColor(.white)
                             Spacer()
                             Text(String(format: "%.1f hrs", computedHours))
@@ -1069,7 +1201,7 @@ struct SleepEntrySheet: View {
                     HStack(alignment: .top, spacing: 12) {
                         Text(sleepQualityEmoji(quality)).font(.system(size: 22))
                         Text(sleepQualityMessage(quality))
-                            .font(.system(size: 13, weight: .light))
+                            .font(.system(size: 13, weight: .regular))
                             .foregroundColor(.white.opacity(0.82))
                             .lineSpacing(4)
                             .fixedSize(horizontal: false, vertical: true)
@@ -1097,7 +1229,7 @@ struct SleepEntrySheet: View {
                                             .font(.system(size: 18))
                                             .foregroundColor(dreamType == i ? .calmDeep : .white.opacity(0.60))
                                         Text(dreamOptions[i])
-                                            .font(.system(size: 11, weight: .regular))
+                                            .font(.system(size: 11, weight: .medium))
                                             .foregroundColor(dreamType == i ? .calmDeep : .white.opacity(0.60))
                                             .multilineTextAlignment(.center)
                                     }
@@ -1111,7 +1243,7 @@ struct SleepEntrySheet: View {
                         }
                         if dreamType > 0 {
                             TextField("Describe your dream (optional)", text: $dreamNote)
-                                .font(.system(size: 14, weight: .light))
+                                .font(.system(size: 14, weight: .regular))
                                 .foregroundColor(.white)
                                 .padding(12)
                                 .background(RoundedRectangle(cornerRadius: 12).fill(Color.white.opacity(0.08)))
@@ -1125,7 +1257,7 @@ struct SleepEntrySheet: View {
                             .foregroundColor(.white.opacity(0.90))
                             .tracking(1.0)
                         TextField("Dreams, disturbances, thoughts...", text: $note)
-                            .font(.system(size: 15, weight: .light))
+                            .font(.system(size: 15, weight: .regular))
                             .foregroundColor(.white)
                             .padding(14)
                             .background(RoundedRectangle(cornerRadius: 14).fill(Color.white.opacity(0.08)))
@@ -1149,7 +1281,7 @@ struct SleepEntrySheet: View {
             .toolbar {
                 ToolbarItem(placement: .principal) {
                     Text("Sleep Journal")
-                        .font(.system(size: 17, weight: .light, design: .rounded))
+                        .font(.system(size: 17, weight: .regular, design: .rounded))
                         .foregroundColor(.white)
                 }
             }
@@ -1167,7 +1299,7 @@ struct SleepTipRow: View {
         HStack(alignment: .top, spacing: 10) {
             Text(emoji).font(.system(size: 16))
             Text(tip)
-                .font(.system(size: 13, weight: .light))
+                .font(.system(size: 13, weight: .regular))
                 .foregroundColor(.white.opacity(0.72))
                 .lineSpacing(3)
                 .fixedSize(horizontal: false, vertical: true)
@@ -1243,7 +1375,7 @@ struct StatCard: View {
                 .font(.system(size: 20, weight: .semibold, design: .rounded))
                 .foregroundColor(.white)
             Text(label)
-                .font(.system(size: 10, weight: .light))
+                .font(.system(size: 10, weight: .regular))
                 .foregroundColor(.white.opacity(0.92))
         }
         .frame(maxWidth: .infinity)
@@ -1283,7 +1415,7 @@ struct EmptyJournalView: View {
         VStack(spacing: 12) {
             Image(systemName: "tray").font(.system(size: 32)).foregroundColor(.white.opacity(0.85))
             Text(message)
-                .font(.system(size: 14, weight: .light))
+                .font(.system(size: 14, weight: .regular))
                 .foregroundColor(.white.opacity(0.90))
                 .multilineTextAlignment(.center)
                 .lineSpacing(4)
@@ -1325,7 +1457,7 @@ struct MoodTrendChart: View {
                     .font(.system(size: 28))
                     .foregroundColor(.white.opacity(0.25))
                 Text("Log your mood daily to see your trend")
-                    .font(.system(size: 13, weight: .light))
+                    .font(.system(size: 13, weight: .regular))
                     .foregroundColor(.white.opacity(0.55))
                     .multilineTextAlignment(.center)
             }
@@ -1355,7 +1487,7 @@ struct MoodTrendChart: View {
                     .lineStyle(StrokeStyle(lineWidth: 1, dash: [4]))
                     .annotation(position: .top, alignment: .trailing) {
                         Text("avg")
-                            .font(.system(size: 9, weight: .light))
+                            .font(.system(size: 9, weight: .regular))
                             .foregroundColor(.white.opacity(0.40))
                     }
             }
@@ -1415,7 +1547,7 @@ struct SleepTrendChart: View {
                     .font(.system(size: 28))
                     .foregroundColor(.white.opacity(0.25))
                 Text("Log your sleep daily to see your trend")
-                    .font(.system(size: 13, weight: .light))
+                    .font(.system(size: 13, weight: .regular))
                     .foregroundColor(.white.opacity(0.55))
                     .multilineTextAlignment(.center)
             }
@@ -1445,7 +1577,7 @@ struct SleepTrendChart: View {
                     .lineStyle(StrokeStyle(lineWidth: 1, dash: [4]))
                     .annotation(position: .top, alignment: .trailing) {
                         Text("avg")
-                            .font(.system(size: 9, weight: .light))
+                            .font(.system(size: 9, weight: .regular))
                             .foregroundColor(.white.opacity(0.40))
                     }
             }
@@ -1529,7 +1661,7 @@ struct GratitudeSectionView: View {
                     .font(.system(size: 10))
                     .foregroundColor(.white.opacity(0.40))
                 Text("Journal entries are stored privately on your device.")
-                    .font(.system(size: 11, weight: .light))
+                    .font(.system(size: 11, weight: .regular))
                     .foregroundColor(.white.opacity(0.40))
             }
             .frame(maxWidth: .infinity, alignment: .leading)
@@ -1540,10 +1672,10 @@ struct GratitudeSectionView: View {
                 let streak = gratitudeStreak
                 VStack(spacing: 6) {
                     Text("\(streak)")
-                        .font(.system(size: 48, weight: .thin, design: .rounded))
+                        .font(.system(size: 48, weight: .regular, design: .rounded))
                         .foregroundColor(.white)
                     Text(streak == 1 ? "day in a row" : "days in a row")
-                        .font(.system(size: 13, weight: .light))
+                        .font(.system(size: 13, weight: .regular))
                         .foregroundColor(.white.opacity(0.70))
                 }
                 .frame(maxWidth: .infinity)
@@ -1563,7 +1695,7 @@ struct GratitudeSectionView: View {
                                     HStack(alignment: .top, spacing: 6) {
                                         Text("•").foregroundColor(.white.opacity(0.40)).font(.system(size: 12))
                                         Text(line)
-                                            .font(.system(size: 13, weight: .light))
+                                            .font(.system(size: 13, weight: .regular))
                                             .foregroundColor(.white.opacity(0.85))
                                             .fixedSize(horizontal: false, vertical: true)
                                     }

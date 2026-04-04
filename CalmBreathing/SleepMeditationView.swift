@@ -46,19 +46,14 @@ struct SleepMeditationView: View {
     private var totalDuration: Double { prompts.map(\.duration).reduce(0, +) }
     private var currentPrompt: String { prompts[min(currentIndex, prompts.count - 1)].text }
 
-    private var promptTimestamps: [Double] {
-        guard let dur = audioPlayer?.duration, dur > 0 else { return [] }
-        // Exact timestamps extracted from audio silence detection
-        let scale = dur / 265.872
-        let raw: [Double] = [
-             8.32,  16.44,  24.63,  34.51,  46.12,
-            53.43,  60.52,  71.49,  79.19,  89.91,
-           101.21, 111.70, 123.02, 133.23, 144.81,
-           160.14, 174.81, 190.12, 203.46, 219.14,
-           225.98, 236.91, 247.37, 261.20, 265.87
-        ]
-        return raw.map { $0 * scale }
-    }
+    // Exact timestamps (seconds) from audio — each value is when the NEXT prompt begins
+    private let promptTimestamps: [Double] = [
+          8.00,  17.00,  26.00,  36.00,  49.00,
+         56.00,  63.00,  73.00,  79.00,  88.00,
+         98.00, 108.00, 119.00, 129.00, 140.00,
+        154.00, 166.00, 180.00, 194.00, 207.00,
+        214.00, 224.00, 233.00, 244.00, 247.44,
+    ]
 
     var body: some View {
         ZStack {
@@ -137,9 +132,6 @@ struct SleepMeditationView: View {
 
     private var introView: some View {
         VStack(spacing: 28) {
-            LotusOrbView()
-                .frame(width: 120, height: 120)
-
             VStack(spacing: 12) {
                 Text("Sleep Meditation")
                     .font(.system(size: 24, weight: .semibold, design: .rounded))
@@ -159,7 +151,7 @@ struct SleepMeditationView: View {
             .padding(.horizontal, 8)
 
             Text("For relaxation and wellness purposes only. Not a substitute for medical or mental health advice. If you have any health conditions, consult a doctor before use.")
-                .font(.system(size: 11, weight: .regular))
+                .font(.system(size: 11, weight: .medium))
                 .foregroundColor(.white.opacity(0.75))
                 .multilineTextAlignment(.center)
                 .padding(.horizontal, 8)
@@ -179,11 +171,8 @@ struct SleepMeditationView: View {
 
     private var activeView: some View {
         VStack(spacing: 32) {
-            LotusOrbView(isAnimating: isRunning)
-                .frame(width: 240, height: 240)
-
             Text("\(currentIndex + 1) of \(prompts.count)")
-                .font(.system(size: 13, weight: .regular))
+                .font(.system(size: 13, weight: .medium))
                 .foregroundColor(.white.opacity(0.55))
 
             Text(currentPrompt)
@@ -213,8 +202,9 @@ struct SleepMeditationView: View {
 
     private var doneView: some View {
         VStack(spacing: 24) {
-            LotusOrbView(isAnimating: false)
-                .frame(width: 100, height: 100)
+            Image(systemName: "moon.stars.fill")
+                .font(.system(size: 54, weight: .regular))
+                .foregroundColor(.calmAccent)
             Text("Sleep Well")
                 .font(.system(size: 26, weight: .semibold, design: .rounded))
                 .foregroundColor(.white)
@@ -227,7 +217,7 @@ struct SleepMeditationView: View {
             VStack(spacing: 8) {
                 if !postMoodLogged {
                     Text("How do you feel now?")
-                        .font(.system(size: 13, weight: .light))
+                        .font(.system(size: 13, weight: .regular))
                         .foregroundColor(.white.opacity(0.65))
                     HStack(spacing: 4) {
                         ForEach([1,2,3,5,6], id: \.self) { level in
@@ -249,7 +239,7 @@ struct SleepMeditationView: View {
                             .font(.system(size: 14))
                             .foregroundColor(.calmAccent)
                         Text("Mood saved")
-                            .font(.system(size: 13, weight: .light))
+                            .font(.system(size: 13, weight: .regular))
                             .foregroundColor(.white.opacity(0.65))
                     }
                 }

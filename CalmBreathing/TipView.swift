@@ -97,12 +97,12 @@ struct TipCardView: View {
             // Headline
             VStack(spacing: 10) {
                 Text("Did this bring you calm?")
-                    .font(.system(size: 26, weight: .light, design: .rounded))
+                    .font(.system(size: 26, weight: .regular, design: .rounded))
                     .foregroundColor(.white)
                     .multilineTextAlignment(.center)
 
                 Text("Serene Breathing is completely free — no ads, no subscriptions, no pressure.\n\nIf a session helped you today, a small tip keeps this app free for everyone.")
-                    .font(.system(size: 14, weight: .light))
+                    .font(.system(size: 14, weight: .regular))
                     .foregroundColor(.white.opacity(0.80))
                     .multilineTextAlignment(.center)
                     .lineSpacing(5)
@@ -130,7 +130,7 @@ struct TipCardView: View {
                 isPresented = false
             } label: {
                 Text("No thanks — continue")
-                    .font(.system(size: 14, weight: .light))
+                    .font(.system(size: 14, weight: .regular))
                     .foregroundColor(.white.opacity(0.45))
                     .padding(.vertical, 8)
             }
@@ -149,11 +149,11 @@ struct TipCardView: View {
             }
 
             Text("Thank You")
-                .font(.system(size: 30, weight: .ultraLight, design: .rounded))
+                .font(.system(size: 30, weight: .regular, design: .rounded))
                 .foregroundColor(.white)
 
             Text("Your generosity means the world. It helps keep this app free, calm, and ad-free for everyone who needs it.")
-                .font(.system(size: 15, weight: .light))
+                .font(.system(size: 15, weight: .regular))
                 .foregroundColor(.white.opacity(0.90))
                 .multilineTextAlignment(.center)
                 .lineSpacing(5)
@@ -185,7 +185,7 @@ struct TipCardView: View {
                         .foregroundColor(.calmDeep)
                 }
                 Text("tip")
-                    .font(.system(size: 11, weight: .light))
+                    .font(.system(size: 11, weight: .regular))
                     .foregroundColor(.calmDeep.opacity(0.65))
             }
             .frame(maxWidth: .infinity)

@@ -126,7 +126,7 @@ struct DailyCheckInView: View {
                                     .tracking(1.0)
                             }
                             Text(briefing.message)
-                                .font(.system(size: 13, weight: .light))
+                                .font(.system(size: 13, weight: .regular))
                                 .foregroundColor(.calmDeep)
                                 .lineSpacing(4)
                                 .fixedSize(horizontal: false, vertical: true)
@@ -213,12 +213,12 @@ struct DailyCheckInView: View {
                                             HStack(spacing: 8) {
                                                 ProgressView().tint(.calmAccent).scaleEffect(0.7)
                                                 Text("Here for you…")
-                                                    .font(.system(size: 13, weight: .light))
+                                                    .font(.system(size: 13, weight: .regular))
                                                     .foregroundColor(.calmMid)
                                             }
                                         } else if !coachMessage.isEmpty {
                                             Text(coachMessage)
-                                                .font(.system(size: 13, weight: .light))
+                                                .font(.system(size: 13, weight: .regular))
                                                 .foregroundColor(.calmDeep)
                                                 .lineSpacing(4)
                                                 .fixedSize(horizontal: false, vertical: true)
@@ -270,7 +270,7 @@ struct DailyCheckInView: View {
                                     .foregroundColor(Color(red: 0.55, green: 0.50, blue: 0.90))
                                     .frame(width: 20)
                                 Text("Bedtime")
-                                    .font(.system(size: 14, weight: .light))
+                                    .font(.system(size: 14, weight: .regular))
                                     .foregroundColor(.calmDeep)
                                 Spacer()
                                 DatePicker("", selection: $bedtime, displayedComponents: .hourAndMinute)
@@ -286,7 +286,7 @@ struct DailyCheckInView: View {
                                     .foregroundColor(Color(red: 1.0, green: 0.80, blue: 0.35))
                                     .frame(width: 20)
                                 Text("Wake time")
-                                    .font(.system(size: 14, weight: .light))
+                                    .font(.system(size: 14, weight: .regular))
                                     .foregroundColor(.calmDeep)
                                 Spacer()
                                 DatePicker("", selection: $wakeTime, displayedComponents: .hourAndMinute)
@@ -302,7 +302,7 @@ struct DailyCheckInView: View {
                                     .foregroundColor(.calmAccent)
                                     .frame(width: 20)
                                 Text("Total sleep")
-                                    .font(.system(size: 14, weight: .light))
+                                    .font(.system(size: 14, weight: .regular))
                                     .foregroundColor(.calmDeep)
                                 Spacer()
                                 Text(String(format: "%.1f hrs", computedHours))
@@ -360,11 +360,11 @@ struct DailyCheckInView: View {
                                             else        { selectedTags.append(tag) }
                                         } label: {
                                             Text(tag)
-                                                .font(.system(size: 12, weight: .regular))
+                                                .font(.system(size: 12, weight: .medium))
                                                 .foregroundColor(selected ? .calmDeep : .calmDeep)
                                                 .frame(maxWidth: .infinity)
                                                 .padding(.vertical, 8)
-                                                .background(Capsule().fill(selected ? Color.calmAccent : Color(red: 0.82, green: 0.85, blue: 0.95).opacity(0.80)))
+                                                .background(Capsule().fill(selected ? Color.white : Color(red: 0.82, green: 0.85, blue: 0.95).opacity(0.80)))
                                         }
                                         .buttonStyle(.plain)
                                     }
@@ -444,7 +444,7 @@ struct DailyCheckInView: View {
                     .font(.system(size: 14))
                     .foregroundColor(.calmAccent)
                 Text("Logged to your journal")
-                    .font(.system(size: 12, weight: .light))
+                    .font(.system(size: 12, weight: .regular))
                     .foregroundColor(.calmMid)
             }
 
@@ -461,7 +461,7 @@ struct DailyCheckInView: View {
                 }
 
                 Text(insight)
-                    .font(.system(size: 15, weight: .light))
+                    .font(.system(size: 15, weight: .regular))
                     .foregroundColor(.calmDeep)
                     .lineSpacing(5)
                     .fixedSize(horizontal: false, vertical: true)
@@ -479,7 +479,7 @@ struct DailyCheckInView: View {
                             .foregroundColor(.calmDeep)
                         if !reason.isEmpty {
                             Text(reason)
-                                .font(.system(size: 13, weight: .light))
+                                .font(.system(size: 13, weight: .regular))
                                 .foregroundColor(.calmMid)
                                 .lineSpacing(4)
                         }

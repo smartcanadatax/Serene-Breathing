@@ -102,7 +102,7 @@ struct PaywallView: View {
                         // Error message
                         if let err = premium.errorMessage {
                             Text(err)
-                                .font(.system(size: 12, weight: .regular))
+                                .font(.system(size: 12, weight: .medium))
                                 .foregroundColor(.red.opacity(0.85))
                                 .multilineTextAlignment(.center)
                         }
@@ -145,13 +145,13 @@ struct PaywallView: View {
                             }
                         } label: {
                             Text(isRestoring ? "Restoring…" : "Restore Purchases")
-                                .font(.system(size: 13, weight: .regular))
+                                .font(.system(size: 13, weight: .medium))
                                 .foregroundColor(.white.opacity(0.60))
                         }
 
                         // Legal
                         Text("Subscriptions auto-renew unless cancelled at least 24 hours before the end of the current period. Manage or cancel anytime in your Apple ID settings.")
-                            .font(.system(size: 10, weight: .light))
+                            .font(.system(size: 10, weight: .regular))
                             .foregroundColor(.white.opacity(0.40))
                             .multilineTextAlignment(.center)
                             .padding(.horizontal, 8)
@@ -210,7 +210,7 @@ struct PaywallView: View {
                         }
                     }
                     Text(subtitle)
-                        .font(.system(size: 11, weight: .light))
+                        .font(.system(size: 11, weight: .regular))
                         .foregroundColor(.white.opacity(0.60))
                 }
                 Spacer()

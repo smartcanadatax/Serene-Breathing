@@ -194,7 +194,7 @@ struct AISleepStoryView: View {
                             .foregroundColor(.white)
 
                         Text(storyText)
-                            .font(.system(size: 14, weight: .light, design: .rounded))
+                            .font(.system(size: 14, weight: .regular, design: .rounded))
                             .foregroundColor(.white.opacity(0.85))
                             .lineSpacing(6)
                             .fixedSize(horizontal: false, vertical: true)
@@ -385,7 +385,7 @@ struct SleepStoriesView: View {
                 .padding(.horizontal, 24)
 
                 Text("For relaxation and wellness purposes only. Not a substitute for medical or mental health advice. If you have any health conditions, consult a doctor before use.")
-                    .font(.system(size: 11, weight: .regular))
+                    .font(.system(size: 11, weight: .medium))
                     .foregroundColor(.white.opacity(0.75))
                     .multilineTextAlignment(.center)
                     .padding(.horizontal, 28)
@@ -417,10 +417,10 @@ private struct StoryCard: View {
                     .font(.system(size: 16, weight: .semibold, design: .rounded))
                     .foregroundColor(.white)
                 Text(story.subtitle)
-                    .font(.system(size: 13, weight: .light))
+                    .font(.system(size: 13, weight: .regular))
                     .foregroundColor(.white.opacity(0.70))
                 Text(story.duration)
-                    .font(.system(size: 11, weight: .regular))
+                    .font(.system(size: 11, weight: .medium))
                     .foregroundColor(.calmAccent.opacity(0.80))
             }
 
@@ -494,7 +494,7 @@ private struct StoryPlayerView: View {
             .padding(.bottom, 40)
 
             Text(story.description)
-                .font(.system(size: 15, weight: .light, design: .rounded))
+                .font(.system(size: 15, weight: .regular, design: .rounded))
                 .foregroundColor(.white.opacity(0.70))
                 .multilineTextAlignment(.center)
                 .lineSpacing(5)
@@ -502,7 +502,7 @@ private struct StoryPlayerView: View {
                 .padding(.bottom, 16)
 
             Text("Close your eyes and listen")
-                .font(.system(size: 13, weight: .light))
+                .font(.system(size: 13, weight: .regular))
                 .foregroundColor(.white.opacity(0.45))
 
             Spacer()

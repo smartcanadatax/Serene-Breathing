@@ -148,11 +148,12 @@ struct SoundLibraryRow: View {
                 // Play indicator
                 ZStack {
                     Circle()
-                        .fill(isActive ? brandPurple.opacity(0.22) : brandPurple.opacity(0.12))
+                        .fill(Color.white)
                         .frame(width: 46, height: 46)
+                        .shadow(color: Color.black.opacity(0.08), radius: 4)
                     Image(systemName: isLocked ? "lock.fill" : (isActive ? "pause.fill" : "play.fill"))
                         .font(.system(size: 16, weight: .semibold))
-                        .foregroundColor(isLocked ? brandPurple.opacity(0.35) : brandPurple)
+                        .foregroundColor(isLocked ? Color(red: 0.541, green: 0.357, blue: 0.804).opacity(0.35) : Color(red: 0.541, green: 0.357, blue: 0.804))
                 }
 
                 VStack(alignment: .leading, spacing: 3) {
@@ -160,7 +161,7 @@ struct SoundLibraryRow: View {
                         .font(.system(size: 15, weight: .semibold, design: .rounded))
                         .foregroundColor(isLocked ? .calmDeep.opacity(0.45) : .calmDeep)
                     Text(isLocked ? "Premium" : sound.subtitle)
-                        .font(.system(size: 12, weight: .light))
+                        .font(.system(size: 12, weight: .regular))
                         .foregroundColor(isLocked ? brandPurple.opacity(0.50) : .calmMid)
                 }
 
@@ -202,7 +203,7 @@ struct SoundLibraryRow: View {
 
 // MARK: - Sound Mini Player
 
-private struct SoundMiniPlayer: View {
+struct SoundMiniPlayer: View {
     @EnvironmentObject var soundPlayer: SoundPlayer
 
     var body: some View {
@@ -218,7 +219,7 @@ private struct SoundMiniPlayer: View {
                         .font(.system(size: 14, weight: .semibold, design: .rounded))
                         .foregroundColor(.calmDeep)
                     Text(soundPlayer.playing?.subtitle ?? "")
-                        .font(.system(size: 11, weight: .light))
+                        .font(.system(size: 11, weight: .regular))
                         .foregroundColor(.calmMid)
                 }
 
@@ -371,7 +372,7 @@ struct SoundCard: View {
                     .font(.system(size: 16, weight: .medium, design: .rounded))
                     .foregroundColor(isLocked ? .white.opacity(0.45) : .white)
                 Text(isLocked ? "Premium" : sound.subtitle)
-                    .font(.system(size: 12, weight: .light))
+                    .font(.system(size: 12, weight: .regular))
                     .foregroundColor(isLocked ? .calmAccent.opacity(0.70) : .white.opacity(0.92))
             }
 
@@ -402,11 +403,12 @@ struct SoundCard: View {
                 } label: {
                     ZStack {
                         Circle()
-                            .fill(isPlaying ? sound.color : Color.white.opacity(0.10))
+                            .fill(Color.white)
                             .frame(width: 42, height: 42)
+                            .shadow(color: Color.black.opacity(0.10), radius: 4)
                         Image(systemName: isPlaying ? "stop.fill" : "play.fill")
                             .font(.system(size: 14))
-                            .foregroundColor(isPlaying ? .white : .white.opacity(0.55))
+                            .foregroundColor(.calmAccent)
                     }
                     .animation(.easeInOut(duration: 0.3), value: isPlaying)
                 }

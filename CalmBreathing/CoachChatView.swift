@@ -63,7 +63,7 @@ If there is any immediate danger, please contact your local emergency services.
 
 // MARK: - Monthly Message Limit
 
-private let monthlyMessageLimit = 3
+private let monthlyMessageLimit = 30
 
 private func currentMonthKey() -> String {
     let f = DateFormatter()
@@ -99,9 +99,15 @@ struct CoachChatView: View {
         CoachChatMessage(role: "assistant",
                          content: "Hi! I'm Serene, your wellness coach. How are you doing today?")
     ]
-    @State private var inputText    = ""
-    @State private var isResponding = false
+    @State private var inputText      = ""
+    @State private var isResponding   = false
     @State private var showDisclaimer = false
+    @State private var showBreathing          = false
+    @State private var showMorningMeditation  = false
+    @State private var showSleepMeditation    = false
+    @State private var showBodyScan           = false
+    @State private var showQuickRelief        = false
+    @State private var showDailyPractice      = false
     @FocusState private var inputFocused: Bool
 
     var body: some View {
@@ -151,8 +157,10 @@ struct CoachChatView: View {
                     ScrollView(showsIndicators: false) {
                         LazyVStack(spacing: 14) {
                             ForEach(messages) { msg in
-                                ChatBubble(message: msg)
-                                    .id(msg.id)
+                                ChatBubble(message: msg, onFeatureTap: { feature in
+                                    handleFeatureTap(feature)
+                                })
+                                .id(msg.id)
                             }
                             if isResponding && (messages.last?.content.isEmpty ?? false) == false {
                                 TypingIndicatorView()
@@ -225,10 +233,29 @@ struct CoachChatView: View {
                 showDisclaimer = false
             }
         }
+        .fullScreenCover(isPresented: $showBreathing)         { BreathingView() }
+        .fullScreenCover(isPresented: $showMorningMeditation) { MorningMeditationView().environmentObject(journal) }
+        .fullScreenCover(isPresented: $showSleepMeditation)   { SleepMeditationView().environmentObject(journal) }
+        .fullScreenCover(isPresented: $showBodyScan)          { BodyScanView().environmentObject(journal) }
+        .fullScreenCover(isPresented: $showQuickRelief)       { QuickReliefHubView() }
+        .fullScreenCover(isPresented: $showDailyPractice)     { DailyPracticeView() }
     }
 
     private var canSend: Bool {
         !inputText.trimmingCharacters(in: .whitespaces).isEmpty && !isResponding
+    }
+
+    // MARK: - Feature Navigation
+
+    private func handleFeatureTap(_ feature: SuggestedFeature) {
+        switch feature {
+        case .boxBreathing, .breathing478: showBreathing = true
+        case .morningMeditation:           showMorningMeditation = true
+        case .sleepMeditation:             showSleepMeditation = true
+        case .bodyScan:                    showBodyScan = true
+        case .quickRelief:                 showQuickRelief = true
+        case .dailyPractice:               showDailyPractice = true
+        }
     }
 
     // MARK: - Send
@@ -243,7 +270,7 @@ struct CoachChatView: View {
 
         // Monthly message limit check
         if monthlyMessageCount() >= monthlyMessageLimit {
-            messages.append(CoachChatMessage(role: "assistant", content: "You've used your 3 free chat messages for this month. Upgrade to Premium for unlimited conversations with Serene. Your breathing and meditation sessions are always available."))
+            messages.append(CoachChatMessage(role: "assistant", content: "You've used your 30 free chat messages for this month. Upgrade to Premium for unlimited conversations with Serene. Your breathing and meditation sessions are always available."))
             return
         }
         incrementMessageCount()
@@ -287,6 +314,7 @@ struct CoachChatView: View {
             await MainActor.run {
                 if let idx = messages.firstIndex(where: { $0.id == targetID }) {
                     messages[idx].isStreaming = false
+                    messages[idx].detectFeatures()
                 }
                 isResponding = false
             }
@@ -298,37 +326,65 @@ struct CoachChatView: View {
 
 private struct ChatBubble: View {
     let message: CoachChatMessage
+    let onFeatureTap: (SuggestedFeature) -> Void
     private var isUser: Bool { message.role == "user" }
 
     var body: some View {
-        HStack(alignment: .bottom, spacing: 8) {
-            if isUser { Spacer(minLength: 56) }
+        VStack(alignment: .leading, spacing: 8) {
+            HStack(alignment: .bottom, spacing: 8) {
+                if isUser { Spacer(minLength: 56) }
 
-            if !isUser {
-                LotusOrbView(isAnimating: false)
-                    .frame(width: 30, height: 30)
+                if !isUser {
+                    ZStack {
+                        Circle().fill(Color(red: 0.541, green: 0.357, blue: 0.804).opacity(0.20))
+                            .frame(width: 30, height: 30)
+                        Image(systemName: "sparkles")
+                            .font(.system(size: 13, weight: .semibold))
+                            .foregroundColor(Color(red: 0.541, green: 0.357, blue: 0.804))
+                    }
+                }
+
+                Group {
+                    if message.content.isEmpty && message.isStreaming {
+                        TypingDotsView()
+                            .padding(.horizontal, 14)
+                            .padding(.vertical, 12)
+                    } else {
+                        Text(message.content)
+                            .font(.system(size: 15, weight: .regular))
+                            .foregroundColor(isUser ? Color(red: 0.04, green: 0.14, blue: 0.36) : .calmDeep)
+                            .padding(.horizontal, 14)
+                            .padding(.vertical, 10)
+                            .fixedSize(horizontal: false, vertical: true)
+                    }
+                }
+                .background(
+                    RoundedRectangle(cornerRadius: 18)
+                        .fill(isUser ? Color.white : Color(red: 0.80, green: 0.78, blue: 0.92))
+                )
+
+                if !isUser { Spacer(minLength: 56) }
             }
 
-            Group {
-                if message.content.isEmpty && message.isStreaming {
-                    TypingDotsView()
-                        .padding(.horizontal, 14)
-                        .padding(.vertical, 12)
-                } else {
-                    Text(message.content)
-                        .font(.system(size: 15, weight: .regular))
-                        .foregroundColor(isUser ? Color(red: 0.04, green: 0.14, blue: 0.36) : .calmDeep)
-                        .padding(.horizontal, 14)
-                        .padding(.vertical, 10)
-                        .fixedSize(horizontal: false, vertical: true)
+            // Feature suggestion buttons
+            if !isUser && !message.isStreaming && !message.suggestedFeatures.isEmpty {
+                ScrollView(.horizontal, showsIndicators: false) {
+                    HStack(spacing: 8) {
+                        ForEach(message.suggestedFeatures, id: \.rawValue) { feature in
+                            Button { onFeatureTap(feature) } label: {
+                                Label(feature.rawValue, systemImage: feature.icon)
+                                    .font(.system(size: 12, weight: .semibold, design: .rounded))
+                                    .foregroundColor(.white)
+                                    .padding(.horizontal, 12)
+                                    .padding(.vertical, 7)
+                                    .background(Capsule().fill(Color(red: 0.541, green: 0.357, blue: 0.804).opacity(0.85)))
+                            }
+                            .buttonStyle(.plain)
+                        }
+                    }
+                    .padding(.leading, 38)
                 }
             }
-            .background(
-                RoundedRectangle(cornerRadius: 18)
-                    .fill(isUser ? Color.white : Color(red: 0.80, green: 0.78, blue: 0.92))
-            )
-
-            if !isUser { Spacer(minLength: 56) }
         }
     }
 }

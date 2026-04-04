@@ -41,58 +41,56 @@ struct SoundsHubView: View {
                 }
                 .padding(.horizontal, 16)
                 .padding(.top, 16)
-                .padding(.bottom, 8)
+                .padding(.bottom, 10)
 
-                // Top picker: Library | Music
-                Picker("", selection: $topTab) {
-                    Text("Sounds Library").tag(0)
-                    Text("Ambient Music").tag(1)
-                }
-                .pickerStyle(.segmented)
-                .padding(.horizontal, 20)
-                .padding(.bottom, 8)
+                // Single row: top tabs + sub-category chips
+                ScrollView(.horizontal, showsIndicators: false) {
+                    HStack(spacing: 8) {
+                        // Library / Music toggle chips
+                        chipButton("Sounds", selected: topTab == 0) { topTab = 0 }
+                        chipButton("Ambient", selected: topTab == 1) { topTab = 1 }
 
-                if topTab == 0 {
-                    // ── Sounds Library ──
-                    Picker("", selection: $soundCategory) {
-                        ForEach(SoundLibraryCategory.allCases, id: \.self) { cat in
-                            Text(cat.rawValue).tag(cat)
+                        Rectangle()
+                            .fill(Color.white.opacity(0.25))
+                            .frame(width: 1, height: 20)
+                            .padding(.horizontal, 2)
+
+                        // Sub-category chips
+                        if topTab == 0 {
+                            ForEach(SoundLibraryCategory.allCases, id: \.self) { cat in
+                                chipButton(cat.rawValue, selected: soundCategory == cat) { soundCategory = cat }
+                            }
+                        } else {
+                            ForEach(AmbientCategory.allCases, id: \.self) { cat in
+                                chipButton(cat.rawValue, selected: ambientCategory == cat) { ambientCategory = cat }
+                            }
                         }
                     }
-                    .pickerStyle(.segmented)
                     .padding(.horizontal, 20)
-                    .padding(.bottom, 8)
+                    .padding(.bottom, 10)
+                }
 
+                if topTab == 0 {
                     ScrollView(showsIndicators: false) {
-                        LazyVStack(spacing: 10) {
+                        LazyVStack(spacing: 8) {
                             ForEach(libraryTracks) { sound in
                                 SoundLibraryRow(sound: sound)
                             }
                         }
                         .padding(.horizontal, 20)
-                        .padding(.top, 4)
+                        .padding(.top, 2)
                         DisclaimerFooter()
                             .padding(.bottom, soundPlayer.playing != nil ? 100 : 32)
                     }
                 } else {
-                    // ── Ambient Music ──
-                    Picker("", selection: $ambientCategory) {
-                        ForEach(AmbientCategory.allCases, id: \.self) { cat in
-                            Text(cat.rawValue).tag(cat)
-                        }
-                    }
-                    .pickerStyle(.segmented)
-                    .padding(.horizontal, 20)
-                    .padding(.bottom, 8)
-
                     ScrollView(showsIndicators: false) {
-                        LazyVStack(spacing: 10) {
+                        LazyVStack(spacing: 8) {
                             ForEach(ambientTracks) { track in
                                 TrackRow(track: track, engine: ambientEngine)
                             }
                         }
                         .padding(.horizontal, 20)
-                        .padding(.top, 4)
+                        .padding(.top, 2)
                         DisclaimerFooter()
                             .padding(.bottom, ambientEngine.currentTrack != nil ? 100 : 32)
                     }
@@ -117,6 +115,19 @@ struct SoundsHubView: View {
         .fullScreenCover(isPresented: $showPaywall) {
             PaywallView(isPresented: $showPaywall).environmentObject(premium)
         }
+    }
+
+    // MARK: - Chip Button
+    private func chipButton(_ label: String, selected: Bool, action: @escaping () -> Void) -> some View {
+        Button(action: action) {
+            Text(label)
+                .font(.system(size: 13, weight: selected ? .semibold : .regular, design: .rounded))
+                .foregroundColor(selected ? .calmDeep : .white.opacity(0.80))
+                .padding(.horizontal, 14)
+                .padding(.vertical, 7)
+                .background(Capsule().fill(selected ? Color.white : Color.white.opacity(0.15)))
+        }
+        .buttonStyle(.plain)
     }
 }
 
@@ -144,7 +155,7 @@ private struct AmbientMiniPlayer: View {
                         .font(.system(size: 14, weight: .semibold, design: .rounded))
                         .foregroundColor(.calmDeep)
                     Text(engine.currentTrack?.subtitle ?? "")
-                        .font(.system(size: 11, weight: .light))
+                        .font(.system(size: 11, weight: .regular))
                         .foregroundColor(.calmMid)
                 }
                 Spacer()

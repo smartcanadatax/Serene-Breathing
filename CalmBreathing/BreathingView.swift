@@ -161,7 +161,7 @@ struct BreathingView: View {
                         .font(.system(size: 24, weight: .bold, design: .rounded))
                         .foregroundColor(.white)
                     Text("Breathe through it")
-                        .font(.system(size: 13, weight: .regular, design: .rounded))
+                        .font(.system(size: 13, weight: .medium, design: .rounded))
                         .foregroundColor(.white.opacity(0.65))
 
                     // Pattern picker pills
@@ -174,26 +174,21 @@ struct BreathingView: View {
                                     else { selectedPattern = p }
                                 }
                             } label: {
-                                VStack(spacing: 2) {
-                                    HStack(spacing: 4) {
-                                        Text(p.rawValue)
-                                            .font(.system(size: 13, weight: selectedPattern == p ? .semibold : .regular))
-                                            .foregroundColor(selectedPattern == p ? .calmDeep : (isLocked ? .white.opacity(0.45) : .white))
-                                        if isLocked {
-                                            Image(systemName: "lock.fill")
-                                                .font(.system(size: 9))
-                                                .foregroundColor(.white.opacity(0.45))
-                                        }
+                                HStack(spacing: 4) {
+                                    Text(p.rawValue)
+                                        .font(.system(size: 13, weight: selectedPattern == p ? .semibold : .medium))
+                                        .foregroundColor(selectedPattern == p ? .calmDeep : (isLocked ? .white.opacity(0.45) : .white))
+                                    if isLocked {
+                                        Image(systemName: "lock.fill")
+                                            .font(.system(size: 9))
+                                            .foregroundColor(.white.opacity(0.45))
                                     }
-                                    Text(p.description)
-                                        .font(.system(size: 10, weight: .light))
-                                        .foregroundColor(selectedPattern == p ? .calmDeep.opacity(0.75) : .white.opacity(0.60))
                                 }
                                 .padding(.horizontal, 18)
-                                .padding(.vertical, 8)
-                                .frame(minHeight: 44)
+                                .padding(.vertical, 10)
+                                .frame(minHeight: 40)
                                 .contentShape(Rectangle())
-                                .background(Capsule().fill(selectedPattern == p ? Color.calmAccent : Color.white.opacity(isLocked ? 0.06 : 0.12)))
+                                .background(Capsule().fill(selectedPattern == p ? Color.white : Color.white.opacity(isLocked ? 0.06 : 0.12)))
                             }
                         }
                     }
@@ -234,15 +229,15 @@ struct BreathingView: View {
                     VStack(spacing: 6) {
                         if phase == .ready {
                             Image(systemName: "hand.tap.fill")
-                                .font(.system(size: 16, weight: .light))
+                                .font(.system(size: 16, weight: .regular))
                                 .foregroundColor(.white.opacity(0.60))
                         }
                         Text(phase.label)
-                            .font(.system(size: 18, weight: .thin, design: .rounded))
+                            .font(.system(size: 18, weight: .light, design: .rounded))
                             .foregroundColor(.white)
                         if isRunning {
                             Text("\(countdown)")
-                                .font(.system(size: 42, weight: .ultraLight, design: .rounded))
+                                .font(.system(size: 42, weight: .light, design: .rounded))
                                 .foregroundColor(.white.opacity(0.85))
                                 .monospacedDigit()
                             Text("Cycle \(cycleCount + 1)")
@@ -618,7 +613,7 @@ private struct HubRow: View {
                     }
                 }
                 Text(subtitle)
-                    .font(.system(size: 12, weight: .regular))
+                    .font(.system(size: 12, weight: .medium))
                     .foregroundColor(.calmMid.opacity(0.75))
             }
             Spacer()

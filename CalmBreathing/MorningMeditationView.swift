@@ -48,20 +48,15 @@ struct MorningMeditationView: View {
     private var totalDuration: Double { prompts.map(\.duration).reduce(0, +) }
     private var currentPrompt: String { prompts[min(currentIndex, prompts.count - 1)].text }
 
-    private var promptTimestamps: [Double] {
-        guard let dur = audioPlayer?.duration, dur > 0 else { return [] }
-        // Exact timestamps extracted from audio silence detection
-        let scale = dur / 175.104
-        let raw: [Double] = [
-              7.48,  15.78,  21.60,  28.07,  34.83,
-             42.92,  49.44,  55.90,  62.91,  68.29,
-             74.52,  82.74,  88.93,  96.15, 100.53,
-            107.57, 114.52, 122.55, 128.78, 137.44,
-            142.36, 149.46, 156.19, 162.47, 167.34,
-            172.50, 175.10
-        ]
-        return raw.map { $0 * scale }
-    }
+    // Exact timestamps (seconds) from audio — each value is when the NEXT prompt begins
+    private let promptTimestamps: [Double] = [
+          9.62,  20.88,  27.48,  35.10,  41.80,
+         50.44,  58.96,  65.88,  71.90,  79.48,
+         87.54,  96.74, 104.92, 111.76, 116.72,
+        125.26, 134.96, 142.04, 150.90, 162.34,
+        167.98, 176.04, 181.84, 187.72, 192.56,
+        198.68, 202.32,
+    ]
 
     var body: some View {
         ZStack {
@@ -139,9 +134,6 @@ struct MorningMeditationView: View {
 
     private var introView: some View {
         VStack(spacing: 28) {
-            LotusOrbView()
-                .frame(width: 120, height: 120)
-
             VStack(spacing: 12) {
                 Text("Morning Meditation")
                     .font(.system(size: 24, weight: .semibold, design: .rounded))
@@ -161,7 +153,7 @@ struct MorningMeditationView: View {
             .padding(.horizontal, 8)
 
             Text("For relaxation and wellness purposes only. Not a substitute for medical or mental health advice. If you have any health conditions, consult a doctor before use.")
-                .font(.system(size: 11, weight: .regular))
+                .font(.system(size: 11, weight: .medium))
                 .foregroundColor(.white.opacity(0.75))
                 .multilineTextAlignment(.center)
                 .padding(.horizontal, 8)
@@ -181,11 +173,8 @@ struct MorningMeditationView: View {
 
     private var activeView: some View {
         VStack(spacing: 32) {
-            LotusOrbView(isAnimating: isRunning)
-                .frame(width: 240, height: 240)
-
             Text("\(currentIndex + 1) of \(prompts.count)")
-                .font(.system(size: 13, weight: .regular))
+                .font(.system(size: 13, weight: .medium))
                 .foregroundColor(.white.opacity(0.55))
 
             Text(currentPrompt)
@@ -215,8 +204,9 @@ struct MorningMeditationView: View {
 
     private var doneView: some View {
         VStack(spacing: 24) {
-            LotusOrbView(isAnimating: false)
-                .frame(width: 100, height: 100)
+            Image(systemName: "sun.max.fill")
+                .font(.system(size: 54, weight: .regular))
+                .foregroundColor(.calmAccent)
             Text("Beautiful Morning")
                 .font(.system(size: 26, weight: .semibold, design: .rounded))
                 .foregroundColor(.white)
@@ -229,7 +219,7 @@ struct MorningMeditationView: View {
             VStack(spacing: 8) {
                 if !postMoodLogged {
                     Text("How do you feel now?")
-                        .font(.system(size: 13, weight: .light))
+                        .font(.system(size: 13, weight: .regular))
                         .foregroundColor(.white.opacity(0.65))
                     HStack(spacing: 4) {
                         ForEach([1,2,3,5,6], id: \.self) { level in
@@ -251,7 +241,7 @@ struct MorningMeditationView: View {
                             .font(.system(size: 14))
                             .foregroundColor(.calmAccent)
                         Text("Mood saved")
-                            .font(.system(size: 13, weight: .light))
+                            .font(.system(size: 13, weight: .regular))
                             .foregroundColor(.white.opacity(0.65))
                     }
                 }

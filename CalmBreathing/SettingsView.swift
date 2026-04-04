@@ -3,6 +3,9 @@ import UserNotifications
 
 // MARK: - Settings View
 struct SettingsView: View {
+    @AppStorage("meditationPalette") private var meditationPalette = "blue"
+    @AppStorage("meditationBgSound") private var meditationBgSound = "none"
+
     @AppStorage("dailyReminder")    private var dailyReminder    = false
     @AppStorage("darkMode")         private var darkMode         = false
     @AppStorage("reminderHour")     private var reminderHour     = 8
@@ -58,10 +61,10 @@ struct SettingsView: View {
                         // Toggle
                         settingsRow {
                             HStack {
-                                iconBadge("bell.fill", color: .calmAccent)
+                                iconBadge("bell.fill")
                                 Text("Remind me to meditate")
                                     .font(.system(size: 16, weight: .regular))
-                                    .foregroundColor(.white)
+                                    .foregroundColor(.calmDeep)
                                 Spacer()
                                 Toggle("", isOn: $dailyReminder)
                                     .tint(.calmAccent)
@@ -76,14 +79,13 @@ struct SettingsView: View {
                         if dailyReminder {
                             settingsRow {
                                 HStack {
-                                    iconBadge("clock.fill", color: .calmPurple)
+                                    iconBadge("clock.fill")
                                     Text("Reminder Time")
                                         .font(.system(size: 16, weight: .regular))
-                                        .foregroundColor(.white)
+                                        .foregroundColor(.calmDeep)
                                     Spacer()
                                     DatePicker("", selection: $reminderTime, displayedComponents: .hourAndMinute)
                                         .labelsHidden()
-                                        .colorScheme(.dark)
                                         .onChange(of: reminderTime) { _, t in
                                             scheduleReminder(at: t)
                                         }
@@ -96,14 +98,14 @@ struct SettingsView: View {
                     settingsSection(header: "Daily Check-In Reminder") {
                         settingsRow {
                             HStack {
-                                iconBadge("sun.and.horizon.fill", color: Color(red: 0.98, green: 0.75, blue: 0.30))
+                                iconBadge("sun.and.horizon.fill")
                                 VStack(alignment: .leading, spacing: 2) {
                                     Text("Remind me to check in")
                                         .font(.system(size: 16, weight: .regular))
-                                        .foregroundColor(.white)
+                                        .foregroundColor(.calmDeep)
                                     Text("Daily reminder to log your mood and sleep")
-                                        .font(.system(size: 11, weight: .regular))
-                                        .foregroundColor(.white.opacity(0.65))
+                                        .font(.system(size: 11, weight: .medium))
+                                        .foregroundColor(.calmMid)
                                 }
                                 Spacer()
                                 Toggle("", isOn: $checkInNotif)
@@ -118,14 +120,13 @@ struct SettingsView: View {
                         if checkInNotif {
                             settingsRow {
                                 HStack {
-                                    iconBadge("clock.fill", color: Color(red: 0.98, green: 0.88, blue: 0.40))
+                                    iconBadge("clock.fill")
                                     Text("Reminder Time")
                                         .font(.system(size: 16, weight: .regular))
-                                        .foregroundColor(.white)
+                                        .foregroundColor(.calmDeep)
                                     Spacer()
                                     DatePicker("", selection: $checkInTime, displayedComponents: .hourAndMinute)
                                         .labelsHidden()
-                                        .colorScheme(.dark)
                                         .onChange(of: checkInTime) { _, t in
                                             scheduleCheckInReminder(at: t)
                                         }
@@ -139,14 +140,14 @@ struct SettingsView: View {
                         settingsRow {
                             VStack(alignment: .leading, spacing: 6) {
                                 HStack {
-                                    iconBadge("flame.fill", color: Color(red: 1.0, green: 0.55, blue: 0.20))
+                                    iconBadge("flame.fill")
                                     VStack(alignment: .leading, spacing: 2) {
                                         Text("Evening streak nudge")
                                             .font(.system(size: 16, weight: .regular))
-                                            .foregroundColor(.white)
+                                            .foregroundColor(.calmDeep)
                                         Text("Daily evening reminder to maintain your streak")
-                                            .font(.system(size: 11, weight: .regular))
-                                            .foregroundColor(.white.opacity(0.65))
+                                            .font(.system(size: 11, weight: .medium))
+                                            .foregroundColor(.calmMid)
                                     }
                                     Spacer()
                                     Toggle("", isOn: $streakNotif)
@@ -162,14 +163,13 @@ struct SettingsView: View {
                         if streakNotif {
                             settingsRow {
                                 HStack {
-                                    iconBadge("clock.fill", color: Color(red: 1.0, green: 0.70, blue: 0.30))
+                                    iconBadge("clock.fill")
                                     Text("Reminder Time")
                                         .font(.system(size: 16, weight: .regular))
-                                        .foregroundColor(.white)
+                                        .foregroundColor(.calmDeep)
                                     Spacer()
                                     DatePicker("", selection: $streakTime, displayedComponents: .hourAndMinute)
                                         .labelsHidden()
-                                        .colorScheme(.dark)
                                         .onChange(of: streakTime) { _, t in
                                             scheduleStreakReminder(at: t)
                                         }
@@ -182,10 +182,10 @@ struct SettingsView: View {
                     settingsSection(header: "Appearance") {
                         settingsRow {
                             HStack {
-                                iconBadge("moon.fill", color: Color(red: 0.55, green: 0.50, blue: 0.90))
+                                iconBadge("moon.fill")
                                 Text("Dark Mode")
                                     .font(.system(size: 16, weight: .regular))
-                                    .foregroundColor(.white)
+                                    .foregroundColor(.calmDeep)
                                 Spacer()
                                 Toggle("", isOn: $darkMode)
                                     .tint(.calmAccent)
@@ -197,37 +197,37 @@ struct SettingsView: View {
                     settingsSection(header: "About") {
                         settingsRow {
                             HStack {
-                                iconBadge("info.circle.fill", color: .calmTeal)
+                                iconBadge("info.circle.fill")
                                 Text("Version")
                                     .font(.system(size: 16, weight: .regular))
-                                    .foregroundColor(.white)
+                                    .foregroundColor(.calmDeep)
                                 Spacer()
                                 Text("1.0.0")
                                     .font(.system(size: 14))
-                                    .foregroundColor(.white.opacity(0.90))
+                                    .foregroundColor(.calmMid)
                             }
                         }
                         NavigationLink(destination: LegalView()) {
                             settingsRow {
                                 HStack {
-                                    iconBadge("doc.text.fill", color: Color(red: 0.55, green: 0.80, blue: 0.65))
+                                    iconBadge("doc.text.fill")
                                     Text("Disclaimer, Privacy & Terms")
                                         .font(.system(size: 16, weight: .regular))
-                                        .foregroundColor(.white)
+                                        .foregroundColor(.calmDeep)
                                     Spacer()
                                     Image(systemName: "chevron.right")
                                         .font(.caption)
-                                        .foregroundColor(.white.opacity(0.88))
+                                        .foregroundColor(.calmMid.opacity(0.60))
                                 }
                             }
                         }
                         .buttonStyle(.plain)
                         settingsRow {
                             HStack {
-                                iconBadge("heart.fill", color: Color(red: 1.0, green: 0.40, blue: 0.50))
+                                iconBadge("heart.fill")
                                 Text("Made with care for your calm")
                                     .font(.system(size: 14, weight: .regular))
-                                    .foregroundColor(.white)
+                                    .foregroundColor(.calmDeep)
                                 Spacer()
                             }
                         }
@@ -244,11 +244,11 @@ struct SettingsView: View {
                                             .foregroundColor(.calmAccent)
                                         Text(credit.title)
                                             .font(.system(size: 14, weight: .regular))
-                                            .foregroundColor(.white)
+                                            .foregroundColor(.calmDeep)
                                     }
                                     Text(credit.attribution)
                                         .font(.system(size: 11))
-                                        .foregroundColor(.white.opacity(0.92))
+                                        .foregroundColor(.calmMid)
                                         .padding(.leading, 20)
                                 }
                             }
@@ -300,7 +300,7 @@ struct SettingsView: View {
             VStack(spacing: 1) { content() }
                 .background(
                     RoundedRectangle(cornerRadius: 16)
-                        .fill(Color.white.opacity(0.07))
+                        .fill(Color(red: 0.95, green: 0.95, blue: 0.98))
                 )
         }
     }
@@ -311,14 +311,15 @@ struct SettingsView: View {
             .padding(.vertical, 14)
     }
 
-    private func iconBadge(_ icon: String, color: Color) -> some View {
+    private func iconBadge(_ icon: String, color: Color = .calmAccent) -> some View {
         ZStack {
             RoundedRectangle(cornerRadius: 8)
-                .fill(color.opacity(0.18))
+                .fill(Color.white)
                 .frame(width: 34, height: 34)
+                .shadow(color: Color.black.opacity(0.06), radius: 3, x: 0, y: 1)
             Image(systemName: icon)
                 .font(.system(size: 15))
-                .foregroundColor(color)
+                .foregroundColor(.calmAccent)
         }
         .padding(.trailing, 6)
     }
@@ -432,5 +433,58 @@ struct SettingsView: View {
 
     private func cancelCheckInReminder() {
         UNUserNotificationCenter.current().removePendingNotificationRequests(withIdentifiers: ["checkInReminder"])
+    }
+}
+
+// MARK: - Palette Options
+enum MeditationPalette: String, CaseIterable {
+    case blue   = "blue"
+    case indigo = "indigo"
+    case teal   = "teal"
+    case sage   = "sage"
+    case slate  = "slate"
+
+    var gradient: LinearGradient {
+        switch self {
+        case .blue:
+            return LinearGradient(colors: [Color(red: 0.31, green: 0.44, blue: 0.77), Color(red: 0.28, green: 0.41, blue: 0.74)], startPoint: .top, endPoint: .bottom)
+        case .indigo:
+            return LinearGradient(colors: [Color(red: 0.22, green: 0.18, blue: 0.55), Color(red: 0.18, green: 0.14, blue: 0.48)], startPoint: .top, endPoint: .bottom)
+        case .teal:
+            return LinearGradient(colors: [Color(red: 0.15, green: 0.48, blue: 0.58), Color(red: 0.12, green: 0.42, blue: 0.52)], startPoint: .top, endPoint: .bottom)
+        case .sage:
+            return LinearGradient(colors: [Color(red: 0.22, green: 0.44, blue: 0.36), Color(red: 0.18, green: 0.38, blue: 0.30)], startPoint: .top, endPoint: .bottom)
+        case .slate:
+            return LinearGradient(colors: [Color(red: 0.24, green: 0.28, blue: 0.40), Color(red: 0.20, green: 0.24, blue: 0.36)], startPoint: .top, endPoint: .bottom)
+        }
+    }
+}
+
+// MARK: - Background Sound Options
+enum MeditationBgSound: String, CaseIterable {
+    case none   = "none"
+    case ocean  = "ocean"
+    case forest = "forest"
+    case rain   = "rain"
+    case zen    = "zen_water"
+
+    var label: String {
+        switch self {
+        case .none:   return "None"
+        case .ocean:  return "Ocean Waves"
+        case .forest: return "Forest"
+        case .rain:   return "Rain"
+        case .zen:    return "Zen Water"
+        }
+    }
+
+    var icon: String {
+        switch self {
+        case .none:   return "speaker.slash.fill"
+        case .ocean:  return "water.waves"
+        case .forest: return "leaf.fill"
+        case .rain:   return "cloud.rain.fill"
+        case .zen:    return "drop.fill"
+        }
     }
 }

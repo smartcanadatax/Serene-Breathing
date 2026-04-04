@@ -58,7 +58,7 @@ struct OnboardingView: View {
                                 .foregroundColor(.white)
                                 .multilineTextAlignment(.center)
                             Text(pages[page].body)
-                                .font(.system(size: 15, weight: .light, design: .rounded))
+                                .font(.system(size: 15, weight: .regular, design: .rounded))
                                 .foregroundColor(.white.opacity(0.85))
                                 .multilineTextAlignment(.center)
                                 .lineSpacing(4)
@@ -117,7 +117,7 @@ struct OnboardingView: View {
                                 .fill(Color.white.opacity(0.15))
                                 .frame(width: 200, height: 200)
                             Image(systemName: pages[page].icon)
-                                .font(.system(size: 90, weight: .ultraLight))
+                                .font(.system(size: 90, weight: .regular))
                                 .foregroundColor(pages[page].iconColor)
                         }
                     }
@@ -132,7 +132,7 @@ struct OnboardingView: View {
                             .animation(.easeInOut(duration: 0.3), value: page)
 
                         Text(pages[page].body)
-                            .font(.system(size: 16, weight: .light, design: .rounded))
+                            .font(.system(size: 16, weight: .regular, design: .rounded))
                             .foregroundColor(.white.opacity(0.90))
                             .multilineTextAlignment(.center)
                             .lineSpacing(4)
@@ -177,7 +177,7 @@ struct OnboardingView: View {
                 // Skip
                 if page < totalPages - 1 {
                     Button("Skip") { hasSeenOnboarding = true }
-                        .font(.system(size: 14, weight: .light))
+                        .font(.system(size: 14, weight: .regular))
                         .foregroundColor(.white.opacity(0.60))
                         .padding(.top, 16)
                 }

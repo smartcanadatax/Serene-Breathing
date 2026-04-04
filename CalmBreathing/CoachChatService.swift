@@ -2,16 +2,58 @@ import Foundation
 
 // MARK: - Chat Message Model
 
+enum SuggestedFeature: String, CaseIterable {
+    case boxBreathing       = "Box Breathing"
+    case breathing478       = "4-7-8 Breathing"
+    case morningMeditation  = "Morning Meditation"
+    case sleepMeditation    = "Sleep Meditation"
+    case bodyScan           = "Body Scan"
+    case quickRelief        = "Quick Relief"
+    case dailyPractice      = "Daily Practice"
+
+    var icon: String {
+        switch self {
+        case .boxBreathing, .breathing478: return "lungs.fill"
+        case .morningMeditation:           return "sunrise.fill"
+        case .sleepMeditation:             return "moon.stars.fill"
+        case .bodyScan:                    return "figure.mind.and.body"
+        case .quickRelief:                 return "bolt.heart.fill"
+        case .dailyPractice:               return "calendar.badge.clock"
+        }
+    }
+
+    var keywords: [String] {
+        switch self {
+        case .boxBreathing:      return ["box breathing", "box breath"]
+        case .breathing478:      return ["4-7-8", "4–7–8", "478"]
+        case .morningMeditation: return ["morning meditation"]
+        case .sleepMeditation:   return ["sleep meditation"]
+        case .bodyScan:          return ["body scan"]
+        case .quickRelief:       return ["quick relief", "stress relief", "anxiety relief"]
+        case .dailyPractice:     return ["daily practice", "daily breathing"]
+        }
+    }
+}
+
 struct CoachChatMessage: Identifiable {
     let id = UUID()
     let role: String        // "user" or "assistant"
     var content: String
     var isStreaming: Bool = false
+    var suggestedFeatures: [SuggestedFeature] = []
 
     init(role: String, content: String, isStreaming: Bool = false) {
         self.role = role
         self.content = content
         self.isStreaming = isStreaming
+    }
+
+    mutating func detectFeatures() {
+        guard role == "assistant", !content.isEmpty else { return }
+        let lower = content.lowercased()
+        suggestedFeatures = SuggestedFeature.allCases.filter { feature in
+            feature.keywords.contains { lower.contains($0) }
+        }
     }
 }
 

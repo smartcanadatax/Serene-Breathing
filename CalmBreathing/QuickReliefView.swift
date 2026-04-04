@@ -232,16 +232,13 @@ struct QuickReliefView: View {
 
     private var introView: some View {
         VStack(spacing: 28) {
-            LotusOrbView(isAnimating: false)
-                .frame(width: 120, height: 120)
-
             VStack(spacing: 8) {
                 Text(exercise.subtitle)
                     .font(.system(size: 20, weight: .semibold, design: .rounded))
                     .foregroundColor(.white)
 
                 Text("\(exercise.totalSeconds >= 60 ? "\(exercise.totalSeconds / 60) minute" : "\(exercise.totalSeconds) seconds") · \(exercise.cycles) cycles")
-                    .font(.system(size: 13, weight: .regular))
+                    .font(.system(size: 13, weight: .medium))
                     .foregroundColor(.white.opacity(0.60))
             }
 
@@ -270,7 +267,7 @@ struct QuickReliefView: View {
                     .font(.system(size: 13))
                     .foregroundColor(purple.opacity(0.80))
                 Text(exercise.science)
-                    .font(.system(size: 12, weight: .regular))
+                    .font(.system(size: 12, weight: .medium))
                     .foregroundColor(.white.opacity(0.65))
                     .lineSpacing(3)
             }
@@ -311,10 +308,10 @@ struct QuickReliefView: View {
                     Text("Begin · \(exercise.totalSeconds >= 60 ? "\(exercise.totalSeconds / 60) min" : "\(exercise.totalSeconds) sec")")
                 }
                 .font(.system(size: 16, weight: .semibold, design: .rounded))
-                .foregroundColor(.white)
+                .foregroundColor(.calmDeep)
                 .frame(maxWidth: .infinity)
                 .padding(.vertical, 16)
-                .background(Capsule().fill(purple).shadow(color: purple.opacity(0.40), radius: 12))
+                .background(Capsule().fill(Color.calmAccent).shadow(color: Color.calmAccent.opacity(0.35), radius: 12))
             }
         }
     }
@@ -325,19 +322,20 @@ struct QuickReliefView: View {
         VStack(spacing: 32) {
             // Breathing logo
             VStack(spacing: 16) {
-                LotusOrbView(isAnimating: isRunning)
-                    .frame(width: 180, height: 180)
+                Circle()
+                    .fill(Color.calmAccent.opacity(0.18))
+                    .frame(width: 120, height: 120)
                     .scaleEffect(scale)
 
                 VStack(spacing: 6) {
                     Text(currentPhase.label)
-                        .font(.system(size: 22, weight: .light, design: .rounded))
+                        .font(.system(size: 22, weight: .regular, design: .rounded))
                         .foregroundColor(.white)
                         .id(phaseIndex)
                         .transition(.opacity)
 
                     Text("\(countdown)")
-                        .font(.system(size: 44, weight: .thin, design: .rounded))
+                        .font(.system(size: 44, weight: .regular, design: .rounded))
                         .foregroundColor(.white)
                         .contentTransition(.numericText(countsDown: true))
                 }
@@ -367,8 +365,9 @@ struct QuickReliefView: View {
 
     private var doneView: some View {
         VStack(spacing: 24) {
-            LotusOrbView(isAnimating: false)
-                .frame(width: 100, height: 100)
+            Image(systemName: "sparkles")
+                .font(.system(size: 54, weight: .regular))
+                .foregroundColor(.calmAccent)
 
             Text("Well Done")
                 .font(.system(size: 26, weight: .semibold, design: .rounded))
@@ -383,7 +382,7 @@ struct QuickReliefView: View {
             VStack(spacing: 8) {
                 if !postMoodLogged {
                     Text("How do you feel now?")
-                        .font(.system(size: 13, weight: .light))
+                        .font(.system(size: 13, weight: .regular))
                         .foregroundColor(.white.opacity(0.65))
                     HStack(spacing: 4) {
                         ForEach([1,2,3,5,6], id: \.self) { level in
@@ -404,7 +403,7 @@ struct QuickReliefView: View {
                         Image(systemName: "checkmark.circle.fill")
                             .foregroundColor(purple)
                         Text("Mood saved")
-                            .font(.system(size: 13, weight: .light))
+                            .font(.system(size: 13, weight: .regular))
                             .foregroundColor(.white.opacity(0.65))
                     }
                 }
@@ -657,7 +656,7 @@ struct QuickReliefHubView: View {
                                         .font(.system(size: 16, weight: .semibold, design: .rounded))
                                         .foregroundColor(.white)
                                     Text(exercise.subtitle)
-                                        .font(.system(size: 13, weight: .regular, design: .rounded))
+                                        .font(.system(size: 13, weight: .medium, design: .rounded))
                                         .foregroundColor(.white.opacity(0.65))
                                 }
                                 Spacer()

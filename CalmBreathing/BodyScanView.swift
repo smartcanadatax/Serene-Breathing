@@ -122,9 +122,6 @@ struct BodyScanView: View {
     // MARK: - Intro
     private var introView: some View {
         VStack(spacing: 28) {
-            LotusOrbView()
-                .frame(width: 120, height: 120)
-
             VStack(spacing: 12) {
                 Text("Body Scan Meditation")
                     .font(.system(size: 24, weight: .semibold, design: .rounded))
@@ -149,12 +146,12 @@ struct BodyScanView: View {
                 }
 
                 Text("A body scan is a mindfulness technique where you move your attention slowly through each part of your body — from head to toe. By noticing sensations without judgement, you release built-up tension, quiet a busy mind, and reconnect with the present moment.")
-                    .font(.system(size: 13, weight: .light))
+                    .font(.system(size: 13, weight: .regular))
                     .foregroundColor(.white.opacity(0.88))
                     .lineSpacing(4)
 
                 Text("Regular practice is linked to reduced stress, better sleep, and a greater sense of calm. It is one of the most widely studied mindfulness exercises in clinical research.")
-                    .font(.system(size: 13, weight: .light))
+                    .font(.system(size: 13, weight: .regular))
                     .foregroundColor(.white.opacity(0.88))
                     .lineSpacing(4)
             }
@@ -196,12 +193,8 @@ struct BodyScanView: View {
     // MARK: - Active
     private var activeView: some View {
         VStack(spacing: 32) {
-            // Overall progress ring
-            LotusOrbView(isAnimating: isRunning)
-                .frame(width: 240, height: 240)
-
             Text("\(currentIndex + 1) of \(prompts.count)")
-                .font(.system(size: 13, weight: .regular))
+                .font(.system(size: 13, weight: .medium))
                 .foregroundColor(.white.opacity(0.55))
 
             // Current prompt
@@ -235,7 +228,7 @@ struct BodyScanView: View {
 
             VStack(spacing: 24) {
                 Image(systemName: "sparkles")
-                    .font(.system(size: 48, weight: .ultraLight))
+                    .font(.system(size: 48, weight: .regular))
                     .foregroundColor(.calmAccent)
 
                 Text("Well Done")
@@ -243,7 +236,7 @@ struct BodyScanView: View {
                     .foregroundColor(.white)
 
                 Text("You completed your Body Scan Meditation. Take a moment to notice how relaxed your body feels.")
-                    .font(.system(size: 15, weight: .light))
+                    .font(.system(size: 15, weight: .regular))
                     .foregroundColor(.white.opacity(0.80))
                     .multilineTextAlignment(.center)
                     .lineSpacing(5)
@@ -252,7 +245,7 @@ struct BodyScanView: View {
                 VStack(spacing: 8) {
                     if !postMoodLogged {
                         Text("How do you feel now?")
-                            .font(.system(size: 13, weight: .light))
+                            .font(.system(size: 13, weight: .regular))
                             .foregroundColor(.white.opacity(0.65))
                         HStack(spacing: 4) {
                             ForEach([1,2,3,5,6], id: \.self) { level in
@@ -274,7 +267,7 @@ struct BodyScanView: View {
                                 .font(.system(size: 14))
                                 .foregroundColor(.calmAccent)
                             Text("Mood saved")
-                                .font(.system(size: 13, weight: .light))
+                                .font(.system(size: 13, weight: .regular))
                                 .foregroundColor(.white.opacity(0.65))
                         }
                     }

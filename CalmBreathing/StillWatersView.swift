@@ -219,7 +219,7 @@ struct StillWatersView: View {
             .padding(.horizontal, 8)
 
             Text("For relaxation and wellness purposes only. Not a substitute for medical or mental health advice.")
-                .font(.system(size: 11, weight: .regular))
+                .font(.system(size: 11, weight: .medium))
                 .foregroundColor(.white.opacity(0.75))
                 .multilineTextAlignment(.center)
                 .padding(.horizontal, 8)
@@ -240,11 +240,11 @@ struct StillWatersView: View {
     private var activeView: some View {
         VStack(spacing: 32) {
             Text("\(currentIndex + 1) of \(prompts.count)")
-                .font(.system(size: 13, weight: .regular))
+                .font(.system(size: 13, weight: .medium))
                 .foregroundColor(.white.opacity(0.55))
 
             Text(currentPrompt)
-                .font(.system(size: 22, weight: .light, design: .rounded))
+                .font(.system(size: 22, weight: .regular, design: .rounded))
                 .foregroundColor(.white)
                 .multilineTextAlignment(.center)
                 .lineSpacing(6)
@@ -282,7 +282,7 @@ struct StillWatersView: View {
             VStack(spacing: 8) {
                 if !postMoodLogged {
                     Text("How do you feel now?")
-                        .font(.system(size: 13, weight: .light))
+                        .font(.system(size: 13, weight: .regular))
                         .foregroundColor(.white.opacity(0.65))
                     HStack(spacing: 4) {
                         ForEach([1,2,3,5,6], id: \.self) { level in
@@ -304,7 +304,7 @@ struct StillWatersView: View {
                             .font(.system(size: 14))
                             .foregroundColor(Color(red: 0.541, green: 0.357, blue: 0.804))
                         Text("Mood saved")
-                            .font(.system(size: 13, weight: .light))
+                            .font(.system(size: 13, weight: .regular))
                             .foregroundColor(.white.opacity(0.65))
                     }
                 }

@@ -18,7 +18,7 @@ struct AICoachHubView: View {
                 HStack {
                     Color.clear.frame(width: 44, height: 44)
                     Spacer()
-                    Text("AI Coach")
+                    Text("Serene")
                         .font(.system(size: 17, weight: .semibold, design: .rounded))
                         .foregroundColor(.white)
                     Spacer()
@@ -45,7 +45,7 @@ struct AICoachHubView: View {
                                 .font(.system(size: 13, weight: .semibold, design: .rounded))
                                 .foregroundColor(.calmAccent)
                             Text("Use Daily Check-In for an instant AI insight every day. The more you log, the deeper Mood and Sleep Pattern Coaches can analyze your trends.")
-                                .font(.system(size: 13, weight: .regular))
+                                .font(.system(size: 13, weight: .medium))
                                 .foregroundColor(.calmMid)
                                 .lineSpacing(4)
                                 .fixedSize(horizontal: false, vertical: true)
@@ -56,39 +56,36 @@ struct AICoachHubView: View {
                         .padding(.horizontal, 24)
 
                     // Daily Check-In card
-                    Button { if premium.isPremium { showCheckIn = true } else { showPaywall = true } } label: {
+                    Button { showCheckIn = true } label: {
                         AICoachCard(
                             icon: "sun.and.horizon.fill",
                             title: "Daily Check-In",
                             subtitle: "Log your mood and sleep, then get a personalized AI insight and session recommendation for your day.",
-                            tag: "Mood · Sleep · Daily Insight",
-                            locked: !premium.isPremium
+                            tag: "Mood · Sleep · Daily Insight"
                         )
                     }
                     .buttonStyle(.plain)
                     .padding(.horizontal, 24)
 
                     // Mood Pattern Coach card
-                    Button { if premium.isPremium { showMood = true } else { showPaywall = true } } label: {
+                    Button { showMood = true } label: {
                         AICoachCard(
                             icon: "chart.line.uptrend.xyaxis",
                             title: "Mood Pattern Coach",
                             subtitle: "Analyzes your last 7 days of mood data and creates a personalized breathing session for your patterns.",
-                            tag: "Mood · Stress · Anxiety",
-                            locked: !premium.isPremium
+                            tag: "Mood · Stress · Anxiety"
                         )
                     }
                     .buttonStyle(.plain)
                     .padding(.horizontal, 24)
 
                     // Sleep Pattern Coach card
-                    Button { if premium.isPremium { showSleep = true } else { showPaywall = true } } label: {
+                    Button { showSleep = true } label: {
                         AICoachCard(
                             icon: "moon.zzz.fill",
                             title: "Sleep Pattern Coach",
                             subtitle: "Analyzes your last 7 nights of sleep data and generates a tailored wind-down session.",
-                            tag: "Sleep · Rest · Recovery",
-                            locked: !premium.isPremium
+                            tag: "Sleep · Rest · Recovery"
                         )
                     }
                     .buttonStyle(.plain)
@@ -151,8 +148,12 @@ private struct FeaturedChatCard: View {
                                 .easeOut(duration: 2.2).repeatForever(autoreverses: false),
                                 value: isPulsing
                             )
-                        LotusOrbView(isAnimating: true)
-                            .frame(width: 50, height: 50)
+                        ZStack {
+                            Circle().fill(Color.white.opacity(0.20)).frame(width: 50, height: 50)
+                            Image(systemName: "sparkles")
+                                .font(.system(size: 22, weight: .semibold))
+                                .foregroundColor(.white)
+                        }
                     }
                     .onAppear { isPulsing = true }
                     VStack(alignment: .leading, spacing: 4) {
@@ -167,7 +168,7 @@ private struct FeaturedChatCard: View {
                 }
 
                 Text("Talk to your personal AI wellness coach anytime. Get breathing recommendations, mood support, and mindfulness guidance in real time.")
-                    .font(.system(size: 13, weight: .regular))
+                    .font(.system(size: 13, weight: .medium))
                     .foregroundColor(.white.opacity(0.88))
                     .lineSpacing(4)
                     .fixedSize(horizontal: false, vertical: true)
@@ -223,7 +224,7 @@ private struct AICoachCard: View {
             }
 
             Text(subtitle)
-                .font(.system(size: 13, weight: .regular))
+                .font(.system(size: 13, weight: .medium))
                 .foregroundColor(.calmMid)
                 .lineSpacing(4)
                 .fixedSize(horizontal: false, vertical: true)

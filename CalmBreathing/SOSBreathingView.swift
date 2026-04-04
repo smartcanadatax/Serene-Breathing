@@ -19,8 +19,9 @@ struct SOSBreathingView: View {
     @State private var audioPlayer: AVAudioPlayer?
     @State private var audioSyncTimer: Timer?
     @State private var visualCountdownTimer: Timer?
-    @State private var lastPhaseIdx   = -1
-    @State private var showCompletion = false
+    @State private var lastPhaseIdx      = -1
+    @State private var showCompletion    = false
+    @State private var completionPlayer: AVAudioPlayer?
 
     private let totalCycles = 6
 
@@ -87,7 +88,7 @@ struct SOSBreathingView: View {
                         .tracking(1.2)
                 }
                 Text("This exercise is for relaxation and stress relief only. It is not a medical treatment and is not intended for emergencies.\n\nRespiratory, cardiac, or any other health condition patients should consult a doctor before practising breathing exercises.\n\nIf you are experiencing a medical emergency, severe chest pain, difficulty breathing, or thoughts of self-harm, please call emergency services (911) immediately.\n\nNot a substitute for professional medical or mental health care.")
-                    .font(.system(size: 12, weight: .light))
+                    .font(.system(size: 12, weight: .regular))
                     .foregroundColor(.white.opacity(0.75))
                     .multilineTextAlignment(.center)
                     .lineSpacing(5)
@@ -147,10 +148,10 @@ struct SOSBreathingView: View {
 
                 VStack(spacing: 4) {
                     Text(phase.label)
-                        .font(.system(size: 16, weight: .light, design: .rounded))
+                        .font(.system(size: 16, weight: .regular, design: .rounded))
                         .foregroundColor(.white)
                     Text("\(countdown)")
-                        .font(.system(size: 38, weight: .ultraLight, design: .rounded))
+                        .font(.system(size: 38, weight: .regular, design: .rounded))
                         .foregroundColor(.white.opacity(0.90))
                         .monospacedDigit()
                 }
@@ -158,12 +159,12 @@ struct SOSBreathingView: View {
             .padding(.bottom, 40)
 
             Text("Cycle \(cycleCount + 1) of \(totalCycles)")
-                .font(.system(size: 13, weight: .light))
+                .font(.system(size: 13, weight: .regular))
                 .foregroundColor(.white.opacity(0.45))
                 .padding(.bottom, 8)
 
             Text("Breathe with the circle")
-                .font(.system(size: 14, weight: .light, design: .rounded))
+                .font(.system(size: 14, weight: .regular, design: .rounded))
                 .foregroundColor(.white.opacity(0.55))
 
             Spacer()
@@ -215,6 +216,7 @@ struct SOSBreathingView: View {
                         if cycleCount >= totalCycles {
                             stopAll()
                             HapticManager.complete()
+                            playCompletionAudio()
                             withAnimation(.easeIn(duration: 0.5)) { showCompletion = true }
                             return
                         }
@@ -278,7 +280,7 @@ struct SOSBreathingView: View {
 
             VStack(spacing: 22) {
                 Image(systemName: "heart.fill")
-                    .font(.system(size: 48, weight: .ultraLight))
+                    .font(.system(size: 48, weight: .regular))
                     .foregroundColor(Color(red: 0.75, green: 0.92, blue: 1.00))
 
                 Text("Well Done")
@@ -286,7 +288,7 @@ struct SOSBreathingView: View {
                     .foregroundColor(.white)
 
                 Text("You completed 6 calming breaths.\nYour nervous system has begun to settle.\nCarry this calm with you.")
-                    .font(.system(size: 15, weight: .light))
+                    .font(.system(size: 15, weight: .regular))
                     .foregroundColor(.white.opacity(0.85))
                     .multilineTextAlignment(.center)
                     .lineSpacing(5)
@@ -306,6 +308,16 @@ struct SOSBreathingView: View {
                 .padding(.top, 4)
             }
         }
+    }
+
+    private func playCompletionAudio() {
+        guard let url = Bundle.main.url(forResource: "breathing_complete", withExtension: "mp3", subdirectory: "Audio"),
+              let player = try? AVAudioPlayer(contentsOf: url) else { return }
+        player.numberOfLoops = 0
+        player.volume = 0.85
+        player.prepareToPlay()
+        player.play()
+        completionPlayer = player
     }
 
     private func stopAll() {

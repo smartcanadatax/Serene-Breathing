@@ -33,6 +33,13 @@ let allAmbientTracks: [AmbientTrack] = [
     AmbientTrack(title: "Deep Space",        subtitle: "Limitless focus",       filename: "monume-space-ambient-498030",                                          category: .focus),
     AmbientTrack(title: "Ambient Flow",      subtitle: "Steady concentration",  filename: "paulyudin-ambient-ambient-music-482398",                               category: .focus),
     AmbientTrack(title: "Cinematic Depth",   subtitle: "Emotional clarity",     filename: "desifreemusic-emotional-ambient-piece-with-slow-cinematic-textures-370144", category: .focus),
+    AmbientTrack(title: "Focus Pulse",       subtitle: "Sharp & energised",     filename: "focus_pulse",                                                          category: .focus),
+    AmbientTrack(title: "Focus Drift",       subtitle: "Effortless attention",  filename: "focus_drift",                                                          category: .focus),
+    AmbientTrack(title: "Focus Clarity",     subtitle: "Clear mind, open flow", filename: "focus_clarity",                                                        category: .focus),
+    AmbientTrack(title: "Focus Flow",        subtitle: "Enter the zone",        filename: "focus_flow",                                                           category: .focus),
+    AmbientTrack(title: "Focus Immersion",   subtitle: "Deep work state",       filename: "focus_immersion",                                                      category: .focus),
+    AmbientTrack(title: "Focus Journey",     subtitle: "Extended concentration",filename: "focus_journey",                                                        category: .focus),
+    AmbientTrack(title: "Deep Work",         subtitle: "Long session focus",    filename: "focus_deep_work",                                                      category: .focus),
 
     // Sleep
     AmbientTrack(title: "Dreamscape",        subtitle: "Drift into deep sleep", filename: "mondamusic-dark-ambient-soundscape-dreamscape-2-487315",               category: .sleep),
@@ -43,6 +50,10 @@ let allAmbientTracks: [AmbientTrack] = [
     AmbientTrack(title: "Very Deep Sleep",   subtitle: "Profound rest",         filename: "very_deep_sleep",                                                      category: .sleep),
     AmbientTrack(title: "C Major Dreams",    subtitle: "Meditation sleep music",filename: "sleep_c_major",                                                        category: .sleep),
     AmbientTrack(title: "Deep Sleep",        subtitle: "Background sleep waves",filename: "deep_sleep_bg",                                                        category: .sleep),
+    AmbientTrack(title: "Sleep Drift",       subtitle: "Floating into rest",    filename: "sleep_deep_drift",                                                     category: .sleep),
+    AmbientTrack(title: "Sleep Meditation",  subtitle: "Guided sleep tones",    filename: "sleep_meditation_bg",                                                  category: .sleep),
+    AmbientTrack(title: "Blue Hour",         subtitle: "Rainy night calm",      filename: "sleep_blue_hour",                                                      category: .sleep),
+    AmbientTrack(title: "Evening Relax",     subtitle: "Melt into sleep",       filename: "sleep_evening_relax",                                                  category: .sleep),
 
     // Creativity
     AmbientTrack(title: "Zen Garden",        subtitle: "Open your mind",        filename: "quietphase-ambient-zen-489706",                                        category: .creativity),
@@ -53,6 +64,10 @@ let allAmbientTracks: [AmbientTrack] = [
     AmbientTrack(title: "Morning Yoga",      subtitle: "Energised & open",      filename: "the_mountain-yoga-meditation-165602",                                  category: .creativity),
     AmbientTrack(title: "Nature Soundscape", subtitle: "Immersive outdoors",    filename: "immersive_nature",                                                     category: .creativity),
     AmbientTrack(title: "Nature & Music",    subtitle: "Relax with nature",     filename: "relaxing_nature",                                                      category: .creativity),
+    AmbientTrack(title: "Spiritual Music",   subtitle: "Sacred creative space", filename: "creativity_spiritual",                                                 category: .creativity),
+    AmbientTrack(title: "Navajo Night",      subtitle: "Ancient & free",        filename: "creativity_navajo",                                                    category: .creativity),
+    AmbientTrack(title: "Healing Sphere",    subtitle: "Open & expansive",      filename: "creativity_healing",                                                   category: .creativity),
+    AmbientTrack(title: "River Zen",         subtitle: "Flowing inspiration",   filename: "creativity_river_zen",                                                 category: .creativity),
 ]
 
 // MARK: - Player Engine
@@ -194,11 +209,12 @@ struct TrackRow: View {
             HStack(spacing: 14) {
                 ZStack {
                     Circle()
-                        .fill(isActive ? Color.calmAccent.opacity(0.18) : Color(red: 0.87, green: 0.89, blue: 0.96))
+                        .fill(Color.white)
                         .frame(width: 46, height: 46)
+                        .shadow(color: Color.black.opacity(0.08), radius: 4)
                     Image(systemName: isPlaying ? "pause.fill" : "play.fill")
                         .font(.system(size: 16, weight: .semibold))
-                        .foregroundColor(isActive ? .calmAccent : Color(red: 0.541, green: 0.357, blue: 0.804).opacity(0.70))
+                        .foregroundColor(.calmAccent)
                 }
 
                 VStack(alignment: .leading, spacing: 3) {
@@ -206,7 +222,7 @@ struct TrackRow: View {
                         .font(.system(size: 15, weight: .semibold, design: .rounded))
                         .foregroundColor(isActive ? .calmAccent : .calmDeep)
                     Text(track.subtitle)
-                        .font(.system(size: 12, weight: .light))
+                        .font(.system(size: 12, weight: .regular))
                         .foregroundColor(.calmMid)
                 }
 
@@ -254,7 +270,7 @@ private struct MiniPlayer: View {
                         .font(.system(size: 14, weight: .semibold, design: .rounded))
                         .foregroundColor(.calmDeep)
                     Text(engine.currentTrack?.subtitle ?? "")
-                        .font(.system(size: 11, weight: .light))
+                        .font(.system(size: 11, weight: .regular))
                         .foregroundColor(.calmMid)
                 }
 

@@ -13,9 +13,9 @@ struct HomeView: View {
     @State private var gratitudeText        = ""
     @State private var gratitudeSaved       = false
     @State private var selectedMood: Int?   = nil
-    @State private var expandMeditation     = false
-    @State private var expandBreathing      = false
-    @State private var expandSounds         = false
+    @State private var showMeditationSheet  = false
+    @State private var showBreathingSheet   = false
+    @State private var showSoundsSheet      = false
 
     var body: some View {
         ZStack {
@@ -38,7 +38,7 @@ struct HomeView: View {
                         .kerning(6)
                         .foregroundColor(Color(red: 0.541, green: 0.357, blue: 0.804).opacity(0.80))
                     Text("Meditation · Breathing · Stress Relief")
-                        .font(.system(size: 12, weight: .regular, design: .rounded))
+                        .font(.system(size: 12, weight: .medium, design: .rounded))
                         .foregroundColor(.white.opacity(0.75))
                         .padding(.top, 4)
                 }
@@ -55,7 +55,7 @@ struct HomeView: View {
                                 .font(.system(size: 13, weight: .semibold))
                                 .foregroundColor(.white)
                             Text("Meditate every day to build a lasting habit")
-                                .font(.system(size: 11, weight: .regular))
+                                .font(.system(size: 11, weight: .medium))
                                 .foregroundColor(.white.opacity(0.80))
                         }
 
@@ -113,7 +113,7 @@ struct HomeView: View {
                                 .font(.system(size: 16, weight: .semibold, design: .rounded))
                                 .foregroundColor(.calmDeep)
                             Text("2-min breathing to ease anxiety instantly")
-                                .font(.system(size: 12, weight: .regular))
+                                .font(.system(size: 12, weight: .medium))
                                 .foregroundColor(.calmMid.opacity(0.75))
                         }
                         Spacer()
@@ -137,115 +137,18 @@ struct HomeView: View {
                 VStack(spacing: 10) {
 
                     // Meditation group
-                    FeatureGroup(title: "Meditation", subtitle: "Guided & timed sessions", icon: "brain.head.profile", bgColor: Color.white.opacity(0.85), isExpanded: $expandMeditation) {
-                        VStack(spacing: 10) {
-                            NavigationLink(destination: MorningMeditationView()) {
-                                HomeButton(icon: "sunrise.fill", title: "Morning Meditation", subtitle: "Start your day with clarity")
-                            }
-                            if premium.isPremium {
-                                NavigationLink(destination: SleepMeditationView()) {
-                                    HomeButton(icon: "moon.stars.fill", title: "Sleep Meditation", subtitle: "Drift into deep restful sleep")
-                                }
-                            } else {
-                                Button { showPaywall = true } label: {
-                                    HomeButton(icon: "moon.stars.fill", title: "Sleep Meditation", subtitle: "Drift into deep restful sleep", locked: true)
-                                }.buttonStyle(.plain)
-                            }
-                            NavigationLink(destination: MeditationTimerView()) {
-                                HomeButton(icon: "timer", title: "Start Meditation", subtitle: "Countdown session")
-                            }
-                            if premium.isPremium {
-                                NavigationLink(destination: MeditationTimerView(startSilent: true)) {
-                                    HomeButton(icon: "bell.fill", title: "Silent Meditation", subtitle: "Sit in stillness, guided by a bell")
-                                }
-                            } else {
-                                Button { showPaywall = true } label: {
-                                    HomeButton(icon: "bell.fill", title: "Silent Meditation", subtitle: "Bell every 5 min to guide your breath", locked: true)
-                                }.buttonStyle(.plain)
-                            }
-                            if premium.isPremium {
-                                NavigationLink(destination: PersonalizedMeditationView()) {
-                                    HomeButton(icon: "sparkles", title: "Personalized Meditation", subtitle: "Personalized session just for you")
-                                }
-                            } else {
-                                Button { showPaywall = true } label: {
-                                    HomeButton(icon: "sparkles", title: "Personalized Meditation", subtitle: "Personalized session just for you", locked: true)
-                                }.buttonStyle(.plain)
-                            }
-                            if premium.isPremium {
-                                NavigationLink(destination: BodyScanView()) {
-                                    HomeButton(icon: "figure.mind.and.body", title: "Body Scan", subtitle: "Guided head-to-toe relaxation")
-                                }
-                            } else {
-                                Button { showPaywall = true } label: {
-                                    HomeButton(icon: "figure.mind.and.body", title: "Body Scan", subtitle: "Guided head-to-toe relaxation", locked: true)
-                                }.buttonStyle(.plain)
-                            }
-                            if premium.isPremium {
-                                NavigationLink(destination: SleepStoriesView()) {
-                                    HomeButton(icon: "book.fill", title: "Sleep Stories", subtitle: "Calming narrated stories for sleep")
-                                }
-                            } else {
-                                Button { showPaywall = true } label: {
-                                    HomeButton(icon: "book.fill", title: "Sleep Stories", subtitle: "Calming narrated stories for sleep", locked: true)
-                                }.buttonStyle(.plain)
-                            }
-                            if premium.isPremium {
-                                NavigationLink(destination: DeepRelaxView()) {
-                                    HomeButton(icon: "sparkles.rectangle.stack.fill", title: "Deep Relax", subtitle: "Immersive video relaxation")
-                                }
-                            } else {
-                                Button { showPaywall = true } label: {
-                                    HomeButton(icon: "sparkles.rectangle.stack.fill", title: "Deep Relax", subtitle: "Immersive video relaxation", locked: true)
-                                }.buttonStyle(.plain)
-                            }
-                            if premium.isPremium {
-                                NavigationLink(destination: StillWatersView()) {
-                                    HomeButton(icon: "drop.fill", title: "Still Waters", subtitle: "Guided calm meditation")
-                                }
-                            } else {
-                                Button { showPaywall = true } label: {
-                                    HomeButton(icon: "drop.fill", title: "Still Waters", subtitle: "Guided calm meditation", locked: true)
-                                }.buttonStyle(.plain)
-                            }
-                        }
+                    FeatureGroup(title: "Meditation", subtitle: "Guided & timed sessions", icon: "brain.head.profile") {
+                        showMeditationSheet = true
                     }
 
                     // Breathing group
-                    FeatureGroup(title: "Breathing", subtitle: "Box · 4-7-8 · Custom · Quick Relief", icon: "lungs.fill", bgColor: Color.white.opacity(0.85), isExpanded: $expandBreathing) {
-                        VStack(spacing: 10) {
-                            NavigationLink(destination: BreathingView()) {
-                                HomeButton(icon: "lungs.fill", title: "Breathing Exercise", subtitle: "Box · 4-7-8 · Custom")
-                            }
-                            if premium.isPremium {
-                                NavigationLink(destination: QuickReliefHubView()) {
-                                    HomeButton(icon: "bolt.heart.fill", title: "Quick Relief", subtitle: "Stress · Anxiety · Focus · Pain Relief")
-                                }
-                            } else {
-                                Button { showPaywall = true } label: {
-                                    HomeButton(icon: "bolt.heart.fill", title: "Quick Relief", subtitle: "Stress · Anxiety · Focus · Pain Relief", locked: true)
-                                }.buttonStyle(.plain)
-                            }
-                        }
+                    FeatureGroup(title: "Breathing", subtitle: "Box · 4-7-8 · Custom · Quick Relief", icon: "lungs.fill") {
+                        showBreathingSheet = true
                     }
 
-
                     // Sounds group
-                    FeatureGroup(title: "Sounds & Music", subtitle: "Nature sounds & ambient music", icon: "waveform", bgColor: Color.white.opacity(0.85), isExpanded: $expandSounds) {
-                        VStack(spacing: 10) {
-                            NavigationLink(destination: RelaxingSoundsView()) {
-                                HomeButton(icon: "waveform", title: "Relaxing Sounds", subtitle: "Nature & ambient sounds")
-                            }
-                            if premium.isPremium {
-                                NavigationLink(destination: AmbientMusicView()) {
-                                    HomeButton(icon: "music.note", title: "Ambient Music", subtitle: "Focus · Sleep · Creativity")
-                                }
-                            } else {
-                                Button { showPaywall = true } label: {
-                                    HomeButton(icon: "music.note", title: "Ambient Music", subtitle: "Focus · Sleep · Creativity", locked: true)
-                                }.buttonStyle(.plain)
-                            }
-                        }
+                    FeatureGroup(title: "Sounds & Music", subtitle: "Nature sounds & ambient music", icon: "waveform") {
+                        showSoundsSheet = true
                     }
 
 
@@ -254,9 +157,9 @@ struct HomeView: View {
                         HomeButton(icon: "chart.bar.fill", title: "Progress", subtitle: "Stats & streaks")
                     }
 
-                    // Settings card
-                    NavigationLink(destination: SettingsView()) {
-                        HomeButton(icon: "gearshape.fill", title: "Settings", subtitle: "Reminders · Privacy Policy")
+                    // AI Coach card
+                    NavigationLink(destination: AICoachHubView()) {
+                        HomeButton(icon: "sparkles", title: "AI Coach", subtitle: "Chat with your wellness coach")
                     }
 
                 }
@@ -272,7 +175,7 @@ struct HomeView: View {
                                 .font(.system(size: 14, weight: .semibold, design: .rounded))
                                 .foregroundColor(.white)
                             Text("Keep it going — meditate today!")
-                                .font(.system(size: 12, weight: .light))
+                                .font(.system(size: 12, weight: .regular))
                                 .foregroundColor(.white.opacity(0.75))
                         }
                         Spacer()
@@ -300,7 +203,7 @@ struct HomeView: View {
                                 .foregroundColor(.white)
                         }
                         TextField("Write something...", text: $gratitudeText)
-                            .font(.system(size: 14, weight: .light))
+                            .font(.system(size: 14, weight: .regular))
                             .foregroundColor(.white)
                             .padding(10)
                             .background(RoundedRectangle(cornerRadius: 10).fill(Color.white.opacity(0.10)))
@@ -340,7 +243,7 @@ struct HomeView: View {
                     HStack(spacing: 8) {
                         Text("🙏")
                         Text("Gratitude saved for today")
-                            .font(.system(size: 13, weight: .light))
+                            .font(.system(size: 13, weight: .regular))
                             .foregroundColor(.white.opacity(0.70))
                         Spacer()
                     }
@@ -368,6 +271,186 @@ struct HomeView: View {
             } // ScrollView
         }
         .navigationBarHidden(true)
+        .sheet(isPresented: $showMeditationSheet) {
+            NavigationStack {
+                ZStack {
+                    CalmBackground()
+                    ScrollView(showsIndicators: false) {
+                        VStack(spacing: 10) {
+                            NavigationLink(destination: MorningMeditationView()) {
+                                HomeButton(icon: "sunrise.fill", title: "Morning Meditation", subtitle: "Start your day with clarity", glassmorphism: true)
+                            }
+                            if premium.isPremium {
+                                NavigationLink(destination: SleepMeditationView()) {
+                                    HomeButton(icon: "moon.stars.fill", title: "Sleep Meditation", subtitle: "Drift into deep restful sleep", glassmorphism: true)
+                                }
+                            } else {
+                                Button { showPaywall = true; showMeditationSheet = false } label: {
+                                    HomeButton(icon: "moon.stars.fill", title: "Sleep Meditation", subtitle: "Drift into deep restful sleep", locked: true, glassmorphism: true)
+                                }.buttonStyle(.plain)
+                            }
+                            NavigationLink(destination: MeditationTimerView()) {
+                                HomeButton(icon: "timer", title: "Start Meditation", subtitle: "Countdown session", glassmorphism: true)
+                            }
+                            if premium.isPremium {
+                                NavigationLink(destination: MeditationTimerView(startSilent: true)) {
+                                    HomeButton(icon: "bell.fill", title: "Silent Meditation", subtitle: "Sit in stillness, guided by a bell", glassmorphism: true)
+                                }
+                            } else {
+                                Button { showPaywall = true; showMeditationSheet = false } label: {
+                                    HomeButton(icon: "bell.fill", title: "Silent Meditation", subtitle: "Bell every 5 min to guide your breath", locked: true, glassmorphism: true)
+                                }.buttonStyle(.plain)
+                            }
+                            if premium.isPremium {
+                                NavigationLink(destination: PersonalizedMeditationView()) {
+                                    HomeButton(icon: "sparkles", title: "Personalized Meditation", subtitle: "Personalized session just for you", glassmorphism: true)
+                                }
+                            } else {
+                                Button { showPaywall = true; showMeditationSheet = false } label: {
+                                    HomeButton(icon: "sparkles", title: "Personalized Meditation", subtitle: "Personalized session just for you", locked: true, glassmorphism: true)
+                                }.buttonStyle(.plain)
+                            }
+                            if premium.isPremium {
+                                NavigationLink(destination: BodyScanView()) {
+                                    HomeButton(icon: "figure.mind.and.body", title: "Body Scan", subtitle: "Guided head-to-toe relaxation", glassmorphism: true)
+                                }
+                            } else {
+                                Button { showPaywall = true; showMeditationSheet = false } label: {
+                                    HomeButton(icon: "figure.mind.and.body", title: "Body Scan", subtitle: "Guided head-to-toe relaxation", locked: true, glassmorphism: true)
+                                }.buttonStyle(.plain)
+                            }
+                            if premium.isPremium {
+                                NavigationLink(destination: SleepStoriesView()) {
+                                    HomeButton(icon: "book.fill", title: "Sleep Stories", subtitle: "Calming narrated stories for sleep", glassmorphism: true)
+                                }
+                            } else {
+                                Button { showPaywall = true; showMeditationSheet = false } label: {
+                                    HomeButton(icon: "book.fill", title: "Sleep Stories", subtitle: "Calming narrated stories for sleep", locked: true, glassmorphism: true)
+                                }.buttonStyle(.plain)
+                            }
+                            if premium.isPremium {
+                                NavigationLink(destination: DeepRelaxView()) {
+                                    HomeButton(icon: "sparkles.rectangle.stack.fill", title: "Deep Relax", subtitle: "Immersive video relaxation", glassmorphism: true)
+                                }
+                            } else {
+                                Button { showPaywall = true; showMeditationSheet = false } label: {
+                                    HomeButton(icon: "sparkles.rectangle.stack.fill", title: "Deep Relax", subtitle: "Immersive video relaxation", locked: true, glassmorphism: true)
+                                }.buttonStyle(.plain)
+                            }
+                            if premium.isPremium {
+                                NavigationLink(destination: StillWatersView()) {
+                                    HomeButton(icon: "drop.fill", title: "Still Waters", subtitle: "Guided calm meditation", glassmorphism: true)
+                                }
+                            } else {
+                                Button { showPaywall = true; showMeditationSheet = false } label: {
+                                    HomeButton(icon: "drop.fill", title: "Still Waters", subtitle: "Guided calm meditation", locked: true, glassmorphism: true)
+                                }.buttonStyle(.plain)
+                            }
+                        }
+                        .padding(.horizontal, 24)
+                        .padding(.vertical, 16)
+                    }
+                }
+                .navigationTitle("Meditation")
+                .navigationBarTitleDisplayMode(.inline)
+                .toolbarBackground(.hidden, for: .navigationBar)
+                .toolbar {
+                    ToolbarItem(placement: .principal) {
+                        Text("Meditation")
+                            .font(.system(size: 17, weight: .semibold, design: .rounded))
+                            .foregroundColor(.white)
+                    }
+                    ToolbarItem(placement: .navigationBarTrailing) {
+                        Button("Done") { showMeditationSheet = false }
+                            .foregroundColor(.calmAccent)
+                    }
+                }
+            }
+            .presentationDetents([.large])
+            .presentationDragIndicator(.visible)
+        }
+        .sheet(isPresented: $showBreathingSheet) {
+            NavigationStack {
+                ZStack {
+                    CalmBackground()
+                    ScrollView(showsIndicators: false) {
+                        VStack(spacing: 10) {
+                            NavigationLink(destination: BreathingView()) {
+                                HomeButton(icon: "lungs.fill", title: "Breathing Exercise", subtitle: "Box · 4-7-8 · Custom", glassmorphism: true)
+                            }
+                            if premium.isPremium {
+                                NavigationLink(destination: QuickReliefHubView()) {
+                                    HomeButton(icon: "bolt.heart.fill", title: "Quick Relief", subtitle: "Stress · Anxiety · Focus · Pain Relief", glassmorphism: true)
+                                }
+                            } else {
+                                Button { showPaywall = true; showBreathingSheet = false } label: {
+                                    HomeButton(icon: "bolt.heart.fill", title: "Quick Relief", subtitle: "Stress · Anxiety · Focus · Pain Relief", locked: true, glassmorphism: true)
+                                }.buttonStyle(.plain)
+                            }
+                        }
+                        .padding(.horizontal, 24)
+                        .padding(.vertical, 16)
+                    }
+                }
+                .navigationTitle("Breathing")
+                .navigationBarTitleDisplayMode(.inline)
+                .toolbarBackground(.hidden, for: .navigationBar)
+                .toolbar {
+                    ToolbarItem(placement: .principal) {
+                        Text("Breathing")
+                            .font(.system(size: 17, weight: .semibold, design: .rounded))
+                            .foregroundColor(.white)
+                    }
+                    ToolbarItem(placement: .navigationBarTrailing) {
+                        Button("Done") { showBreathingSheet = false }
+                            .foregroundColor(.calmAccent)
+                    }
+                }
+            }
+            .presentationDetents([.large])
+            .presentationDragIndicator(.visible)
+        }
+        .sheet(isPresented: $showSoundsSheet) {
+            NavigationStack {
+                ZStack {
+                    CalmBackground()
+                    ScrollView(showsIndicators: false) {
+                        VStack(spacing: 10) {
+                            NavigationLink(destination: RelaxingSoundsView()) {
+                                HomeButton(icon: "waveform", title: "Relaxing Sounds", subtitle: "Nature & ambient sounds", glassmorphism: true)
+                            }
+                            if premium.isPremium {
+                                NavigationLink(destination: AmbientMusicView()) {
+                                    HomeButton(icon: "music.note", title: "Ambient Music", subtitle: "Focus · Sleep · Creativity", glassmorphism: true)
+                                }
+                            } else {
+                                Button { showPaywall = true; showSoundsSheet = false } label: {
+                                    HomeButton(icon: "music.note", title: "Ambient Music", subtitle: "Focus · Sleep · Creativity", locked: true, glassmorphism: true)
+                                }.buttonStyle(.plain)
+                            }
+                        }
+                        .padding(.horizontal, 24)
+                        .padding(.vertical, 16)
+                    }
+                }
+                .navigationTitle("Sounds & Music")
+                .navigationBarTitleDisplayMode(.inline)
+                .toolbarBackground(.hidden, for: .navigationBar)
+                .toolbar {
+                    ToolbarItem(placement: .principal) {
+                        Text("Sounds & Music")
+                            .font(.system(size: 17, weight: .semibold, design: .rounded))
+                            .foregroundColor(.white)
+                    }
+                    ToolbarItem(placement: .navigationBarTrailing) {
+                        Button("Done") { showSoundsSheet = false }
+                            .foregroundColor(.calmAccent)
+                    }
+                }
+            }
+            .presentationDetents([.large])
+            .presentationDragIndicator(.visible)
+        }
         .fullScreenCover(isPresented: $showPaywall) {
             PaywallView(isPresented: $showPaywall)
                 .environmentObject(premium)
@@ -541,58 +624,43 @@ struct DailyQuoteCard: View {
     }
 }
 
-// MARK: - Feature Group (expandable)
-struct FeatureGroup<Content: View>: View {
+// MARK: - Feature Group (tappable — opens sheet)
+struct FeatureGroup: View {
     let title: String
     let subtitle: String
     let icon: String
-    var bgColor: Color = Color.white
-    @Binding var isExpanded: Bool
-    @ViewBuilder let content: () -> Content
+    let action: () -> Void
 
     var body: some View {
-        VStack(spacing: 0) {
-            Button {
-                withAnimation(.easeInOut(duration: 0.25)) { isExpanded.toggle() }
-            } label: {
-                HStack(spacing: 16) {
-                    ZStack {
-                        Circle()
-                            .fill(Color.white)
-                            .frame(width: 50, height: 50)
-                            .shadow(color: Color(red: 0.541, green: 0.357, blue: 0.804).opacity(0.15), radius: 4, x: 0, y: 2)
-                        Image(systemName: icon)
-                            .font(.system(size: 20))
-                            .foregroundColor(Color(red: 0.541, green: 0.357, blue: 0.804))
-                    }
-                    VStack(alignment: .leading, spacing: 3) {
-                        Text(title)
-                            .font(.system(.callout, design: .rounded).weight(.semibold))
-                            .foregroundColor(.calmDeep)
-                        Text(subtitle)
-                            .font(.system(.caption))
-                            .foregroundColor(.calmMid.opacity(0.65))
-                    }
-                    Spacer()
-                    Image(systemName: isExpanded ? "chevron.up" : "chevron.down")
-                        .font(.system(size: 12, weight: .semibold))
-                        .foregroundColor(.calmMid.opacity(0.50))
+        Button(action: action) {
+            HStack(spacing: 16) {
+                ZStack {
+                    Circle()
+                        .fill(Color.white)
+                        .frame(width: 50, height: 50)
+                        .shadow(color: Color(red: 0.541, green: 0.357, blue: 0.804).opacity(0.15), radius: 4, x: 0, y: 2)
+                    Image(systemName: icon)
+                        .font(.system(size: 20))
+                        .foregroundColor(Color(red: 0.541, green: 0.357, blue: 0.804))
                 }
-                .padding(.horizontal, 18)
-                .padding(.vertical, 15)
-                .contentShape(Rectangle())
-            }
-            .buttonStyle(.plain)
-
-            if isExpanded {
-                VStack(spacing: 8) {
-                    content()
+                VStack(alignment: .leading, spacing: 3) {
+                    Text(title)
+                        .font(.system(.callout, design: .rounded).weight(.semibold))
+                        .foregroundColor(.calmDeep)
+                    Text(subtitle)
+                        .font(.system(.caption))
+                        .foregroundColor(.calmMid.opacity(0.65))
                 }
-                .padding(.horizontal, 18)
-                .padding(.bottom, 14)
-                .transition(.opacity.combined(with: .move(edge: .top)))
+                Spacer()
+                Image(systemName: "chevron.right")
+                    .font(.system(size: 12, weight: .semibold))
+                    .foregroundColor(.calmMid.opacity(0.50))
             }
+            .padding(.horizontal, 18)
+            .padding(.vertical, 15)
+            .contentShape(Rectangle())
         }
+        .buttonStyle(.plain)
         .background(
             RoundedRectangle(cornerRadius: 20)
                 .fill(Color(red: 0.87, green: 0.89, blue: 0.96))
@@ -607,7 +675,7 @@ struct HomeButton: View {
     let title: String
     let subtitle: String
     var locked: Bool = false
-    var bgColor: Color = Color.white
+    var glassmorphism: Bool = false
 
     private let brandPurple = Color(red: 0.541, green: 0.357, blue: 0.804)
 
@@ -616,12 +684,14 @@ struct HomeButton: View {
             // Icon badge
             ZStack {
                 Circle()
-                    .fill(Color.white)
+                    .fill(glassmorphism ? Color.white.opacity(0.18) : Color.white)
                     .frame(width: 50, height: 50)
-                    .shadow(color: brandPurple.opacity(0.15), radius: 4, x: 0, y: 2)
+                    .shadow(color: glassmorphism ? Color.clear : brandPurple.opacity(0.15), radius: 4, x: 0, y: 2)
                 Image(systemName: icon)
                     .font(.system(size: 20))
-                    .foregroundColor(locked ? brandPurple.opacity(0.35) : brandPurple)
+                    .foregroundColor(locked
+                        ? (glassmorphism ? Color.white.opacity(0.30) : brandPurple.opacity(0.35))
+                        : (glassmorphism ? Color.white : brandPurple))
             }
 
             // Labels
@@ -629,30 +699,40 @@ struct HomeButton: View {
                 HStack(spacing: 5) {
                     Text(title)
                         .font(.system(size: 16, weight: .semibold, design: .rounded))
-                        .foregroundColor(locked ? .calmDeep.opacity(0.40) : .calmDeep)
+                        .foregroundColor(locked
+                            ? (glassmorphism ? Color.white.opacity(0.35) : .calmDeep.opacity(0.40))
+                            : (glassmorphism ? Color.white : .calmDeep))
                     if locked {
                         Image(systemName: "lock.fill")
                             .font(.system(size: 11))
-                            .foregroundColor(.calmMid.opacity(0.45))
+                            .foregroundColor(glassmorphism ? Color.white.opacity(0.35) : .calmMid.opacity(0.45))
                     }
                 }
                 Text(subtitle)
-                    .font(.system(size: 12, weight: .regular))
-                    .foregroundColor(.calmMid.opacity(locked ? 0.40 : 0.70))
+                    .font(.system(size: 12, weight: .medium))
+                    .foregroundColor(locked
+                        ? (glassmorphism ? Color.white.opacity(0.30) : .calmMid.opacity(0.40))
+                        : (glassmorphism ? Color.white.opacity(0.70) : .calmMid.opacity(0.70)))
             }
 
             Spacer()
 
             Image(systemName: "chevron.right")
                 .font(.system(size: 12, weight: .semibold))
-                .foregroundColor(.calmMid.opacity(0.45))
+                .foregroundColor(glassmorphism ? Color.white.opacity(0.35) : .calmMid.opacity(0.45))
         }
         .padding(.horizontal, 18)
         .padding(.vertical, 15)
         .background(
-            RoundedRectangle(cornerRadius: 20)
-                .fill(Color(red: 0.87, green: 0.89, blue: 0.96))
-                .shadow(color: Color.black.opacity(0.08), radius: 6, x: 0, y: 2)
+            ZStack {
+                RoundedRectangle(cornerRadius: 20)
+                    .fill(glassmorphism ? Color.white.opacity(0.12) : Color(red: 0.87, green: 0.89, blue: 0.96))
+                    .shadow(color: glassmorphism ? Color.clear : Color.black.opacity(0.08), radius: 6, x: 0, y: 2)
+                if glassmorphism {
+                    RoundedRectangle(cornerRadius: 20)
+                        .stroke(Color.white.opacity(0.18), lineWidth: 1)
+                }
+            }
         )
     }
 }

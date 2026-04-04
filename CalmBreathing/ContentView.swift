@@ -90,7 +90,7 @@ struct ContentView: View {
                             .environmentObject(journal)
                     }
                     .tabItem {
-                        Label("AI Coach", systemImage: "sparkles")
+                        Label("Serene", systemImage: "sparkles")
                     }
                 }
                 .tint(.white)

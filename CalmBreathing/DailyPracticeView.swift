@@ -442,12 +442,12 @@ struct DailyPracticeView: View {
                 // Quote
                 VStack(spacing: 10) {
                     Text("\u{201C}\(practice.quote)\u{201D}")
-                        .font(.system(size: 15, weight: .light, design: .rounded))
+                        .font(.system(size: 15, weight: .regular, design: .rounded))
                         .foregroundColor(.white.opacity(0.85))
                         .multilineTextAlignment(.center)
                         .lineSpacing(5)
                     Text("— \(practice.author)")
-                        .font(.system(size: 13, weight: .regular))
+                        .font(.system(size: 13, weight: .medium))
                         .foregroundColor(practice.accentColor.opacity(0.80))
                 }
                 .padding(.horizontal, 28)
@@ -464,7 +464,7 @@ struct DailyPracticeView: View {
                             .foregroundColor(.white)
                     }
                     Text(practice.patternDescription)
-                        .font(.system(size: 13, weight: .light))
+                        .font(.system(size: 13, weight: .regular))
                         .foregroundColor(.white.opacity(0.70))
                         .multilineTextAlignment(.center)
 
@@ -477,7 +477,7 @@ struct DailyPracticeView: View {
                     .padding(.top, 4)
 
                     Text("\(practice.cycles) cycles · ~\(cycleDurationMinutes()) min")
-                        .font(.system(size: 12, weight: .light))
+                        .font(.system(size: 12, weight: .regular))
                         .foregroundColor(.white.opacity(0.50))
                 }
                 .padding(18)
@@ -492,7 +492,7 @@ struct DailyPracticeView: View {
                 .padding(.top, 22)
 
                 Text("For relaxation and wellness purposes only. Not a substitute for medical or mental health advice. Respiratory, cardiac, or any other health condition patients should consult a doctor before practising breathing exercises.")
-                    .font(.system(size: 11, weight: .regular))
+                    .font(.system(size: 11, weight: .medium))
                     .foregroundColor(.white.opacity(0.75))
                     .multilineTextAlignment(.center)
                     .padding(.horizontal, 28)
@@ -547,10 +547,10 @@ struct DailyPracticeView: View {
 
                 VStack(spacing: 4) {
                     Text(currentStep.label)
-                        .font(.system(size: 17, weight: .light, design: .rounded))
+                        .font(.system(size: 17, weight: .regular, design: .rounded))
                         .foregroundColor(.white)
                     Text("\(countdown)")
-                        .font(.system(size: 42, weight: .ultraLight, design: .rounded))
+                        .font(.system(size: 42, weight: .regular, design: .rounded))
                         .foregroundColor(.white.opacity(0.90))
                         .monospacedDigit()
                 }
@@ -558,12 +558,12 @@ struct DailyPracticeView: View {
             .padding(.bottom, 36)
 
             Text("Cycle \(cycleCount + 1) of \(practice.cycles)")
-                .font(.system(size: 13, weight: .light))
+                .font(.system(size: 13, weight: .regular))
                 .foregroundColor(.white.opacity(0.45))
                 .padding(.bottom, 6)
 
             Text("Breathe with the circle")
-                .font(.system(size: 14, weight: .light, design: .rounded))
+                .font(.system(size: 14, weight: .regular, design: .rounded))
                 .foregroundColor(.white.opacity(0.50))
 
             Spacer()
@@ -573,7 +573,7 @@ struct DailyPracticeView: View {
                 withAnimation(.easeIn(duration: 0.5)) { showCompletion = true }
             } label: {
                 Text("Skip to Reflection")
-                    .font(.system(size: 13, weight: .regular))
+                    .font(.system(size: 13, weight: .medium))
                     .foregroundColor(.white.opacity(0.45))
                     .padding(.horizontal, 24)
                     .padding(.vertical, 10)
@@ -602,7 +602,7 @@ struct DailyPracticeView: View {
                         .fill(practice.accentColor.opacity(0.15))
                         .frame(width: 80, height: 80)
                     Image(systemName: "checkmark")
-                        .font(.system(size: 32, weight: .light))
+                        .font(.system(size: 32, weight: .regular))
                         .foregroundColor(practice.accentColor)
                 }
 
@@ -612,7 +612,7 @@ struct DailyPracticeView: View {
 
                 // Day's reflection — unique per day
                 Text(practice.reflection)
-                    .font(.system(size: 15, weight: .light, design: .rounded))
+                    .font(.system(size: 15, weight: .regular, design: .rounded))
                     .foregroundColor(.white.opacity(0.88))
                     .multilineTextAlignment(.center)
                     .lineSpacing(5)
@@ -620,7 +620,7 @@ struct DailyPracticeView: View {
 
                 // Day's quote attribution
                 Text("— \(practice.author)")
-                    .font(.system(size: 12, weight: .regular))
+                    .font(.system(size: 12, weight: .medium))
                     .foregroundColor(practice.accentColor.opacity(0.75))
                     .padding(.top, 2)
 
@@ -650,7 +650,7 @@ struct DailyPracticeView: View {
                 .font(.system(size: 18, weight: .semibold, design: .rounded))
                 .foregroundColor(practice.accentColor)
             Text(label)
-                .font(.system(size: 10, weight: .light))
+                .font(.system(size: 10, weight: .regular))
                 .foregroundColor(.white.opacity(0.55))
         }
     }
@@ -806,7 +806,7 @@ struct DailyPracticeCard: View {
                         .font(.system(size: 20, weight: .bold, design: .rounded))
                         .foregroundColor(Color(red: 0.10, green: 0.22, blue: 0.42))
                     Text(practice.intention)
-                        .font(.system(size: 12, weight: .regular, design: .rounded))
+                        .font(.system(size: 12, weight: .medium, design: .rounded))
                         .foregroundColor(Color(red: 0.20, green: 0.35, blue: 0.55))
                         .lineSpacing(2)
                         .lineLimit(2)
