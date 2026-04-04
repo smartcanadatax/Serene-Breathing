@@ -1,106 +1,169 @@
 import SwiftUI
 
-// MARK: - Sounds Hub
+// MARK: - Sounds Hub (combined Library + Ambient in one page)
 
 struct SoundsHubView: View {
     @EnvironmentObject var premium:     PremiumStore
     @EnvironmentObject var soundPlayer: SoundPlayer
     @EnvironmentObject var userPrefs:   UserPreferencesStore
+    @StateObject private var ambientEngine = AmbientMusicEngine()
+
+    @State private var topTab: Int = 0                          // 0 = Library, 1 = Music
+    @State private var soundCategory: SoundLibraryCategory = .nature
+    @State private var ambientCategory: AmbientCategory = .focus
+    @State private var showPaywall = false
+
+    private var libraryTracks: [SoundPlayer.SoundType] {
+        SoundPlayer.SoundType.allCases.filter { $0.libraryCategory == soundCategory }
+    }
+    private var ambientTracks: [AmbientTrack] {
+        allAmbientTracks.filter { $0.category == ambientCategory }
+    }
 
     var body: some View {
-        ZStack {
+        ZStack(alignment: .bottom) {
             CalmBackground()
 
-            ScrollView(showsIndicators: false) {
-                VStack(spacing: 0) {
-                    // Header
-                    VStack(spacing: 6) {
-                        AppLogoView(size: 64)
-                            .padding(.top, 20)
-                        Text("Sounds")
-                            .font(.system(size: 28, weight: .bold, design: .rounded))
-                            .foregroundColor(.white)
-                        Text("Relax, focus & drift off")
-                            .font(.system(size: 14, weight: .regular, design: .rounded))
-                            .foregroundColor(.white.opacity(0.70))
+            VStack(spacing: 0) {
+                // Nav bar
+                HStack {
+                    Color.clear.frame(width: 36, height: 36)
+                    Spacer()
+                    Text("Sounds")
+                        .font(.system(size: 17, weight: .semibold, design: .rounded))
+                        .foregroundColor(.white)
+                    Spacer()
+                    HStack(spacing: 10) {
+                        SleepTimerButton()
                     }
-                    .padding(.bottom, 24)
-
-                    // Rows
-                    VStack(spacing: 10) {
-                        NavigationLink(destination: RelaxingSoundsView()
-                            .environmentObject(soundPlayer)
-                            .environmentObject(userPrefs)
-                            .environmentObject(premium)
-                        ) {
-                            SoundsHubRow(
-                                icon: "waveform",
-                                title: "Sounds Library",
-                                subtitle: "Nature · Meditation · Sleep sounds"
-                            )
-                        }
-
-                        NavigationLink(destination: AmbientMusicView()) {
-                            SoundsHubRow(
-                                icon: "music.note",
-                                title: "Ambient Music",
-                                subtitle: "Focus · Sleep · Creativity playlists"
-                            )
-                        }
-                    }
-                    .padding(.horizontal, 20)
-
-                    DisclaimerFooter()
-                        .padding(.bottom, 16)
+                    .frame(width: 36, height: 36)
+                    .background(Circle().fill(Color.white.opacity(0.25)))
                 }
+                .padding(.horizontal, 16)
+                .padding(.top, 16)
+                .padding(.bottom, 8)
+
+                // Top picker: Library | Music
+                Picker("", selection: $topTab) {
+                    Text("Sounds Library").tag(0)
+                    Text("Ambient Music").tag(1)
+                }
+                .pickerStyle(.segmented)
+                .padding(.horizontal, 20)
+                .padding(.bottom, 8)
+
+                if topTab == 0 {
+                    // ── Sounds Library ──
+                    Picker("", selection: $soundCategory) {
+                        ForEach(SoundLibraryCategory.allCases, id: \.self) { cat in
+                            Text(cat.rawValue).tag(cat)
+                        }
+                    }
+                    .pickerStyle(.segmented)
+                    .padding(.horizontal, 20)
+                    .padding(.bottom, 8)
+
+                    ScrollView(showsIndicators: false) {
+                        LazyVStack(spacing: 10) {
+                            ForEach(libraryTracks) { sound in
+                                SoundLibraryRow(sound: sound)
+                            }
+                        }
+                        .padding(.horizontal, 20)
+                        .padding(.top, 4)
+                        DisclaimerFooter()
+                            .padding(.bottom, soundPlayer.playing != nil ? 100 : 32)
+                    }
+                } else {
+                    // ── Ambient Music ──
+                    Picker("", selection: $ambientCategory) {
+                        ForEach(AmbientCategory.allCases, id: \.self) { cat in
+                            Text(cat.rawValue).tag(cat)
+                        }
+                    }
+                    .pickerStyle(.segmented)
+                    .padding(.horizontal, 20)
+                    .padding(.bottom, 8)
+
+                    ScrollView(showsIndicators: false) {
+                        LazyVStack(spacing: 10) {
+                            ForEach(ambientTracks) { track in
+                                TrackRow(track: track, engine: ambientEngine)
+                            }
+                        }
+                        .padding(.horizontal, 20)
+                        .padding(.top, 4)
+                        DisclaimerFooter()
+                            .padding(.bottom, ambientEngine.currentTrack != nil ? 100 : 32)
+                    }
+                    .animation(.easeInOut(duration: 0.3), value: ambientEngine.currentTrack?.id)
+                }
+            }
+            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
+
+            // Mini players
+            if topTab == 0, soundPlayer.playing != nil {
+                SoundMiniPlayer()
+                    .transition(.move(edge: .bottom).combined(with: .opacity))
+            }
+            if topTab == 1, ambientEngine.currentTrack != nil {
+                AmbientMiniPlayer(engine: ambientEngine)
+                    .transition(.move(edge: .bottom).combined(with: .opacity))
             }
         }
         .navigationBarHidden(true)
+        .animation(.easeInOut(duration: 0.25), value: topTab)
+        .onDisappear { ambientEngine.stop() }
+        .fullScreenCover(isPresented: $showPaywall) {
+            PaywallView(isPresented: $showPaywall).environmentObject(premium)
+        }
     }
 }
 
-// MARK: - Row
+// MARK: - Ambient Mini Player (inline, no nav dependency)
 
-private struct SoundsHubRow: View {
-    let icon: String
-    let title: String
-    let subtitle: String
-
-    private let brandPurple = Color(red: 0.541, green: 0.357, blue: 0.804)
+private struct AmbientMiniPlayer: View {
+    @ObservedObject var engine: AmbientMusicEngine
 
     var body: some View {
-        HStack(spacing: 16) {
-            ZStack {
-                Circle()
-                    .fill(Color.white)
-                    .frame(width: 50, height: 50)
-                    .shadow(color: brandPurple.opacity(0.15), radius: 4, x: 0, y: 2)
-                Image(systemName: icon)
-                    .font(.system(size: 20))
-                    .foregroundColor(brandPurple)
+        VStack(spacing: 0) {
+            GeometryReader { geo in
+                ZStack(alignment: .leading) {
+                    Rectangle().fill(Color.white.opacity(0.10)).frame(height: 2)
+                    Rectangle()
+                        .fill(Color.calmAccent)
+                        .frame(width: geo.size.width * CGFloat(engine.progress), height: 2)
+                        .animation(.linear(duration: 0.5), value: engine.progress)
+                }
             }
+            .frame(height: 2)
 
-            VStack(alignment: .leading, spacing: 3) {
-                Text(title)
-                    .font(.system(size: 16, weight: .semibold, design: .rounded))
-                    .foregroundColor(Color(red: 0.08, green: 0.12, blue: 0.28))
-                Text(subtitle)
-                    .font(.system(size: 12, weight: .regular))
-                    .foregroundColor(Color(red: 0.20, green: 0.28, blue: 0.50).opacity(0.75))
+            HStack(spacing: 16) {
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(engine.currentTrack?.title ?? "")
+                        .font(.system(size: 14, weight: .semibold, design: .rounded))
+                        .foregroundColor(.calmDeep)
+                    Text(engine.currentTrack?.subtitle ?? "")
+                        .font(.system(size: 11, weight: .light))
+                        .foregroundColor(.calmMid)
+                }
+                Spacer()
+                Button {
+                    if engine.isPlaying { engine.pause() } else { engine.resume() }
+                } label: {
+                    Image(systemName: engine.isPlaying ? "pause.circle.fill" : "play.circle.fill")
+                        .font(.system(size: 36))
+                        .foregroundColor(.calmAccent)
+                }
+                Button { engine.stop() } label: {
+                    Image(systemName: "xmark.circle.fill")
+                        .font(.system(size: 36))
+                        .foregroundColor(Color(red: 0.541, green: 0.357, blue: 0.804).opacity(0.50))
+                }
             }
-
-            Spacer()
-
-            Image(systemName: "chevron.right")
-                .font(.system(size: 12, weight: .semibold))
-                .foregroundColor(Color(red: 0.20, green: 0.28, blue: 0.50).opacity(0.45))
+            .padding(.horizontal, 20)
+            .padding(.vertical, 12)
         }
-        .padding(.horizontal, 18)
-        .padding(.vertical, 15)
-        .background(
-            RoundedRectangle(cornerRadius: 20)
-                .fill(Color.white.opacity(0.85))
-                .shadow(color: Color.black.opacity(0.06), radius: 6, x: 0, y: 2)
-        )
+        .background(Color.white.opacity(0.92).ignoresSafeArea(edges: .bottom))
     }
 }

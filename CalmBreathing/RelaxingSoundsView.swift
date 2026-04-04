@@ -117,7 +117,7 @@ struct RelaxingSoundsView: View {
 
 // MARK: - Sound Library Row
 
-private struct SoundLibraryRow: View {
+struct SoundLibraryRow: View {
     @EnvironmentObject var soundPlayer: SoundPlayer
     @EnvironmentObject var userPrefs:   UserPreferencesStore
     @EnvironmentObject var premium:     PremiumStore

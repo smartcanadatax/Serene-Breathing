@@ -182,7 +182,7 @@ struct AmbientMusicView: View {
 
 // MARK: - Track Row
 
-private struct TrackRow: View {
+struct TrackRow: View {
     let track: AmbientTrack
     @ObservedObject var engine: AmbientMusicEngine
 
