@@ -26,21 +26,21 @@ struct HomeView: View {
                 Spacer(minLength: 8)
 
                 // App branding
-                VStack(spacing: 4) {
+                VStack(spacing: 2) {
                     Text("Serene")
-                        .font(.system(size: 40, weight: .bold, design: .serif).italic())
+                        .font(.custom("Georgia-BoldItalic", size: 48).leading(.tight))
                         .foregroundColor(Color(red: 0.541, green: 0.357, blue: 0.804))
                         .onTapGesture(count: 5) {
                             premium.forceUnlock()
                         }
                     Text("BREATHING")
-                        .font(.system(size: 12, weight: .medium, design: .rounded))
-                        .kerning(5)
-                        .foregroundColor(Color(red: 0.541, green: 0.357, blue: 0.804).opacity(0.75))
+                        .font(.system(size: 12, weight: .semibold, design: .default))
+                        .kerning(6)
+                        .foregroundColor(Color(red: 0.541, green: 0.357, blue: 0.804).opacity(0.80))
                     Text("Meditation · Breathing · Stress Relief")
                         .font(.system(size: 12, weight: .regular, design: .rounded))
-                        .foregroundColor(.calmMid)
-                        .padding(.top, 2)
+                        .foregroundColor(.white.opacity(0.75))
+                        .padding(.top, 4)
                 }
 
                 // Daily reminder banner (inline — won't overlap branding)
@@ -53,10 +53,10 @@ struct HomeView: View {
                         VStack(alignment: .leading, spacing: 2) {
                             Text("Set a daily reminder")
                                 .font(.system(size: 13, weight: .semibold))
-                                .foregroundColor(.calmDeep)
+                                .foregroundColor(.white)
                             Text("Meditate every day to build a lasting habit")
                                 .font(.system(size: 11, weight: .regular))
-                                .foregroundColor(.calmMid)
+                                .foregroundColor(.white.opacity(0.80))
                         }
 
                         Spacer()
@@ -64,16 +64,16 @@ struct HomeView: View {
                         NavigationLink(destination: SettingsView()) {
                             Text("Set Up")
                                 .font(.system(size: 12, weight: .semibold))
-                                .foregroundColor(.calmDeep)
+                                .foregroundColor(.white)
                                 .padding(.horizontal, 12)
                                 .padding(.vertical, 6)
-                                .background(Capsule().fill(Color.calmAccent))
+                                .background(Capsule().fill(Color.white.opacity(0.25)))
                         }
 
                         Button { withAnimation { showReminderBanner = false } } label: {
                             Image(systemName: "xmark")
                                 .font(.system(size: 10, weight: .bold))
-                                .foregroundColor(.white.opacity(0.90))
+                                .foregroundColor(.white.opacity(0.80))
                                 .frame(width: 44, height: 44)
                                 .contentShape(Rectangle())
                         }
@@ -82,9 +82,7 @@ struct HomeView: View {
                     .padding(.vertical, 10)
                     .background(
                         RoundedRectangle(cornerRadius: 14)
-                            .fill(Color.white.opacity(0.10))
-                            .overlay(RoundedRectangle(cornerRadius: 14)
-                                .stroke(Color.calmAccent.opacity(0.25), lineWidth: 1))
+                            .fill(Color(red: 0.541, green: 0.357, blue: 0.804).opacity(0.85))
                     )
                     .padding(.horizontal, 24)
                     .padding(.top, 16)
@@ -107,7 +105,9 @@ struct HomeView: View {
                 // SOS Button
                 Button { showSOS = true } label: {
                     HStack(spacing: 16) {
-                        AppLogoView(size: 44)
+                        LotusOrbView(isAnimating: true)
+                            .frame(width: 44, height: 44)
+                            .brightness(-0.07)
                         VStack(alignment: .leading, spacing: 3) {
                             Text("Need Calm Now?")
                                 .font(.system(size: 16, weight: .semibold, design: .rounded))
@@ -125,8 +125,8 @@ struct HomeView: View {
                     .padding(.vertical, 14)
                     .background(
                         RoundedRectangle(cornerRadius: 20)
-                            .fill(Color.white.opacity(0.85))
-                            .shadow(color: Color.black.opacity(0.06), radius: 6, x: 0, y: 2)
+                            .fill(Color(red: 0.87, green: 0.89, blue: 0.96))
+                            .shadow(color: Color.black.opacity(0.08), radius: 6, x: 0, y: 2)
                     )
                 }
                 .buttonStyle(.plain)
@@ -137,7 +137,7 @@ struct HomeView: View {
                 VStack(spacing: 10) {
 
                     // Meditation group
-                    FeatureGroup(title: "Meditation", subtitle: "Guided & timed sessions", icon: "brain.head.profile", isExpanded: $expandMeditation) {
+                    FeatureGroup(title: "Meditation", subtitle: "Guided & timed sessions", icon: "brain.head.profile", bgColor: Color.white.opacity(0.85), isExpanded: $expandMeditation) {
                         VStack(spacing: 10) {
                             NavigationLink(destination: MorningMeditationView()) {
                                 HomeButton(icon: "sunrise.fill", title: "Morning Meditation", subtitle: "Start your day with clarity")
@@ -212,7 +212,7 @@ struct HomeView: View {
                     }
 
                     // Breathing group
-                    FeatureGroup(title: "Breathing", subtitle: "Box · 4-7-8 · Custom · Quick Relief", icon: "lungs.fill", isExpanded: $expandBreathing) {
+                    FeatureGroup(title: "Breathing", subtitle: "Box · 4-7-8 · Custom · Quick Relief", icon: "lungs.fill", bgColor: Color.white.opacity(0.85), isExpanded: $expandBreathing) {
                         VStack(spacing: 10) {
                             NavigationLink(destination: BreathingView()) {
                                 HomeButton(icon: "lungs.fill", title: "Breathing Exercise", subtitle: "Box · 4-7-8 · Custom")
@@ -231,7 +231,7 @@ struct HomeView: View {
 
 
                     // Sounds group
-                    FeatureGroup(title: "Sounds & Music", subtitle: "Nature sounds & ambient music", icon: "waveform", isExpanded: $expandSounds) {
+                    FeatureGroup(title: "Sounds & Music", subtitle: "Nature sounds & ambient music", icon: "waveform", bgColor: Color.white.opacity(0.85), isExpanded: $expandSounds) {
                         VStack(spacing: 10) {
                             NavigationLink(destination: RelaxingSoundsView()) {
                                 HomeButton(icon: "waveform", title: "Relaxing Sounds", subtitle: "Nature & ambient sounds")
@@ -248,6 +248,16 @@ struct HomeView: View {
                         }
                     }
 
+
+                    // Progress card
+                    NavigationLink(destination: ProgressTabView()) {
+                        HomeButton(icon: "chart.bar.fill", title: "Progress", subtitle: "Stats & streaks")
+                    }
+
+                    // Settings card
+                    NavigationLink(destination: SettingsView()) {
+                        HomeButton(icon: "gearshape.fill", title: "Settings", subtitle: "Reminders · Privacy Policy")
+                    }
 
                 }
                 .padding(.horizontal, 24)
@@ -271,9 +281,9 @@ struct HomeView: View {
                     .padding(.vertical, 12)
                     .background(
                         RoundedRectangle(cornerRadius: 14)
-                            .fill(Color(red: 1.0, green: 0.55, blue: 0.20).opacity(0.18))
+                            .fill(Color(red: 0.541, green: 0.357, blue: 0.804).opacity(0.20))
                             .overlay(RoundedRectangle(cornerRadius: 14)
-                                .stroke(Color(red: 1.0, green: 0.55, blue: 0.20).opacity(0.35), lineWidth: 1))
+                                .stroke(Color(red: 0.541, green: 0.357, blue: 0.804).opacity(0.45), lineWidth: 1))
                     )
                     .padding(.horizontal, 24)
                     .padding(.top, 8)
@@ -342,7 +352,7 @@ struct HomeView: View {
 
                 Text("Take a moment for yourself")
                     .font(.caption)
-                    .foregroundColor(.calmMid.opacity(0.70))
+                    .foregroundColor(.white.opacity(0.45))
 
                 HStack(spacing: 10) {
                     Label("No login required", systemImage: "person.slash.fill")
@@ -526,11 +536,7 @@ struct DailyQuoteCard: View {
         .padding(.vertical, 10)
         .background(
             RoundedRectangle(cornerRadius: 12)
-                .fill(Color.white.opacity(0.10))
-                .overlay(
-                    RoundedRectangle(cornerRadius: 12)
-                        .stroke(Color.white.opacity(0.15), lineWidth: 1)
-                )
+                .fill(Color(red: 0.44, green: 0.33, blue: 0.68))
         )
     }
 }
@@ -540,6 +546,7 @@ struct FeatureGroup<Content: View>: View {
     let title: String
     let subtitle: String
     let icon: String
+    var bgColor: Color = Color.white
     @Binding var isExpanded: Bool
     @ViewBuilder let content: () -> Content
 
@@ -549,23 +556,27 @@ struct FeatureGroup<Content: View>: View {
                 withAnimation(.easeInOut(duration: 0.25)) { isExpanded.toggle() }
             } label: {
                 HStack(spacing: 16) {
-                    Image(systemName: icon)
-                        .font(.system(size: 20))
-                        .foregroundColor(Color(red: 0.10, green: 0.22, blue: 0.42))
-                        .frame(width: 50, height: 50)
-                        .background(Circle().fill(Color(red: 0.10, green: 0.22, blue: 0.42).opacity(0.08)))
+                    ZStack {
+                        Circle()
+                            .fill(Color.white)
+                            .frame(width: 50, height: 50)
+                            .shadow(color: Color(red: 0.541, green: 0.357, blue: 0.804).opacity(0.15), radius: 4, x: 0, y: 2)
+                        Image(systemName: icon)
+                            .font(.system(size: 20))
+                            .foregroundColor(Color(red: 0.541, green: 0.357, blue: 0.804))
+                    }
                     VStack(alignment: .leading, spacing: 3) {
                         Text(title)
                             .font(.system(.callout, design: .rounded).weight(.semibold))
-                            .foregroundColor(Color(red: 0.10, green: 0.22, blue: 0.42))
+                            .foregroundColor(.calmDeep)
                         Text(subtitle)
                             .font(.system(.caption))
-                            .foregroundColor(Color(red: 0.10, green: 0.22, blue: 0.42).opacity(0.55))
+                            .foregroundColor(.calmMid.opacity(0.65))
                     }
                     Spacer()
                     Image(systemName: isExpanded ? "chevron.up" : "chevron.down")
                         .font(.system(size: 12, weight: .semibold))
-                        .foregroundColor(Color(red: 0.10, green: 0.22, blue: 0.42).opacity(0.50))
+                        .foregroundColor(.calmMid.opacity(0.50))
                 }
                 .padding(.horizontal, 18)
                 .padding(.vertical, 15)
@@ -584,8 +595,8 @@ struct FeatureGroup<Content: View>: View {
         }
         .background(
             RoundedRectangle(cornerRadius: 20)
-                .fill(Color.white.opacity(0.75))
-                .shadow(color: Color.black.opacity(0.08), radius: 8, x: 0, y: 3)
+                .fill(Color(red: 0.87, green: 0.89, blue: 0.96))
+                .shadow(color: Color.black.opacity(0.08), radius: 6, x: 0, y: 2)
         )
     }
 }
@@ -596,6 +607,7 @@ struct HomeButton: View {
     let title: String
     let subtitle: String
     var locked: Bool = false
+    var bgColor: Color = Color.white
 
     private let brandPurple = Color(red: 0.541, green: 0.357, blue: 0.804)
 
@@ -617,16 +629,16 @@ struct HomeButton: View {
                 HStack(spacing: 5) {
                     Text(title)
                         .font(.system(size: 16, weight: .semibold, design: .rounded))
-                        .foregroundColor(locked ? .calmDeep.opacity(0.45) : .calmDeep)
+                        .foregroundColor(locked ? .calmDeep.opacity(0.40) : .calmDeep)
                     if locked {
                         Image(systemName: "lock.fill")
                             .font(.system(size: 11))
-                            .foregroundColor(.calmMid.opacity(0.50))
+                            .foregroundColor(.calmMid.opacity(0.45))
                     }
                 }
                 Text(subtitle)
                     .font(.system(size: 12, weight: .regular))
-                    .foregroundColor(.calmMid.opacity(locked ? 0.45 : 0.75))
+                    .foregroundColor(.calmMid.opacity(locked ? 0.40 : 0.70))
             }
 
             Spacer()
@@ -639,8 +651,8 @@ struct HomeButton: View {
         .padding(.vertical, 15)
         .background(
             RoundedRectangle(cornerRadius: 20)
-                .fill(Color.white.opacity(0.85))
-                .shadow(color: Color.black.opacity(0.06), radius: 6, x: 0, y: 2)
+                .fill(Color(red: 0.87, green: 0.89, blue: 0.96))
+                .shadow(color: Color.black.opacity(0.08), radius: 6, x: 0, y: 2)
         )
     }
 }

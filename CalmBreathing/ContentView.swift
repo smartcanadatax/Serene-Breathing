@@ -19,14 +19,85 @@ struct CalmBackground: View {
     var body: some View {
         LinearGradient(
             colors: [
-                Color(red: 0.46, green: 0.64, blue: 0.92),
-                Color(red: 0.36, green: 0.54, blue: 0.86),
-                Color(red: 0.28, green: 0.46, blue: 0.80)
+                Color(red: 0.31, green: 0.44, blue: 0.77),
+                Color(red: 0.30, green: 0.43, blue: 0.76),
+                Color(red: 0.28, green: 0.41, blue: 0.74)
             ],
             startPoint: .top,
             endPoint: .bottom
         )
         .ignoresSafeArea()
+    }
+}
+
+// MARK: - Sounds Hub
+struct SoundsHubView: View {
+    @EnvironmentObject var premium:     PremiumStore
+    @EnvironmentObject var soundPlayer: SoundPlayer
+    @EnvironmentObject var userPrefs:   UserPreferencesStore
+
+    var body: some View {
+        ZStack {
+            CalmBackground()
+            ScrollView(showsIndicators: false) {
+                VStack(spacing: 0) {
+                    VStack(spacing: 6) {
+                        AppLogoView(size: 64)
+                            .padding(.top, 20)
+                        Text("Sounds")
+                            .font(.system(size: 28, weight: .bold, design: .rounded))
+                            .foregroundColor(.white)
+                        Text("Relax, focus & drift off")
+                            .font(.system(size: 14, weight: .regular, design: .rounded))
+                            .foregroundColor(.white.opacity(0.70))
+                    }
+                    .padding(.bottom, 24)
+
+                    VStack(spacing: 10) {
+                        NavigationLink(destination: RelaxingSoundsView()
+                            .environmentObject(soundPlayer)
+                            .environmentObject(userPrefs)
+                            .environmentObject(premium)
+                        ) {
+                            SoundsHubRow(icon: "waveform", title: "Sounds Library", subtitle: "Nature · Meditation · Sleep sounds")
+                        }
+                        NavigationLink(destination: AmbientMusicView()) {
+                            SoundsHubRow(icon: "music.note", title: "Ambient Music", subtitle: "Focus · Sleep · Creativity playlists")
+                        }
+                    }
+                    .padding(.horizontal, 20)
+
+                    DisclaimerFooter()
+                        .padding(.bottom, 16)
+                }
+            }
+        }
+        .navigationBarHidden(true)
+    }
+}
+
+private struct SoundsHubRow: View {
+    let icon: String
+    let title: String
+    let subtitle: String
+    private let brandPurple = Color(red: 0.541, green: 0.357, blue: 0.804)
+    var body: some View {
+        HStack(spacing: 16) {
+            ZStack {
+                Circle().fill(Color.white).frame(width: 50, height: 50)
+                    .shadow(color: brandPurple.opacity(0.15), radius: 4, x: 0, y: 2)
+                Image(systemName: icon).font(.system(size: 20)).foregroundColor(brandPurple)
+            }
+            VStack(alignment: .leading, spacing: 3) {
+                Text(title).font(.system(size: 16, weight: .semibold, design: .rounded)).foregroundColor(.calmDeep)
+                Text(subtitle).font(.system(size: 12, weight: .regular)).foregroundColor(.calmMid.opacity(0.70))
+            }
+            Spacer()
+            Image(systemName: "chevron.right").font(.system(size: 12, weight: .semibold)).foregroundColor(.calmMid.opacity(0.45))
+        }
+        .padding(.horizontal, 18).padding(.vertical, 15)
+        .background(RoundedRectangle(cornerRadius: 20).fill(Color(red: 0.87, green: 0.89, blue: 0.96))
+            .shadow(color: Color.black.opacity(0.08), radius: 6, x: 0, y: 2))
     }
 }
 
@@ -71,7 +142,7 @@ struct ContentView: View {
                     }
 
                     NavigationStack {
-                        RelaxingSoundsView()
+                        SoundsHubView()
                     }
                     .tabItem {
                         Label("Sounds", systemImage: "waveform")

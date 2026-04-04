@@ -40,6 +40,9 @@ let allAmbientTracks: [AmbientTrack] = [
     AmbientTrack(title: "Rain Piano",        subtitle: "Soft rain & piano",     filename: "clavier-music-relaxing-ambient-music-rain-354479",                     category: .sleep),
     AmbientTrack(title: "Mountain Night",    subtitle: "Peaceful wilderness",   filename: "the_mountain-ambient-nature-132350",                                   category: .sleep),
     AmbientTrack(title: "Calm Mountain",     subtitle: "Serene stillness",      filename: "the_mountain-calm-ambient-146122",                                     category: .sleep),
+    AmbientTrack(title: "Very Deep Sleep",   subtitle: "Profound rest",         filename: "very_deep_sleep",                                                      category: .sleep),
+    AmbientTrack(title: "C Major Dreams",    subtitle: "Meditation sleep music",filename: "sleep_c_major",                                                        category: .sleep),
+    AmbientTrack(title: "Deep Sleep",        subtitle: "Background sleep waves",filename: "deep_sleep_bg",                                                        category: .sleep),
 
     // Creativity
     AmbientTrack(title: "Zen Garden",        subtitle: "Open your mind",        filename: "quietphase-ambient-zen-489706",                                        category: .creativity),
@@ -48,6 +51,8 @@ let allAmbientTracks: [AmbientTrack] = [
     AmbientTrack(title: "Yoga Flow",         subtitle: "Fluid and free",        filename: "quietphase-yoga-ambient-485882",                                       category: .creativity),
     AmbientTrack(title: "Peaceful Mind",     subtitle: "Clear creative space",  filename: "playstarz_music-ambient-meditation-486609",                            category: .creativity),
     AmbientTrack(title: "Morning Yoga",      subtitle: "Energised & open",      filename: "the_mountain-yoga-meditation-165602",                                  category: .creativity),
+    AmbientTrack(title: "Nature Soundscape", subtitle: "Immersive outdoors",    filename: "immersive_nature",                                                     category: .creativity),
+    AmbientTrack(title: "Nature & Music",    subtitle: "Relax with nature",     filename: "relaxing_nature",                                                      category: .creativity),
 ]
 
 // MARK: - Player Engine
@@ -187,23 +192,22 @@ private struct TrackRow: View {
     var body: some View {
         Button { engine.play(track) } label: {
             HStack(spacing: 14) {
-                // Play indicator
                 ZStack {
                     Circle()
-                        .fill(isActive ? Color.calmAccent.opacity(0.20) : Color.white.opacity(0.08))
+                        .fill(isActive ? Color.calmAccent.opacity(0.18) : Color(red: 0.87, green: 0.89, blue: 0.96))
                         .frame(width: 46, height: 46)
                     Image(systemName: isPlaying ? "pause.fill" : "play.fill")
                         .font(.system(size: 16, weight: .semibold))
-                        .foregroundColor(isActive ? .calmAccent : .white.opacity(0.70))
+                        .foregroundColor(isActive ? .calmAccent : Color(red: 0.541, green: 0.357, blue: 0.804).opacity(0.70))
                 }
 
                 VStack(alignment: .leading, spacing: 3) {
                     Text(track.title)
                         .font(.system(size: 15, weight: .semibold, design: .rounded))
-                        .foregroundColor(isActive ? .calmAccent : .white)
+                        .foregroundColor(isActive ? .calmAccent : .calmDeep)
                     Text(track.subtitle)
                         .font(.system(size: 12, weight: .light))
-                        .foregroundColor(.white.opacity(0.60))
+                        .foregroundColor(.calmMid)
                 }
 
                 Spacer()
@@ -216,7 +220,7 @@ private struct TrackRow: View {
             .padding(.vertical, 12)
             .background(
                 RoundedRectangle(cornerRadius: 14)
-                    .fill(isActive ? Color.calmAccent.opacity(0.10) : Color.white.opacity(0.07))
+                    .fill(isActive ? Color.calmAccent.opacity(0.10) : Color(red: 0.87, green: 0.89, blue: 0.96))
                     .overlay(RoundedRectangle(cornerRadius: 14)
                         .stroke(isActive ? Color.calmAccent.opacity(0.40) : Color.clear, lineWidth: 1))
             )
@@ -248,10 +252,10 @@ private struct MiniPlayer: View {
                 VStack(alignment: .leading, spacing: 2) {
                     Text(engine.currentTrack?.title ?? "")
                         .font(.system(size: 14, weight: .semibold, design: .rounded))
-                        .foregroundColor(.white)
+                        .foregroundColor(.calmDeep)
                     Text(engine.currentTrack?.subtitle ?? "")
                         .font(.system(size: 11, weight: .light))
-                        .foregroundColor(.white.opacity(0.60))
+                        .foregroundColor(.calmMid)
                 }
 
                 Spacer()
@@ -274,8 +278,7 @@ private struct MiniPlayer: View {
             .padding(.vertical, 12)
         }
         .background(
-            Color(red: 0.10, green: 0.22, blue: 0.45)
-                .opacity(0.97)
+            Color(red: 0.87, green: 0.89, blue: 0.96)
                 .ignoresSafeArea(edges: .bottom)
         )
     }

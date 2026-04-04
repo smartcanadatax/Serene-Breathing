@@ -20,7 +20,7 @@ extension SoundPlayer.SoundType {
     var libraryCategory: SoundLibraryCategory {
         switch self {
         case .ocean, .forest, .meditationRiver, .ambience, .downpour,
-             .immersiveNature, .relaxingNature:
+             .immersiveNature, .relaxingNature, .alexNatureAmbient, .soothingNature:
             return .nature
         case .rainSleep, .sleepMeditation, .relaxSleep, .yogaRelaxing,
              .stillWaters, .deepSleepBg, .sleepCMajor, .veryDeepSleep,
@@ -56,9 +56,9 @@ struct RelaxingSoundsView: View {
                     Button { dismiss() } label: {
                         Image(systemName: "chevron.left")
                             .font(.system(size: 16, weight: .semibold))
-                            .foregroundColor(.white.opacity(0.85))
-                            .frame(width: 44, height: 44)
-                            .contentShape(Rectangle())
+                            .foregroundColor(.white)
+                            .frame(width: 36, height: 36)
+                            .background(Circle().fill(Color.white.opacity(0.25)))
                     }
                     Spacer()
                     Text("Sounds Library")
@@ -67,18 +67,9 @@ struct RelaxingSoundsView: View {
                     Spacer()
                     HStack(spacing: 10) {
                         SleepTimerButton()
-                        if !premium.isPremium {
-                            Button { showPaywallFromNav = true } label: {
-                                HStack(spacing: 4) {
-                                    Image(systemName: "crown.fill").font(.system(size: 11))
-                                    Text("Premium").font(.system(size: 12, weight: .semibold))
-                                }
-                                .foregroundColor(.calmDeep)
-                                .padding(.horizontal, 10).padding(.vertical, 5)
-                                .background(Capsule().fill(Color.calmAccent))
-                            }
-                        }
                     }
+                    .frame(width: 36, height: 36)
+                    .background(Circle().fill(Color.white.opacity(0.25)))
                 }
                 .padding(.horizontal, 16)
                 .padding(.top, 16)
@@ -138,6 +129,8 @@ private struct SoundLibraryRow: View {
     private var isLocked:  Bool { !sound.isFree && !premium.isPremium }
     private var isFav:     Bool { userPrefs.isFavorite(sound) }
 
+    private let brandPurple = Color(red: 0.541, green: 0.357, blue: 0.804)
+
     var body: some View {
         Button {
             if isLocked {
@@ -155,20 +148,20 @@ private struct SoundLibraryRow: View {
                 // Play indicator
                 ZStack {
                     Circle()
-                        .fill(isActive ? Color.calmAccent.opacity(0.20) : Color.white.opacity(0.08))
+                        .fill(isActive ? brandPurple.opacity(0.22) : brandPurple.opacity(0.12))
                         .frame(width: 46, height: 46)
                     Image(systemName: isLocked ? "lock.fill" : (isActive ? "pause.fill" : "play.fill"))
                         .font(.system(size: 16, weight: .semibold))
-                        .foregroundColor(isLocked ? .white.opacity(0.35) : (isActive ? .calmAccent : .white.opacity(0.70)))
+                        .foregroundColor(isLocked ? brandPurple.opacity(0.35) : brandPurple)
                 }
 
                 VStack(alignment: .leading, spacing: 3) {
                     Text(sound.rawValue)
                         .font(.system(size: 15, weight: .semibold, design: .rounded))
-                        .foregroundColor(isLocked ? .white.opacity(0.45) : (isActive ? .calmAccent : .white))
+                        .foregroundColor(isLocked ? .calmDeep.opacity(0.45) : .calmDeep)
                     Text(isLocked ? "Premium" : sound.subtitle)
                         .font(.system(size: 12, weight: .light))
-                        .foregroundColor(isLocked ? .calmAccent.opacity(0.70) : .white.opacity(0.60))
+                        .foregroundColor(isLocked ? brandPurple.opacity(0.50) : .calmMid)
                 }
 
                 Spacer()
@@ -179,7 +172,7 @@ private struct SoundLibraryRow: View {
                     } label: {
                         Image(systemName: isFav ? "heart.fill" : "heart")
                             .font(.system(size: 15))
-                            .foregroundColor(isFav ? Color(red: 1.0, green: 0.40, blue: 0.55) : .white.opacity(0.30))
+                            .foregroundColor(isFav ? Color(red: 1.0, green: 0.40, blue: 0.55) : brandPurple.opacity(0.30))
                             .frame(width: 44, height: 44)
                             .contentShape(Rectangle())
                     }
@@ -194,9 +187,9 @@ private struct SoundLibraryRow: View {
             .padding(.vertical, 12)
             .background(
                 RoundedRectangle(cornerRadius: 14)
-                    .fill(isActive ? Color.calmAccent.opacity(0.10) : Color.white.opacity(0.07))
+                    .fill(isActive ? Color.calmAccent.opacity(0.10) : Color(red: 0.87, green: 0.89, blue: 0.96))
                     .overlay(RoundedRectangle(cornerRadius: 14)
-                        .stroke(isActive ? Color.calmAccent.opacity(0.40) : Color.clear, lineWidth: 1))
+                        .stroke(isActive ? brandPurple.opacity(0.30) : Color.clear, lineWidth: 1))
             )
         }
         .buttonStyle(.plain)
@@ -223,10 +216,10 @@ private struct SoundMiniPlayer: View {
                 VStack(alignment: .leading, spacing: 2) {
                     Text(soundPlayer.playing?.rawValue ?? "")
                         .font(.system(size: 14, weight: .semibold, design: .rounded))
-                        .foregroundColor(.white)
+                        .foregroundColor(.calmDeep)
                     Text(soundPlayer.playing?.subtitle ?? "")
                         .font(.system(size: 11, weight: .light))
-                        .foregroundColor(.white.opacity(0.60))
+                        .foregroundColor(.calmMid)
                 }
 
                 Spacer()
@@ -246,7 +239,7 @@ private struct SoundMiniPlayer: View {
                 Button { soundPlayer.stop() } label: {
                     Image(systemName: "xmark.circle.fill")
                         .font(.system(size: 36))
-                        .foregroundColor(.white.opacity(0.40))
+                        .foregroundColor(Color(red: 0.541, green: 0.357, blue: 0.804).opacity(0.50))
                         .frame(width: 44, height: 44)
                         .contentShape(Rectangle())
                 }
@@ -255,8 +248,7 @@ private struct SoundMiniPlayer: View {
             .padding(.vertical, 12)
         }
         .background(
-            Color(red: 0.10, green: 0.22, blue: 0.45)
-                .opacity(0.97)
+            Color.white.opacity(0.92)
                 .ignoresSafeArea(edges: .bottom)
         )
     }

@@ -341,6 +341,7 @@ struct DailyPracticeView: View {
     @State private var audioSyncTimer: Timer?
     @State private var lastPhaseIdx   = -1
     @State private var visualCountdownTimer: Timer?
+    private let completionSynth = AVSpeechSynthesizer()
 
     // Audio phase triggers (when the voice cue fires)
     private let audioCycleDuration: TimeInterval = 27.984
@@ -362,14 +363,7 @@ struct DailyPracticeView: View {
 
     var body: some View {
         ZStack {
-            LinearGradient(
-                colors: [
-                    Color(red: 0.08, green: 0.18, blue: 0.40),
-                    Color(red: 0.12, green: 0.28, blue: 0.55),
-                ],
-                startPoint: .topLeading, endPoint: .bottomTrailing
-            )
-            .ignoresSafeArea()
+            CalmBackground()
 
             switch screen {
             case .intro:     introView
@@ -391,6 +385,23 @@ struct DailyPracticeView: View {
             }
         }
         .onDisappear { stopTimers() }
+        .onReceive(NotificationCenter.default.publisher(for: AVAudioSession.interruptionNotification)) { note in
+            guard let info = note.userInfo,
+                  let typeVal = info[AVAudioSessionInterruptionTypeKey] as? UInt,
+                  let type = AVAudioSession.InterruptionType(rawValue: typeVal) else { return }
+            switch type {
+            case .began:
+                audioPlayer?.pause()
+            case .ended:
+                let opts = (info[AVAudioSessionInterruptionOptionKey] as? UInt)
+                    .map { AVAudioSession.InterruptionOptions(rawValue: $0) } ?? []
+                if opts.contains(.shouldResume) {
+                    try? AVAudioSession.sharedInstance().setActive(true)
+                    audioPlayer?.play()
+                }
+            @unknown default: break
+            }
+        }
     }
 
     // MARK: - Intro
@@ -576,14 +587,7 @@ struct DailyPracticeView: View {
 
     private var dailyCompletionOverlay: some View {
         ZStack {
-            LinearGradient(
-                colors: [
-                    Color(red: 0.08, green: 0.18, blue: 0.40),
-                    Color(red: 0.12, green: 0.28, blue: 0.55),
-                ],
-                startPoint: .topLeading, endPoint: .bottomTrailing
-            )
-            .ignoresSafeArea()
+            CalmBackground()
 
             VStack(spacing: 20) {
                 // Theme badge
@@ -692,6 +696,7 @@ struct DailyPracticeView: View {
                         if cycleCount >= practice.cycles {
                             stopTimers()
                             HapticManager.complete()
+                            playCompletionSpeech()
                             withAnimation(.easeIn(duration: 0.5)) { showCompletion = true }
                             return
                         }
@@ -747,6 +752,7 @@ struct DailyPracticeView: View {
                     self.cycleCount += 1
                     if self.cycleCount >= self.practice.cycles {
                         self.stopTimers()
+                        self.playCompletionSpeech()
                         withAnimation(.easeIn(duration: 0.5)) { self.showCompletion = true }
                         return
                     }
@@ -756,6 +762,16 @@ struct DailyPracticeView: View {
                 }
             }
         }
+    }
+
+    private func playCompletionSpeech() {
+        let utt = AVSpeechUtterance(string: "Well done. You have finished your breathing session.")
+        utt.voice = AVSpeechSynthesisVoice(identifier: "com.apple.ttsbundle.Nicky-compact")
+                   ?? AVSpeechSynthesisVoice(language: "en-US")
+        utt.rate = 0.42
+        utt.pitchMultiplier = 0.9
+        utt.volume = 0.85
+        completionSynth.speak(utt)
     }
 
     private func stopTimers() {
@@ -784,7 +800,7 @@ struct DailyPracticeCard: View {
                 VStack(alignment: .leading, spacing: 4) {
                     Text("TODAY'S PRACTICE")
                         .font(.system(size: 9, weight: .bold))
-                        .foregroundColor(Color(red: 0.30, green: 0.55, blue: 0.80))
+                        .foregroundColor(Color(red: 0.541, green: 0.357, blue: 0.804))
                         .tracking(1.5)
                     Text(practice.theme)
                         .font(.system(size: 20, weight: .bold, design: .rounded))
@@ -797,18 +813,20 @@ struct DailyPracticeCard: View {
                 }
                 Spacer()
                 VStack(spacing: 4) {
-                    AppLogoView(size: 52)
+                    LotusOrbView(isAnimating: true)
+                        .frame(width: 52, height: 52)
+                        .brightness(-0.07)
                     Image(systemName: "chevron.right")
                         .font(.system(size: 10, weight: .semibold))
-                        .foregroundColor(Color(red: 0.50, green: 0.65, blue: 0.80))
+                        .foregroundColor(Color(red: 0.40, green: 0.48, blue: 0.65))
                 }
             }
             .padding(14)
             .frame(maxWidth: .infinity, alignment: .leading)
             .background(
                 RoundedRectangle(cornerRadius: 16)
-                    .fill(Color.white.opacity(0.75))
-                    .shadow(color: Color.black.opacity(0.06), radius: 6, x: 0, y: 2)
+                    .fill(Color(red: 0.87, green: 0.89, blue: 0.96))
+                    .shadow(color: Color.black.opacity(0.08), radius: 6, x: 0, y: 2)
             )
         }
         .buttonStyle(.plain)

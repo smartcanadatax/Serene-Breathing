@@ -102,7 +102,7 @@ struct SleepPatternCoachView: View {
                             .frame(width: 80, height: 80)
                         Image(systemName: "moon.zzz.fill")
                             .font(.system(size: 34))
-                            .foregroundColor(.white)
+                            .foregroundColor(.calmDeep)
                     }
                     Text("Sleep Pattern Coach")
                         .font(.system(size: 26, weight: .semibold, design: .rounded))
@@ -124,10 +124,10 @@ struct SleepPatternCoachView: View {
                     VStack(spacing: 12) {
                         Image(systemName: "moon.zzz")
                             .font(.system(size: 28))
-                            .foregroundColor(.white.opacity(0.60))
+                            .foregroundColor(.calmMid)
                         Text("Log your sleep for at least 7 nights to unlock your personalized sleep pattern analysis. \(max(0, 7 - recentSleep.count)) more night\(max(0, 7 - recentSleep.count) == 1 ? "" : "s") to go.")
                             .font(.system(size: 13))
-                            .foregroundColor(.white.opacity(0.80))
+                            .foregroundColor(.calmDeep.opacity(0.80))
                             .multilineTextAlignment(.center)
                         if journal.hasSleepEntryToday {
                             Label("Sleep logged today", systemImage: "checkmark.circle.fill")
@@ -146,14 +146,14 @@ struct SleepPatternCoachView: View {
                     }
                     .padding()
                     .frame(maxWidth: .infinity)
-                    .background(RoundedRectangle(cornerRadius: 14).fill(Color.white.opacity(0.10)))
+                    .background(RoundedRectangle(cornerRadius: 14).fill(Color.white.opacity(0.85)))
                     .padding(.horizontal, 24)
                 }
 
                 if let err = errorText {
                     Text(err)
                         .font(.system(size: 13))
-                        .foregroundColor(.white)
+                        .foregroundColor(.calmDeep)
                         .multilineTextAlignment(.center)
                         .padding()
                         .background(RoundedRectangle(cornerRadius: 12).fill(Color.red.opacity(0.25)))
@@ -193,7 +193,7 @@ struct SleepPatternCoachView: View {
             HStack {
                 Text("Your Last \(recentSleep.count) Nights")
                     .font(.system(size: 13, weight: .semibold, design: .rounded))
-                    .foregroundColor(.white)
+                    .foregroundColor(.calmDeep)
                 Spacer()
             }
 
@@ -206,7 +206,7 @@ struct SleepPatternCoachView: View {
                             .frame(width: 14, height: CGFloat(entry.hours) * 8)
                         Text(String(format: "%.0f", entry.hours))
                             .font(.system(size: 7))
-                            .foregroundColor(.white.opacity(0.60))
+                            .foregroundColor(.calmMid)
                     }
                 }
             }
@@ -215,10 +215,10 @@ struct SleepPatternCoachView: View {
             HStack(spacing: 16) {
                 Label(String(format: "%.1fh avg", avgHours), systemImage: "clock.fill")
                     .font(.system(size: 11, weight: .medium))
-                    .foregroundColor(.white.opacity(0.75))
+                    .foregroundColor(.calmMid)
                 Label(String(format: "%.1f/5 quality", avgQuality), systemImage: "star.fill")
                     .font(.system(size: 11, weight: .medium))
-                    .foregroundColor(.white.opacity(0.75))
+                    .foregroundColor(.calmMid)
                 if avgHours < 7 {
                     Label("Low sleep", systemImage: "exclamationmark.triangle.fill")
                         .font(.system(size: 11, weight: .medium))
@@ -233,13 +233,13 @@ struct SleepPatternCoachView: View {
                         Circle().fill(qualityColor(q)).frame(width: 8, height: 8)
                         Text(qualityLabel(q))
                             .font(.system(size: 9, weight: .medium))
-                            .foregroundColor(.white.opacity(0.60))
+                            .foregroundColor(.calmMid)
                     }
                 }
             }
         }
         .padding(16)
-        .background(RoundedRectangle(cornerRadius: 16).fill(Color.white.opacity(0.12)))
+        .background(RoundedRectangle(cornerRadius: 16).fill(Color.white.opacity(0.85)))
         .padding(.horizontal, 24)
     }
 
@@ -296,13 +296,13 @@ struct SleepPatternCoachView: View {
                                 .foregroundColor(.calmAccent)
                             Text(insight)
                                 .font(.system(size: 14))
-                                .foregroundColor(.white.opacity(0.90))
+                                .foregroundColor(.calmDeep)
                                 .lineSpacing(4)
                                 .fixedSize(horizontal: false, vertical: true)
                         }
                         .padding(16)
                         .frame(maxWidth: .infinity, alignment: .leading)
-                        .background(RoundedRectangle(cornerRadius: 14).fill(Color.white.opacity(0.12)))
+                        .background(RoundedRectangle(cornerRadius: 14).fill(Color.white.opacity(0.85)))
                         .padding(.horizontal, 24)
                     }
 
@@ -325,7 +325,7 @@ struct SleepPatternCoachView: View {
                     VStack(alignment: .leading, spacing: 10) {
                         Label("Your Sleep Plan", systemImage: "sparkles")
                             .font(.system(size: 13, weight: .semibold))
-                            .foregroundColor(.white)
+                            .foregroundColor(.calmDeep)
                         Text(script)
                             .font(.system(size: 14))
                             .foregroundColor(.calmDeep)
@@ -345,7 +345,7 @@ struct SleepPatternCoachView: View {
                                 Text("Start Recommended Session")
                                     .font(.system(size: 15, weight: .semibold, design: .rounded))
                             }
-                            .foregroundColor(.white)
+                            .foregroundColor(.calmDeep)
                             .padding(.horizontal, 32)
                             .padding(.vertical, 14)
                             .background(Capsule().fill(Color(red: 0.541, green: 0.357, blue: 0.804)))

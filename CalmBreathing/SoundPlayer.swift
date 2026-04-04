@@ -44,6 +44,8 @@ class SoundPlayer: ObservableObject {
         // New nature
         case immersiveNature       = "Immersive Nature"
         case relaxingNature        = "Relaxing Nature"
+        case alexNatureAmbient     = "Nature Ambient"
+        case soothingNature        = "Soothing Nature"
         // New sleep
         case stillWaters           = "Still Waters"
         case deepSleepBg           = "Deep Sleep"
@@ -71,13 +73,7 @@ class SoundPlayer: ObservableObject {
 
         var id: String { rawValue }
 
-        /// First 3 sounds are free; everything else requires Premium
-        var isFree: Bool {
-            switch self {
-            case .ocean, .forest, .ambience: return true
-            default: return false
-            }
-        }
+        var isFree: Bool { return true }
 
         var icon: String {
             switch self {
@@ -113,6 +109,8 @@ class SoundPlayer: ObservableObject {
             case .sereneMindfulness:     return "sparkles"
             case .immersiveNature:       return "tree.fill"
             case .relaxingNature:        return "leaf.fill"
+            case .alexNatureAmbient:     return "wind"
+            case .soothingNature:        return "leaf.fill"
             case .stillWaters:           return "drop.fill"
             case .deepSleepBg:           return "bed.double.fill"
             case .sleepCMajor:           return "music.note"
@@ -170,6 +168,8 @@ class SoundPlayer: ObservableObject {
             case .sereneMindfulness:     return "Serene mindfulness journey"
             case .immersiveNature:       return "Immersive nature soundscape"
             case .relaxingNature:        return "Relaxing music with nature"
+            case .alexNatureAmbient:     return "Ambient nature music"
+            case .soothingNature:        return "Soothing nature sounds"
             case .stillWaters:           return "Peaceful still water sounds"
             case .deepSleepBg:           return "Background music for deep sleep"
             case .sleepCMajor:           return "Sleep music in C major"
@@ -227,6 +227,8 @@ class SoundPlayer: ObservableObject {
             case .sereneMindfulness:     return Color(red: 0.20, green: 0.35, blue: 0.60)
             case .immersiveNature:       return Color(red: 0.08, green: 0.40, blue: 0.25)
             case .relaxingNature:        return Color(red: 0.10, green: 0.42, blue: 0.28)
+            case .alexNatureAmbient:     return Color(red: 0.08, green: 0.45, blue: 0.30)
+            case .soothingNature:        return Color(red: 0.12, green: 0.44, blue: 0.22)
             case .stillWaters:           return Color(red: 0.05, green: 0.35, blue: 0.55)
             case .deepSleepBg:           return Color(red: 0.06, green: 0.12, blue: 0.40)
             case .sleepCMajor:           return Color(red: 0.15, green: 0.18, blue: 0.48)
@@ -322,6 +324,8 @@ class SoundPlayer: ObservableObject {
             case .sereneMindfulness:     return ("serene_mindfulness",   "mp3")
             case .immersiveNature:       return ("immersive_nature",     "mp3")
             case .relaxingNature:        return ("relaxing_nature",      "mp3")
+            case .alexNatureAmbient:     return ("alex_nature_ambient",  "mp3")
+            case .soothingNature:        return ("soothing_nature",      "mp3")
             case .stillWaters:           return ("still_waters",         "mp3")
             case .deepSleepBg:           return ("deep_sleep_bg",        "mp3")
             case .sleepCMajor:           return ("sleep_c_major",        "mp3")

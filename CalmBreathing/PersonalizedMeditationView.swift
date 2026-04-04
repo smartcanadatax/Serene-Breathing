@@ -4,8 +4,8 @@ import UIKit
 
 // MARK: - Audio file map (add entries as you record each mood)
 private let personalizedMeditationAudioFiles: [MeditationMood: String] = [
-    .stressed:    "meditation_stressed_3min",
-    .anxious:    "meditation_anxious_3min",
+    .stressed:   "meditation_stressed_3min",
+    .anxious:    "meditation_stressed_3min",
     .cantSleep:  "meditation_cantsleep_3min",
     .overwhelmed:"meditation_overwhelmed_3min",
     .sad:        "meditation_sad_3min",
@@ -37,6 +37,8 @@ final class PersonalizedMeditationEngine: NSObject, ObservableObject {
     // Not used in audio-file mode but kept for UI compatibility
     @Published var currentSentenceID: UUID? = nil
 
+    private var interruptionObserver: NSObjectProtocol?
+
     override init() {
         super.init()
         synthesizer.delegate = self
@@ -45,6 +47,7 @@ final class PersonalizedMeditationEngine: NSObject, ObservableObject {
     func start(mood: MeditationMood, sentences: [ScriptSentence]) {
         stop()
         configureAudioSession()
+        startInterruptionObserver()
 
         if let filename = personalizedMeditationAudioFiles[mood],
            let url = Bundle.main.url(forResource: filename, withExtension: "mp3", subdirectory: "Audio"),
@@ -74,6 +77,10 @@ final class PersonalizedMeditationEngine: NSObject, ObservableObject {
     }
 
     func stop() {
+        if let observer = interruptionObserver {
+            NotificationCenter.default.removeObserver(observer)
+            interruptionObserver = nil
+        }
         audioPlayer?.stop()
         audioPlayer = nil
         progressTimer?.invalidate()
@@ -133,6 +140,33 @@ final class PersonalizedMeditationEngine: NSObject, ObservableObject {
         return voices.first
     }
 
+    private func startInterruptionObserver() {
+        interruptionObserver = NotificationCenter.default.addObserver(
+            forName: AVAudioSession.interruptionNotification,
+            object: nil,
+            queue: .main
+        ) { [weak self] note in
+            guard let self,
+                  let info = note.userInfo,
+                  let typeVal = info[AVAudioSessionInterruptionTypeKey] as? UInt,
+                  let type = AVAudioSession.InterruptionType(rawValue: typeVal) else { return }
+            switch type {
+            case .began:
+                self.audioPlayer?.pause()
+                self.isPlaying = false
+            case .ended:
+                let opts = (info[AVAudioSessionInterruptionOptionKey] as? UInt)
+                    .map { AVAudioSession.InterruptionOptions(rawValue: $0) } ?? []
+                if opts.contains(.shouldResume) {
+                    try? AVAudioSession.sharedInstance().setActive(true)
+                    self.audioPlayer?.play()
+                    self.isPlaying = true
+                }
+            @unknown default: break
+            }
+        }
+    }
+
     private func configureAudioSession() {
         try? AVAudioSession.sharedInstance().setCategory(.playback, mode: .spokenAudio, options: [.duckOthers])
         try? AVAudioSession.sharedInstance().setActive(true)
@@ -147,6 +181,7 @@ final class PersonalizedMeditationEngine: NSObject, ObservableObject {
 
 extension PersonalizedMeditationEngine: AVAudioPlayerDelegate {
     nonisolated func audioPlayerDidFinishPlaying(_ player: AVAudioPlayer, successfully flag: Bool) {
+        guard flag else { return }   // interrupted — do not trigger completion
         Task { @MainActor in
             self.progress = 1.0
             self.markFinished()
@@ -187,7 +222,7 @@ struct PersonalizedMeditationView: View {
     @EnvironmentObject private var premium: PremiumStore
     @Environment(\.dismiss) private var dismiss
 
-    @State private var selectedMood: MeditationMood = .anxious
+    @State private var selectedMood: MeditationMood? = nil
     @State private var navigateToPlayer = false
     @State private var generatedSentences: [ScriptSentence] = []
 
@@ -198,32 +233,13 @@ struct PersonalizedMeditationView: View {
             ScrollView {
                 VStack(spacing: 28) {
 
-                    // Nav header
-                    HStack {
-                        Button { dismiss() } label: {
-                            Image(systemName: "chevron.left")
-                                .font(.system(size: 16, weight: .semibold))
-                                .foregroundColor(.white.opacity(0.85))
-                                .frame(width: 44, height: 44)
-                                .contentShape(Rectangle())
-                        }
-                        Spacer()
-                        Text("Personalized Meditation")
-                            .font(.system(size: 17, weight: .semibold, design: .rounded))
-                            .foregroundColor(.white)
-                        Spacer()
-                        Color.clear.frame(width: 44, height: 44)
-                    }
-                    .padding(.horizontal, 4)
+                    Color.clear.frame(height: 60)
 
                     // Header
                     VStack(spacing: 8) {
                         Image(systemName: "sparkles")
                             .font(.system(size: 32, weight: .ultraLight))
                             .foregroundColor(.calmAccent)
-                        Text("Personalized Meditation")
-                            .font(.system(size: 22, weight: .semibold, design: .rounded))
-                            .foregroundColor(.white)
                         Text("Tell us how you feel — we'll guide you from there.")
                             .font(.system(size: 14, weight: .light))
                             .foregroundColor(.white.opacity(0.72))
@@ -231,17 +247,30 @@ struct PersonalizedMeditationView: View {
                     }
                     .padding(.top, 8)
 
-                    // Mood picker
+                    // Mood picker — tap any card to begin immediately
                     VStack(alignment: .leading, spacing: 12) {
                         Text("HOW ARE YOU FEELING?")
                             .font(.system(size: 11, weight: .semibold))
                             .foregroundColor(.white.opacity(0.55))
                             .padding(.leading, 4)
+                        Text("Tap your mood to begin")
+                            .font(.system(size: 12, weight: .light))
+                            .foregroundColor(.white.opacity(0.45))
+                            .padding(.leading, 4)
 
                         LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 10) {
                             ForEach(MeditationMood.allCases) { mood in
                                 MoodCard(mood: mood, isSelected: selectedMood == mood)
-                                    .onTapGesture { selectedMood = mood }
+                                    .onTapGesture {
+                                        selectedMood = mood
+
+                                        let sections = PersonalizedMeditationGenerator.generate(
+                                            mood: mood,
+                                            length: .short
+                                        )
+                                        generatedSentences = sections.flatMap { $0.sentences }
+                                        navigateToPlayer = true
+                                    }
                             }
                         }
                     }
@@ -252,38 +281,38 @@ struct PersonalizedMeditationView: View {
                         .foregroundColor(.white.opacity(0.75))
                         .multilineTextAlignment(.center)
                         .padding(.horizontal, 8)
-
-                    // Begin button
-                    Button {
-                        let sections = PersonalizedMeditationGenerator.generate(
-                            mood: selectedMood,
-                            length: .short
-                        )
-                        generatedSentences = sections.flatMap { $0.sentences }
-                        navigateToPlayer = true
-                    } label: {
-                        HStack(spacing: 10) {
-                            Image(systemName: "sparkles")
-                            Text("Begin Meditation").fontWeight(.semibold)
-                        }
-                        .font(.system(size: 16, design: .rounded))
-                        .foregroundColor(.calmDeep)
-                        .frame(maxWidth: .infinity)
-                        .padding(.vertical, 16)
-                        .background(
-                            Capsule()
-                                .fill(Color.calmAccent)
-                                .shadow(color: Color.calmAccent.opacity(0.35), radius: 10)
-                        )
-                    }
-                    .padding(.bottom, 32)
+                        .padding(.bottom, 32)
                 }
                 .padding(.horizontal, 20)
+            }
+            // Fixed header overlay
+            VStack {
+                HStack {
+                    Button { dismiss() } label: {
+                        Image(systemName: "chevron.left")
+                            .font(.system(size: 16, weight: .semibold))
+                            .foregroundColor(.white.opacity(0.85))
+                            .frame(width: 44, height: 44)
+                            .contentShape(Rectangle())
+                    }
+                    Spacer()
+                    Text("Personalized Meditation")
+                        .font(.system(size: 17, weight: .semibold, design: .rounded))
+                        .foregroundColor(.white)
+                    Spacer()
+                    Color.clear.frame(width: 44, height: 44)
+                }
+                .padding(.horizontal, 16)
+                .padding(.top, 16)
+                Spacer()
             }
         }
         .navigationBarHidden(true)
         .navigationDestination(isPresented: $navigateToPlayer) {
-            PersonalizedMeditationPlayerView(mood: selectedMood, sentences: generatedSentences)
+            if let mood = selectedMood {
+                PersonalizedMeditationPlayerView(mood: mood, sentences: generatedSentences)
+                    .onDisappear { selectedMood = nil }
+            }
         }
     }
 }
@@ -301,10 +330,10 @@ private struct MoodCard: View {
                 .foregroundColor(.calmAccent)
             Text(mood.rawValue)
                 .font(.system(size: 15, weight: .semibold, design: .rounded))
-                .foregroundColor(.white)
+                .foregroundColor(.calmDeep)
             Text(mood.tagline)
                 .font(.system(size: 11, weight: .light))
-                .foregroundColor(.white.opacity(0.65))
+                .foregroundColor(.calmMid.opacity(0.75))
                 .multilineTextAlignment(.center)
                 .lineLimit(2)
         }
@@ -313,7 +342,7 @@ private struct MoodCard: View {
         .padding(.vertical, 20)
         .background(
             RoundedRectangle(cornerRadius: 14)
-                .fill(isSelected ? Color.calmAccent.opacity(0.18) : Color.white.opacity(0.07))
+                .fill(isSelected ? Color.calmAccent.opacity(0.18) : Color(red: 0.87, green: 0.89, blue: 0.96))
                 .overlay(
                     RoundedRectangle(cornerRadius: 14)
                         .stroke(isSelected ? Color.calmAccent.opacity(0.6) : Color.clear, lineWidth: 1.5)
@@ -390,14 +419,7 @@ struct PersonalizedMeditationPlayerView: View {
 
                 // Controls
                 HStack(spacing: 48) {
-                    Button {
-                        engine.stop()
-                        dismiss()
-                    } label: {
-                        Image(systemName: "xmark.circle.fill")
-                            .font(.system(size: 36))
-                            .foregroundColor(.white.opacity(0.45))
-                    }
+                    Color.clear.frame(width: 36, height: 36)
 
                     Button {
                         if engine.isPlaying {
@@ -412,12 +434,37 @@ struct PersonalizedMeditationPlayerView: View {
                     } label: {
                         Image(systemName: engine.isPlaying ? "pause.circle.fill" : "play.circle.fill")
                             .font(.system(size: 64))
-                            .foregroundColor(.calmAccent)
+                            .foregroundColor(Color(red: 0.87, green: 0.89, blue: 0.96))
                     }
 
                     Color.clear.frame(width: 36, height: 36)
                 }
                 .padding(.bottom, 48)
+            }
+
+            // Fixed title header
+            VStack {
+                HStack {
+                    Button {
+                        engine.stop()
+                        dismiss()
+                    } label: {
+                        Image(systemName: "chevron.left")
+                            .font(.system(size: 16, weight: .semibold))
+                            .foregroundColor(.white.opacity(0.85))
+                            .frame(width: 44, height: 44)
+                            .contentShape(Rectangle())
+                    }
+                    Spacer()
+                    Text(mood.rawValue)
+                        .font(.system(size: 17, weight: .semibold, design: .rounded))
+                        .foregroundColor(.white)
+                    Spacer()
+                    Color.clear.frame(width: 44, height: 44)
+                }
+                .padding(.horizontal, 16)
+                .padding(.top, 16)
+                Spacer()
             }
 
             if showCompletion {
@@ -427,8 +474,7 @@ struct PersonalizedMeditationPlayerView: View {
                 .transition(.opacity)
             }
         }
-        .navigationBarTitleDisplayMode(.inline)
-        .toolbarBackground(.hidden, for: .navigationBar)
+        .navigationBarHidden(true)
         .onChange(of: engine.progress) { _, newValue in
             if newValue >= 1.0 && hasStarted {
                 engine.markFinished()
@@ -581,7 +627,7 @@ private struct CompletionOverlay: View {
                         .foregroundColor(.calmDeep)
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 16)
-                        .background(Capsule().fill(Color.calmAccent))
+                        .background(Capsule().fill(Color(red: 0.87, green: 0.89, blue: 0.96)))
                 }
                 .padding(.horizontal, 40)
                 .padding(.top, 8)

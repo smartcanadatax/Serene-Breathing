@@ -172,7 +172,7 @@ struct StillWatersView: View {
                                 .contentShape(Rectangle())
                         }
                         Spacer()
-                        Text("Inner Calm")
+                        Text("Still Waters")
                             .font(.system(size: 17, weight: .semibold, design: .rounded))
                             .foregroundColor(.white)
                         Spacer()
@@ -258,10 +258,10 @@ struct StillWatersView: View {
             Button(action: stopSession) {
                 Text("End Session")
                     .font(.system(size: 14, weight: .regular))
-                    .foregroundColor(.white.opacity(0.60))
+                    .foregroundColor(.calmDeep)
                     .padding(.horizontal, 24)
                     .padding(.vertical, 10)
-                    .background(Capsule().fill(Color.white.opacity(0.08)))
+                    .background(Capsule().fill(Color(red: 0.87, green: 0.89, blue: 0.96)))
             }
         }
     }

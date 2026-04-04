@@ -8,22 +8,22 @@ struct BodyScanView: View {
     @EnvironmentObject private var journal: JournalStore
     @State private var postMoodLogged = false
 
-    private let prompts: [(text: String, duration: Double)] = [
-        ("Find a comfortable position. Close your eyes and take three slow, deep breaths.", 17),
-        ("Bring your attention to the top of your head. Notice any tension. Let it soften.", 17),
-        ("Move your awareness to your forehead and eyes. Allow them to relax completely.", 17),
-        ("Relax your jaw, your cheeks, your lips. Let your face become completely soft.", 17),
-        ("Bring attention to your neck and shoulders. With each exhale, let the tension release.", 17),
-        ("Notice your chest and your heart area. Feel it rise and fall with each breath.", 16),
-        ("Move to your upper arms, then your forearms, then your hands. Let them grow heavy.", 17),
-        ("Bring awareness to your belly. Feel it expand on the inhale, relax on the exhale.", 17),
-        ("Move your attention to your lower back. Breathe into any areas of tightness.", 16),
-        ("Notice your hips and the weight of your body. Allow yourself to sink deeper.", 16),
-        ("Bring awareness to your thighs, your knees, your calves. Feel them completely relax.", 17),
-        ("Move attention to your feet and toes. Let go of any tension held there.", 16),
-        ("Now feel your whole body at once — relaxed, heavy, and completely at peace.", 16),
-        ("Rest here for a moment. You are safe. You are calm. You are exactly where you need to be.", 18),
-        ("When you're ready, take a deep breath, gently wiggle your fingers and toes, and open your eyes.", 6),
+    private let prompts: [String] = [
+        "Find a comfortable position. Allow your eyes to close gently. Take a moment to arrive here, fully present.",
+        "Take a deep breath in through your nose. And slowly release it through your mouth.",
+        "Once more, breathe in. And let it all go. One more time — breathe in slowly. And breathe out completely.",
+        "We'll gently move attention through the body. There is nothing to fix or change. Simply notice. Simply be aware.",
+        "Bring your awareness to the top of your head. Notice any sensations — warmth, tingling, or stillness.",
+        "Move your attention to your forehead. Let the muscles soften and smooth. Your eyebrows, your temples — completely relaxed.",
+        "Your eyes, your cheeks, your jaw. Allow the jaw to drop slightly. No need to hold it tight.",
+        "Your lips, your tongue. Let everything in your face be completely still.",
+        "Bring awareness to your neck. Notice any tension here and simply breathe into it. With each exhale, let the neck soften.",
+        "Move your attention to your shoulders. So much tension lives here. Let them drop. Let them fall. Heavier with every breath out.",
+        "Your upper arms, elbows, forearms, wrists, and hands. Each finger. Heavy. Warm. Completely relaxed.",
+        "Bring attention to your chest. Feel it rise and fall. Your upper back and shoulder blades — let them widen and soften.",
+        "Bring awareness to your belly. Notice it rising and falling. Your lower back — breathe into any tightness, and let it release.",
+        "Move attention to your hips, pelvis, and tailbone. Your thighs, knees, calves, ankles, the soles of your feet, each toe.",
+        "Feel your whole body at once. You are exactly where you need to be. Take one final deep breath in — and release everything.",
     ]
 
     @State private var currentIndex = 0
@@ -32,23 +32,17 @@ struct BodyScanView: View {
     @State private var syncTimer: Timer?
     @State private var progress: Double = 0
     @State private var audioPlayer: AVAudioPlayer?
+    @State private var isInterrupted = false
 
-    private var totalDuration: Double { prompts.map(\.duration).reduce(0, +) }
-    private var currentPrompt: String { prompts[min(currentIndex, prompts.count - 1)].text }
+    private var totalDuration: Double { audioPlayer?.duration ?? 501 }
+    private var currentPrompt: String { prompts[min(currentIndex, prompts.count - 1)] }
 
-    // Cumulative end-timestamps scaled to actual audio duration, proportioned by character count
-    // (character count matches Polly's speech timing far better than arbitrary duration values)
-    private var promptTimestamps: [Double] {
-        guard let dur = audioPlayer?.duration, dur > 0 else { return [] }
-        let totalChars = Double(prompts.reduce(0) { $0 + $1.text.count })
-        var stamps: [Double] = []
-        var sum = 0.0
-        for p in prompts {
-            sum += (Double(p.text.count) / totalChars) * dur
-            stamps.append(sum)
-        }
-        return stamps
-    }
+    // Exact timestamps (seconds) from audio — each value is when the NEXT prompt begins speaking
+    private let promptTimestamps: [Double] = [
+        17.86,  33.60,  66.76,  84.56, 106.92,
+       133.04, 157.84, 171.72, 195.84, 220.16,
+       252.24, 298.98, 346.58, 423.28, 501.48,
+    ]
 
     var body: some View {
         ZStack {
@@ -104,6 +98,25 @@ struct BodyScanView: View {
             stopScan()
             audioPlayer?.stop()
         }
+        .onReceive(NotificationCenter.default.publisher(for: AVAudioSession.interruptionNotification)) { note in
+            guard let info = note.userInfo,
+                  let typeVal = info[AVAudioSessionInterruptionTypeKey] as? UInt,
+                  let type = AVAudioSession.InterruptionType(rawValue: typeVal) else { return }
+            switch type {
+            case .began:
+                isInterrupted = true
+                audioPlayer?.pause()
+            case .ended:
+                isInterrupted = false
+                let opts = (info[AVAudioSessionInterruptionOptionKey] as? UInt)
+                    .map { AVAudioSession.InterruptionOptions(rawValue: $0) } ?? []
+                if opts.contains(.shouldResume) {
+                    try? AVAudioSession.sharedInstance().setActive(true)
+                    audioPlayer?.play()
+                }
+            @unknown default: break
+            }
+        }
     }
 
     // MARK: - Intro
@@ -116,7 +129,7 @@ struct BodyScanView: View {
                 Text("Body Scan Meditation")
                     .font(.system(size: 24, weight: .semibold, design: .rounded))
                     .foregroundColor(.white)
-                Text("A gentle \(Int(totalDuration / 60))-minute guided journey through your body, releasing tension from head to toe.")
+                Text("A gentle 8-minute guided journey through your body, releasing tension from head to toe.")
                     .font(.system(size: 15, weight: .regular))
                     .foregroundColor(.white.opacity(0.90))
                     .multilineTextAlignment(.center)
@@ -207,10 +220,10 @@ struct BodyScanView: View {
             Button(action: stopScan) {
                 Text("End Session")
                     .font(.system(size: 14, weight: .regular))
-                    .foregroundColor(.white.opacity(0.60))
+                    .foregroundColor(.calmDeep)
                     .padding(.horizontal, 24)
                     .padding(.vertical, 10)
-                    .background(Capsule().fill(Color.white.opacity(0.08)))
+                    .background(Capsule().fill(Color(red: 0.87, green: 0.89, blue: 0.96)))
             }
         }
     }
@@ -308,7 +321,7 @@ struct BodyScanView: View {
     }
 
     private func playBodyScanAudio() {
-        guard let url = Bundle.main.url(forResource: "body_scan", withExtension: "mp3", subdirectory: "Audio"),
+        guard let url = Bundle.main.url(forResource: "body_scan_v2", withExtension: "mp3", subdirectory: "Audio"),
               let player = try? AVAudioPlayer(contentsOf: url) else { return }
         player.numberOfLoops = 0
         player.volume = 0.85
@@ -348,7 +361,7 @@ struct BodyScanView: View {
                 }
 
                 // Detect natural end of audio
-                if !player.isPlaying && time > 1 {
+                if !player.isPlaying && time > 1 && !self.isInterrupted {
                     self.isRunning = false
                     self.isDone = true
                     UIApplication.shared.isIdleTimerDisabled = false

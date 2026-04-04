@@ -24,6 +24,7 @@ struct DailyCheckInView: View {
     // Optional
     @State private var selectedTags: [String] = []
     @State private var showOptional = false
+    @State private var showMoodAlert = false
     @State private var moodNote = ""
 
     // AI
@@ -126,7 +127,7 @@ struct DailyCheckInView: View {
                             }
                             Text(briefing.message)
                                 .font(.system(size: 13, weight: .light))
-                                .foregroundColor(.white.opacity(0.88))
+                                .foregroundColor(.calmDeep)
                                 .lineSpacing(4)
                                 .fixedSize(horizontal: false, vertical: true)
                             Button {
@@ -210,15 +211,15 @@ struct DailyCheckInView: View {
                                         }
                                         if isLoadingCoach {
                                             HStack(spacing: 8) {
-                                                ProgressView().tint(.white).scaleEffect(0.7)
+                                                ProgressView().tint(.calmAccent).scaleEffect(0.7)
                                                 Text("Here for you…")
                                                     .font(.system(size: 13, weight: .light))
-                                                    .foregroundColor(.white.opacity(0.60))
+                                                    .foregroundColor(.calmMid)
                                             }
                                         } else if !coachMessage.isEmpty {
                                             Text(coachMessage)
                                                 .font(.system(size: 13, weight: .light))
-                                                .foregroundColor(.white.opacity(0.88))
+                                                .foregroundColor(.calmDeep)
                                                 .lineSpacing(4)
                                                 .fixedSize(horizontal: false, vertical: true)
                                                 .transition(.opacity)
@@ -253,7 +254,7 @@ struct DailyCheckInView: View {
                                     Button { sleepQuality = level } label: {
                                         Image(systemName: level <= sleepQuality ? "star.fill" : "star")
                                             .font(.system(size: 24))
-                                            .foregroundColor(level <= sleepQuality ? Color(red: 1.0, green: 0.80, blue: 0.25) : .white.opacity(0.25))
+                                            .foregroundColor(level <= sleepQuality ? Color(red: 1.0, green: 0.80, blue: 0.25) : .calmMid.opacity(0.25))
                                             .frame(maxWidth: .infinity, minHeight: 44)
                                             .contentShape(Rectangle())
                                     }
@@ -261,7 +262,7 @@ struct DailyCheckInView: View {
                                 }
                             }
 
-                            Divider().background(Color.white.opacity(0.10))
+                            Divider().background(Color.black.opacity(0.08))
 
                             // Time pickers
                             HStack {
@@ -270,11 +271,11 @@ struct DailyCheckInView: View {
                                     .frame(width: 20)
                                 Text("Bedtime")
                                     .font(.system(size: 14, weight: .light))
-                                    .foregroundColor(.white)
+                                    .foregroundColor(.calmDeep)
                                 Spacer()
                                 DatePicker("", selection: $bedtime, displayedComponents: .hourAndMinute)
                                     .labelsHidden()
-                                    .colorScheme(.dark)
+                                    .colorScheme(.light)
                                     .onChange(of: bedtime) { _, v in
                                         UserDefaults.standard.set(v, forKey: "lastBedtime")
                                     }
@@ -286,11 +287,11 @@ struct DailyCheckInView: View {
                                     .frame(width: 20)
                                 Text("Wake time")
                                     .font(.system(size: 14, weight: .light))
-                                    .foregroundColor(.white)
+                                    .foregroundColor(.calmDeep)
                                 Spacer()
                                 DatePicker("", selection: $wakeTime, displayedComponents: .hourAndMinute)
                                     .labelsHidden()
-                                    .colorScheme(.dark)
+                                    .colorScheme(.light)
                                     .onChange(of: wakeTime) { _, v in
                                         UserDefaults.standard.set(v, forKey: "lastWakeTime")
                                     }
@@ -302,7 +303,7 @@ struct DailyCheckInView: View {
                                     .frame(width: 20)
                                 Text("Total sleep")
                                     .font(.system(size: 14, weight: .light))
-                                    .foregroundColor(.white)
+                                    .foregroundColor(.calmDeep)
                                 Spacer()
                                 Text(String(format: "%.1f hrs", computedHours))
                                     .font(.system(size: 14, weight: .semibold))
@@ -310,23 +311,23 @@ struct DailyCheckInView: View {
                             }
 
                             // Dream log
-                            Divider().background(Color.white.opacity(0.10))
+                            Divider().background(Color.black.opacity(0.08))
                             HStack(spacing: 8) {
                                 ForEach(0..<3, id: \.self) { i in
                                     Button { dreamType = i } label: {
                                         VStack(spacing: 4) {
                                             Image(systemName: dreamIcons[i])
                                                 .font(.system(size: 16))
-                                                .foregroundColor(dreamType == i ? .calmDeep : .white.opacity(0.55))
+                                                .foregroundColor(dreamType == i ? .calmDeep : .calmMid)
                                             Text(dreamOptions[i])
                                                 .font(.system(size: 10))
-                                                .foregroundColor(dreamType == i ? .calmDeep : .white.opacity(0.55))
+                                                .foregroundColor(dreamType == i ? .calmDeep : .calmMid)
                                                 .multilineTextAlignment(.center)
                                         }
                                         .frame(maxWidth: .infinity)
                                         .padding(.vertical, 8)
                                         .background(RoundedRectangle(cornerRadius: 10)
-                                            .fill(dreamType == i ? Color.calmAccent : Color.white.opacity(0.08)))
+                                            .fill(dreamType == i ? Color.calmAccent : Color(red: 0.82, green: 0.85, blue: 0.95).opacity(0.80)))
                                     }
                                     .buttonStyle(.plain)
                                 }
@@ -345,7 +346,7 @@ struct DailyCheckInView: View {
                                     Spacer()
                                     Image(systemName: showOptional ? "chevron.up" : "chevron.down")
                                         .font(.system(size: 12))
-                                        .foregroundColor(.white.opacity(0.50))
+                                        .foregroundColor(.calmMid.opacity(0.70))
                                 }
                             }
                             .buttonStyle(.plain)
@@ -360,10 +361,10 @@ struct DailyCheckInView: View {
                                         } label: {
                                             Text(tag)
                                                 .font(.system(size: 12, weight: .regular))
-                                                .foregroundColor(selected ? .calmDeep : .white.opacity(0.80))
+                                                .foregroundColor(selected ? .calmDeep : .calmDeep)
                                                 .frame(maxWidth: .infinity)
                                                 .padding(.vertical, 8)
-                                                .background(Capsule().fill(selected ? Color.calmAccent : Color.white.opacity(0.08)))
+                                                .background(Capsule().fill(selected ? Color.calmAccent : Color(red: 0.82, green: 0.85, blue: 0.95).opacity(0.80)))
                                         }
                                         .buttonStyle(.plain)
                                     }
@@ -385,7 +386,11 @@ struct DailyCheckInView: View {
                     // Generate button / Insight card
                     if insight.isEmpty {
                         Button {
-                            saveAndGenerate()
+                            if selectedMood == 0 {
+                                showMoodAlert = true
+                            } else {
+                                saveAndGenerate()
+                            }
                         } label: {
                             Group {
                                 if isGenerating {
@@ -406,7 +411,7 @@ struct DailyCheckInView: View {
                             .background(Capsule().fill(canGenerate ? Color.calmAccent : Color.white.opacity(0.20))
                                 .shadow(color: canGenerate ? .calmAccent.opacity(0.35) : .clear, radius: 10))
                         }
-                        .disabled(!canGenerate || isGenerating)
+                        .disabled(isGenerating)
                         .padding(.horizontal, 24)
                     } else {
                         insightCard
@@ -415,6 +420,11 @@ struct DailyCheckInView: View {
                     DisclaimerFooter().padding(.bottom, 40)
                 }
             }
+        }
+        .alert("Select Your Mood", isPresented: $showMoodAlert) {
+            Button("OK", role: .cancel) {}
+        } message: {
+            Text("Please select how you're feeling before getting your insight.")
         }
         .fullScreenCover(isPresented: $showCoachChat) { CoachChatView().environmentObject(journal) }
         .fullScreenCover(isPresented: $showMorning)  { MorningMeditationView().environmentObject(journal) }
@@ -435,7 +445,7 @@ struct DailyCheckInView: View {
                     .foregroundColor(.calmAccent)
                 Text("Logged to your journal")
                     .font(.system(size: 12, weight: .light))
-                    .foregroundColor(.white.opacity(0.65))
+                    .foregroundColor(.calmMid)
             }
 
             // Insight text
@@ -452,25 +462,25 @@ struct DailyCheckInView: View {
 
                 Text(insight)
                     .font(.system(size: 15, weight: .light))
-                    .foregroundColor(.white.opacity(0.90))
+                    .foregroundColor(.calmDeep)
                     .lineSpacing(5)
                     .fixedSize(horizontal: false, vertical: true)
 
                 if !technique.isEmpty {
-                    Divider().background(Color.white.opacity(0.10))
+                    Divider().background(Color.black.opacity(0.08))
 
                     VStack(alignment: .leading, spacing: 6) {
                         Text("RECOMMENDED FOR YOU")
                             .font(.system(size: 10, weight: .semibold))
-                            .foregroundColor(.white.opacity(0.55))
+                            .foregroundColor(.calmMid)
                             .tracking(1.0)
                         Text(technique)
                             .font(.system(size: 16, weight: .semibold, design: .rounded))
-                            .foregroundColor(.white)
+                            .foregroundColor(.calmDeep)
                         if !reason.isEmpty {
                             Text(reason)
                                 .font(.system(size: 13, weight: .light))
-                                .foregroundColor(.white.opacity(0.70))
+                                .foregroundColor(.calmMid)
                                 .lineSpacing(4)
                         }
                         Button {
@@ -490,7 +500,7 @@ struct DailyCheckInView: View {
             .padding(18)
             .background(
                 RoundedRectangle(cornerRadius: 18)
-                    .fill(Color.white.opacity(0.10))
+                    .fill(Color.white.opacity(0.85))
                     .overlay(RoundedRectangle(cornerRadius: 18).stroke(Color.calmAccent.opacity(0.25), lineWidth: 1))
             )
             .padding(.horizontal, 24)
@@ -498,7 +508,7 @@ struct DailyCheckInView: View {
             Button { dismiss() } label: {
                 Text("Done")
                     .font(.system(size: 16, weight: .medium, design: .rounded))
-                    .foregroundColor(.white.opacity(0.70))
+                    .foregroundColor(.calmMid)
                     .padding(.vertical, 12)
             }
         }
@@ -508,7 +518,7 @@ struct DailyCheckInView: View {
     private func sectionCard<Content: View>(@ViewBuilder content: () -> Content) -> some View {
         content()
             .padding(18)
-            .background(RoundedRectangle(cornerRadius: 18).fill(Color.white.opacity(0.10)))
+            .background(RoundedRectangle(cornerRadius: 18).fill(Color.white.opacity(0.85)))
             .padding(.horizontal, 20)
     }
 
@@ -516,10 +526,10 @@ struct DailyCheckInView: View {
         HStack(spacing: 6) {
             Image(systemName: icon)
                 .font(.system(size: 12, weight: .semibold))
-                .foregroundColor(.calmAccent)
+                .foregroundColor(.calmDeep)
             Text(title)
                 .font(.system(size: 11, weight: .semibold))
-                .foregroundColor(.calmAccent)
+                .foregroundColor(.calmDeep)
                 .tracking(1.0)
         }
         .frame(maxWidth: .infinity, alignment: .leading)

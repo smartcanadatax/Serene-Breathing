@@ -342,18 +342,25 @@ struct MeditationTimerView: View {
                     .foregroundColor(.white)
             }
             ToolbarItem(placement: .navigationBarTrailing) {
-                if !premium.isPremium {
-                    Button { showPaywall = true } label: {
-                        HStack(spacing: 4) {
-                            Image(systemName: "crown.fill")
-                                .font(.system(size: 11))
-                            Text("Premium")
-                                .font(.system(size: 12, weight: .semibold))
+                HStack(spacing: 10) {
+                    Button { showThemeSheet = true } label: {
+                        Image(systemName: "slider.horizontal.3")
+                            .font(.system(size: 17, weight: .medium))
+                            .foregroundColor(.white)
+                    }
+                    if !premium.isPremium {
+                        Button { showPaywall = true } label: {
+                            HStack(spacing: 4) {
+                                Image(systemName: "crown.fill")
+                                    .font(.system(size: 11))
+                                Text("Premium")
+                                    .font(.system(size: 12, weight: .semibold))
+                            }
+                            .foregroundColor(.calmDeep)
+                            .padding(.horizontal, 10)
+                            .padding(.vertical, 5)
+                            .background(Capsule().fill(Color.calmAccent))
                         }
-                        .foregroundColor(.calmDeep)
-                        .padding(.horizontal, 10)
-                        .padding(.vertical, 5)
-                        .background(Capsule().fill(Color.calmAccent))
                     }
                 }
             }

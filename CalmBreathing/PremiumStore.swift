@@ -8,7 +8,7 @@ class PremiumStore: ObservableObject {
     static let monthlyID = "com.serenebreathing.app.premium.monthly"
     static let yearlyID  = "com.serenebreathing.app.premium.yearly"
 
-    @Published var isPremium    = false
+    @Published var isPremium    = true
     @Published var products:    [Product] = []
     @Published var isPurchasing = false
     @Published var errorMessage: String?
@@ -81,7 +81,8 @@ class PremiumStore: ObservableObject {
                 active = true
             }
         }
-        isPremium = active
+        // Keep unlocked — all features available
+        isPremium = true
     }
 
     private func checkVerified<T>(_ result: VerificationResult<T>) throws -> T {

@@ -21,15 +21,7 @@ struct AISleepStoryView: View {
 
     var body: some View {
         ZStack {
-            LinearGradient(
-                colors: [
-                    Color(red: 0.05, green: 0.10, blue: 0.28),
-                    Color(red: 0.08, green: 0.15, blue: 0.38),
-                    Color(red: 0.10, green: 0.20, blue: 0.45),
-                ],
-                startPoint: .topLeading, endPoint: .bottomTrailing
-            )
-            .ignoresSafeArea()
+            CalmBackground()
 
             if showStory {
                 storyView
@@ -326,15 +318,7 @@ struct SleepStoriesView: View {
 
     var body: some View {
         ZStack {
-            LinearGradient(
-                colors: [
-                    Color(red: 0.05, green: 0.10, blue: 0.28),
-                    Color(red: 0.08, green: 0.15, blue: 0.38),
-                    Color(red: 0.10, green: 0.20, blue: 0.45),
-                ],
-                startPoint: .topLeading, endPoint: .bottomTrailing
-            )
-            .ignoresSafeArea()
+            CalmBackground()
 
             if let story = selectedStory {
                 StoryPlayerView(story: story) {
@@ -421,7 +405,7 @@ private struct StoryCard: View {
         HStack(spacing: 16) {
             ZStack {
                 Circle()
-                    .fill(Color.white.opacity(0.10))
+                    .fill(Color.white)
                     .frame(width: 56, height: 56)
                 Image(systemName: story.icon)
                     .font(.system(size: 22))
@@ -444,7 +428,7 @@ private struct StoryCard: View {
 
             Image(systemName: "play.circle.fill")
                 .font(.system(size: 30))
-                .foregroundColor(.calmAccent.opacity(0.80))
+                .foregroundColor(.white)
         }
         .padding(.horizontal, 16)
         .padding(.vertical, 14)

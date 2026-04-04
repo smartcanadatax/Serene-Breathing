@@ -106,7 +106,15 @@ struct CoachChatView: View {
 
     var body: some View {
         ZStack {
-            CalmBackground()
+            LinearGradient(
+                colors: [
+                    Color(red: 0.57, green: 0.49, blue: 0.86),
+                    Color(red: 0.52, green: 0.50, blue: 0.84),
+                    Color(red: 0.46, green: 0.52, blue: 0.83)
+                ],
+                startPoint: .top,
+                endPoint: .bottom
+            ).ignoresSafeArea()
 
             VStack(spacing: 0) {
 
@@ -170,14 +178,14 @@ struct CoachChatView: View {
                         if inputText.isEmpty {
                             Text("Message Serene…")
                                 .font(.system(size: 15))
-                                .foregroundColor(.white.opacity(0.45))
+                                .foregroundColor(Color(red: 0.55, green: 0.52, blue: 0.75))
                                 .padding(.horizontal, 14)
                                 .allowsHitTesting(false)
                         }
                         TextField("", text: $inputText, axis: .vertical)
                             .font(.system(size: 15))
-                            .foregroundColor(.white)
-                            .tint(.white)
+                            .foregroundColor(.calmDeep)
+                            .tint(Color(red: 0.541, green: 0.357, blue: 0.804).opacity(0.80))
                             .lineLimit(1...4)
                             .focused($inputFocused)
                             .padding(.horizontal, 14)
@@ -186,10 +194,10 @@ struct CoachChatView: View {
                     .frame(minHeight: 44)
                     .background(
                         RoundedRectangle(cornerRadius: 22)
-                            .fill(Color.white.opacity(0.15))
+                            .fill(Color(red: 0.80, green: 0.78, blue: 0.92))
                             .overlay(
                                 RoundedRectangle(cornerRadius: 22)
-                                    .stroke(Color.white.opacity(0.25), lineWidth: 1)
+                                    .stroke(Color.white.opacity(0.20), lineWidth: 1)
                             )
                     )
                     .contentShape(Rectangle())
@@ -198,14 +206,14 @@ struct CoachChatView: View {
                     Button { sendMessage() } label: {
                         Image(systemName: "arrow.up.circle.fill")
                             .font(.system(size: 34))
-                            .foregroundColor(canSend ? .white : .white.opacity(0.28))
+                            .foregroundColor(canSend ? Color.white : Color.white.opacity(0.35))
                     }
                     .disabled(!canSend)
                     .animation(.easeInOut(duration: 0.15), value: canSend)
                 }
                 .padding(.horizontal, 18)
                 .padding(.vertical, 12)
-                .background(Color.black.opacity(0.15))
+                .background(Color(red: 0.42, green: 0.38, blue: 0.70))
             }
         }
         .onAppear {
@@ -297,14 +305,8 @@ private struct ChatBubble: View {
             if isUser { Spacer(minLength: 56) }
 
             if !isUser {
-                ZStack {
-                    Circle()
-                        .fill(Color.white.opacity(0.22))
-                        .frame(width: 30, height: 30)
-                    Image(systemName: "sparkles")
-                        .font(.system(size: 13))
-                        .foregroundColor(.white)
-                }
+                LotusOrbView(isAnimating: false)
+                    .frame(width: 30, height: 30)
             }
 
             Group {
@@ -315,7 +317,7 @@ private struct ChatBubble: View {
                 } else {
                     Text(message.content)
                         .font(.system(size: 15, weight: .regular))
-                        .foregroundColor(isUser ? Color(red: 0.04, green: 0.14, blue: 0.36) : .white)
+                        .foregroundColor(isUser ? Color(red: 0.04, green: 0.14, blue: 0.36) : .calmDeep)
                         .padding(.horizontal, 14)
                         .padding(.vertical, 10)
                         .fixedSize(horizontal: false, vertical: true)
@@ -323,7 +325,7 @@ private struct ChatBubble: View {
             }
             .background(
                 RoundedRectangle(cornerRadius: 18)
-                    .fill(isUser ? Color.white.opacity(0.90) : Color.white.opacity(0.16))
+                    .fill(isUser ? Color.white : Color(red: 0.80, green: 0.78, blue: 0.92))
             )
 
             if !isUser { Spacer(minLength: 56) }
@@ -340,7 +342,7 @@ private struct TypingDotsView: View {
         HStack(spacing: 5) {
             ForEach(0..<3, id: \.self) { i in
                 Circle()
-                    .fill(Color.white.opacity(0.70))
+                    .fill(Color(red: 0.541, green: 0.357, blue: 0.804))
                     .frame(width: 7, height: 7)
                     .scaleEffect(animate ? 1.2 : 0.7)
                     .animation(
@@ -361,7 +363,7 @@ private struct ChatDisclaimerSheet: View {
     var body: some View {
         ZStack {
             LinearGradient(
-                colors: [Color(red: 0.48, green: 0.80, blue: 0.98), Color(red: 0.15, green: 0.48, blue: 0.84)],
+                colors: [Color(red: 0.72, green: 0.58, blue: 0.92), Color(red: 0.541, green: 0.357, blue: 0.804)],
                 startPoint: .topLeading, endPoint: .bottomTrailing
             )
             .ignoresSafeArea()
@@ -441,16 +443,16 @@ private struct TypingIndicatorView: View {
         HStack(alignment: .bottom, spacing: 8) {
             ZStack {
                 Circle()
-                    .fill(Color.white.opacity(0.22))
+                    .fill(Color(red: 0.541, green: 0.357, blue: 0.804).opacity(0.20))
                     .frame(width: 30, height: 30)
                 Image(systemName: "sparkles")
                     .font(.system(size: 13))
-                    .foregroundColor(.white)
+                    .foregroundColor(Color(red: 0.541, green: 0.357, blue: 0.804))
             }
             TypingDotsView()
                 .padding(.horizontal, 14)
                 .padding(.vertical, 12)
-                .background(RoundedRectangle(cornerRadius: 18).fill(Color.white.opacity(0.16)))
+                .background(RoundedRectangle(cornerRadius: 18).fill(Color(red: 0.541, green: 0.357, blue: 0.804).opacity(0.15)))
             Spacer(minLength: 56)
         }
     }

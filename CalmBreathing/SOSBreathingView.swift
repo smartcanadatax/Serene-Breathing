@@ -35,7 +35,7 @@ struct SOSBreathingView: View {
 
     var body: some View {
         ZStack {
-            Color(red: 0.05, green: 0.10, blue: 0.25).ignoresSafeArea()
+            CalmBackground()
 
             if showDisclaimer {
                 disclaimerView
@@ -171,10 +171,10 @@ struct SOSBreathingView: View {
             Button { stopAll(); dismiss() } label: {
                 Text("End Session")
                     .font(.system(size: 14, weight: .regular))
-                    .foregroundColor(.white.opacity(0.55))
+                    .foregroundColor(.calmDeep)
                     .padding(.horizontal, 28)
                     .padding(.vertical, 10)
-                    .background(Capsule().fill(Color.white.opacity(0.08)))
+                    .background(Capsule().fill(Color(red: 0.87, green: 0.89, blue: 0.96)))
             }
             .padding(.bottom, 48)
         }
@@ -274,7 +274,7 @@ struct SOSBreathingView: View {
 
     private var completionOverlay: some View {
         ZStack {
-            Color(red: 0.05, green: 0.10, blue: 0.25).ignoresSafeArea()
+            CalmBackground()
 
             VStack(spacing: 22) {
                 Image(systemName: "heart.fill")
@@ -297,7 +297,7 @@ struct SOSBreathingView: View {
                 } label: {
                     Text("Done")
                         .font(.system(size: 17, weight: .semibold, design: .rounded))
-                        .foregroundColor(Color(red: 0.05, green: 0.10, blue: 0.25))
+                        .foregroundColor(.calmDeep)
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 16)
                         .background(Capsule().fill(Color(red: 0.75, green: 0.92, blue: 1.00)))

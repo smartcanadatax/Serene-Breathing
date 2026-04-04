@@ -13,52 +13,47 @@ struct AICoachHubView: View {
         ZStack {
             CalmBackground()
 
-            ScrollView(showsIndicators: false) {
-                LazyVStack(spacing: 28) {
-                    Spacer(minLength: 32)
+            VStack(spacing: 0) {
+                // Nav bar
+                HStack {
+                    Color.clear.frame(width: 44, height: 44)
+                    Spacer()
+                    Text("AI Coach")
+                        .font(.system(size: 17, weight: .semibold, design: .rounded))
+                        .foregroundColor(.white)
+                    Spacer()
+                    Color.clear.frame(width: 44, height: 44)
+                }
+                .padding(.horizontal, 16)
+                .padding(.top, 16)
+                .padding(.bottom, 8)
 
-                    // Header
-                    VStack(spacing: 10) {
-                        ZStack {
-                            Circle()
-                                .fill(Color.white.opacity(0.18))
-                                .frame(width: 80, height: 80)
-                            Image(systemName: "sparkles")
-                                .font(.system(size: 34))
-                                .foregroundColor(.white)
+                ScrollView(showsIndicators: false) {
+                    LazyVStack(spacing: 20) {
+                        Spacer(minLength: 8)
+
+                        // ── Featured: Chat with Serene ──────────────────────
+                        Button { showChat = true } label: {
+                            FeaturedChatCard()
                         }
-                        Text("AI Coach")
-                            .font(.system(size: 26, weight: .semibold, design: .rounded))
-                            .foregroundColor(.calmDeep)
-                        Text("Personalized sessions based on your real data — not just how you feel right now.")
-                            .font(.system(size: 14))
-                            .foregroundColor(.calmMid)
-                            .multilineTextAlignment(.center)
-                            .padding(.horizontal, 16)
-                    }
+                        .buttonStyle(.plain)
+                        .padding(.horizontal, 24)
 
-                    // ── Featured: Chat with Serene ──────────────────────
-                    Button { showChat = true } label: {
-                        FeaturedChatCard()
-                    }
-                    .buttonStyle(.plain)
-                    .padding(.horizontal, 24)
-
-                    // Daily logging reminder
-                    VStack(alignment: .leading, spacing: 8) {
-                        Label("Build Your Pattern", systemImage: "calendar.badge.clock")
-                            .font(.system(size: 13, weight: .semibold, design: .rounded))
-                            .foregroundColor(.calmAccent)
-                        Text("Use Daily Check-In for an instant AI insight every day. The more you log, the deeper Mood and Sleep Pattern Coaches can analyze your trends.")
-                            .font(.system(size: 13, weight: .regular))
-                            .foregroundColor(.white.opacity(0.85))
-                            .lineSpacing(4)
-                            .fixedSize(horizontal: false, vertical: true)
-                    }
-                    .padding(16)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .background(RoundedRectangle(cornerRadius: 14).fill(Color.white.opacity(0.12)))
-                    .padding(.horizontal, 24)
+                        // Daily logging reminder
+                        VStack(alignment: .leading, spacing: 8) {
+                            Label("Build Your Pattern", systemImage: "calendar.badge.clock")
+                                .font(.system(size: 13, weight: .semibold, design: .rounded))
+                                .foregroundColor(.calmAccent)
+                            Text("Use Daily Check-In for an instant AI insight every day. The more you log, the deeper Mood and Sleep Pattern Coaches can analyze your trends.")
+                                .font(.system(size: 13, weight: .regular))
+                                .foregroundColor(.calmMid)
+                                .lineSpacing(4)
+                                .fixedSize(horizontal: false, vertical: true)
+                        }
+                        .padding(16)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .background(RoundedRectangle(cornerRadius: 14).fill(Color(red: 0.87, green: 0.89, blue: 0.96)))
+                        .padding(.horizontal, 24)
 
                     // Daily Check-In card
                     Button { if premium.isPremium { showCheckIn = true } else { showPaywall = true } } label: {
@@ -100,9 +95,10 @@ struct AICoachHubView: View {
                     .padding(.horizontal, 24)
 
                     DisclaimerFooter().padding(.bottom, 80)
-                }
-            }
-        }
+                    }  // LazyVStack
+                }  // ScrollView
+            }  // VStack
+        }  // ZStack
         .navigationBarHidden(true)
         .fullScreenCover(isPresented: $showMood) {
             MoodPatternCoachView().environmentObject(journal)
@@ -133,8 +129,8 @@ private struct FeaturedChatCard: View {
                 .fill(
                     LinearGradient(
                         colors: [
-                            Color(red: 0.42, green: 0.22, blue: 0.78),
-                            Color(red: 0.22, green: 0.42, blue: 0.90)
+                            Color(red: 0.52, green: 0.30, blue: 0.80),
+                            Color(red: 0.68, green: 0.44, blue: 0.80)
                         ],
                         startPoint: .topLeading,
                         endPoint: .bottomTrailing
@@ -146,7 +142,6 @@ private struct FeaturedChatCard: View {
             VStack(alignment: .leading, spacing: 14) {
                 HStack(spacing: 14) {
                     ZStack {
-                        // Pulse ring
                         Circle()
                             .stroke(Color.white.opacity(0.30), lineWidth: 1.5)
                             .frame(width: 54, height: 54)
@@ -156,12 +151,8 @@ private struct FeaturedChatCard: View {
                                 .easeOut(duration: 2.2).repeatForever(autoreverses: false),
                                 value: isPulsing
                             )
-                        Circle()
-                            .fill(Color.white.opacity(0.18))
-                            .frame(width: 54, height: 54)
-                        Image(systemName: "sparkles")
-                            .font(.system(size: 24))
-                            .foregroundColor(.white)
+                        LotusOrbView(isAnimating: true)
+                            .frame(width: 50, height: 50)
                     }
                     .onAppear { isPulsing = true }
                     VStack(alignment: .leading, spacing: 4) {
@@ -185,7 +176,7 @@ private struct FeaturedChatCard: View {
                     Spacer()
                     Text("Start Chatting →")
                         .font(.system(size: 14, weight: .semibold, design: .rounded))
-                        .foregroundColor(Color(red: 0.42, green: 0.22, blue: 0.78))
+                        .foregroundColor(Color(red: 0.52, green: 0.30, blue: 0.80))
                         .padding(.horizontal, 18)
                         .padding(.vertical, 9)
                         .background(Capsule().fill(Color.white))
@@ -211,11 +202,11 @@ private struct AICoachCard: View {
             HStack(spacing: 14) {
                 ZStack {
                     Circle()
-                        .fill(Color.white.opacity(0.20))
+                        .fill(Color(red: 0.87, green: 0.89, blue: 0.96))
                         .frame(width: 52, height: 52)
                     Image(systemName: icon)
-                        .font(.system(size: 22))
-                        .foregroundColor(locked ? .white.opacity(0.40) : .white)
+                        .font(.system(size: 20))
+                        .foregroundColor(locked ? Color(red: 0.541, green: 0.357, blue: 0.804).opacity(0.40) : Color(red: 0.541, green: 0.357, blue: 0.804))
                 }
                 VStack(alignment: .leading, spacing: 4) {
                     Text(title)
@@ -240,9 +231,7 @@ private struct AICoachCard: View {
         .padding(18)
         .background(
             RoundedRectangle(cornerRadius: 18)
-                .fill(Color.white.opacity(0.50))
-                .overlay(RoundedRectangle(cornerRadius: 18)
-                    .stroke(Color.calmDeep.opacity(0.08), lineWidth: 1))
+                .fill(Color(red: 0.87, green: 0.89, blue: 0.96))
         )
     }
 }

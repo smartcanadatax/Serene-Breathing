@@ -154,10 +154,15 @@ struct BreathingView: View {
                 .padding(.top, 16)
 
                 // Header
-                VStack(spacing: 10) {
-                    Text("Breathing Exercise")
-                        .font(.system(size: 22, weight: .semibold, design: .rounded))
+                VStack(spacing: 6) {
+                    AppLogoView(size: 52)
+                        .padding(.top, 4)
+                    Text("Need Calm Now?")
+                        .font(.system(size: 24, weight: .bold, design: .rounded))
                         .foregroundColor(.white)
+                    Text("Breathe through it")
+                        .font(.system(size: 13, weight: .regular, design: .rounded))
+                        .foregroundColor(.white.opacity(0.65))
 
                     // Pattern picker pills
                     HStack(spacing: 8) {
@@ -261,7 +266,7 @@ struct BreathingView: View {
                 // Controls
                 HStack(spacing: 20) {
                     if isRunning {
-                        Button(action: stopBreathing) {
+                        Button(action: stopWithCompletion) {
                             Label("Stop", systemImage: "stop.fill")
                                 .font(.system(size: 15, weight: .medium))
                                 .foregroundColor(.white)
@@ -425,6 +430,21 @@ struct BreathingView: View {
                 }
             }
         }
+    }
+
+    private func playCompletionSpeech() {
+        let utt = AVSpeechUtterance(string: "Well done. You have finished your breathing session.")
+        utt.voice = AVSpeechSynthesisVoice(identifier: "com.apple.ttsbundle.Nicky-compact")
+                   ?? AVSpeechSynthesisVoice(language: "en-US")
+        utt.rate = 0.42
+        utt.pitchMultiplier = 0.9
+        utt.volume = 0.85
+        speechSynth.speak(utt)
+    }
+
+    private func stopWithCompletion() {
+        stopBreathing()
+        playCompletionSpeech()
     }
 
     private func playBreathingAudio() {

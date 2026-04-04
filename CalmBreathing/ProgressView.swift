@@ -1264,7 +1264,7 @@ struct MoodBarRow: View {
                 ZStack(alignment: .leading) {
                     Capsule().fill(Color.white.opacity(0.08)).frame(height: 8)
                     Capsule()
-                        .fill(level.moodColor.opacity(0.80))
+                        .fill(Color(red: 0.541, green: 0.357, blue: 0.804).opacity(0.80))
                         .frame(width: max(4, geo.size.width * percent), height: 8)
                 }
             }
@@ -1342,8 +1342,8 @@ struct MoodTrendChart: View {
                     .foregroundStyle(
                         LinearGradient(
                             colors: [
-                                Color(red: 0.40, green: 0.75, blue: 1.00),
-                                Color(red: 0.25, green: 0.55, blue: 0.90)
+                                Color(red: 0.55, green: 0.50, blue: 0.95),
+                                Color(red: 0.35, green: 0.30, blue: 0.75)
                             ],
                             startPoint: .top, endPoint: .bottom
                         )

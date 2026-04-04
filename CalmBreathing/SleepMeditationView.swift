@@ -41,6 +41,7 @@ struct SleepMeditationView: View {
     @State private var syncTimer: Timer?
     @State private var progress: Double = 0
     @State private var audioPlayer: AVAudioPlayer?
+    @State private var isInterrupted = false
 
     private var totalDuration: Double { prompts.map(\.duration).reduce(0, +) }
     private var currentPrompt: String { prompts[min(currentIndex, prompts.count - 1)].text }
@@ -62,16 +63,7 @@ struct SleepMeditationView: View {
     var body: some View {
         ZStack {
             // Darker background for sleep
-            LinearGradient(
-                colors: [
-                    Color(red: 0.05, green: 0.10, blue: 0.28),
-                    Color(red: 0.08, green: 0.15, blue: 0.38),
-                    Color(red: 0.10, green: 0.20, blue: 0.45),
-                ],
-                startPoint: .topLeading,
-                endPoint: .bottomTrailing
-            )
-            .ignoresSafeArea()
+            CalmBackground()
 
             if isDone {
                 VStack { Spacer(); doneView; Spacer() }
@@ -119,6 +111,25 @@ struct SleepMeditationView: View {
         .onDisappear {
             stopSession()
             audioPlayer?.stop()
+        }
+        .onReceive(NotificationCenter.default.publisher(for: AVAudioSession.interruptionNotification)) { note in
+            guard let info = note.userInfo,
+                  let typeVal = info[AVAudioSessionInterruptionTypeKey] as? UInt,
+                  let type = AVAudioSession.InterruptionType(rawValue: typeVal) else { return }
+            switch type {
+            case .began:
+                isInterrupted = true
+                audioPlayer?.pause()
+            case .ended:
+                isInterrupted = false
+                let opts = (info[AVAudioSessionInterruptionOptionKey] as? UInt)
+                    .map { AVAudioSession.InterruptionOptions(rawValue: $0) } ?? []
+                if opts.contains(.shouldResume) {
+                    try? AVAudioSession.sharedInstance().setActive(true)
+                    audioPlayer?.play()
+                }
+            @unknown default: break
+            }
         }
     }
 
@@ -190,10 +201,10 @@ struct SleepMeditationView: View {
             Button(action: stopSession) {
                 Text("End Session")
                     .font(.system(size: 14, weight: .regular))
-                    .foregroundColor(.white.opacity(0.60))
+                    .foregroundColor(.calmDeep)
                     .padding(.horizontal, 24)
                     .padding(.vertical, 10)
-                    .background(Capsule().fill(Color.white.opacity(0.08)))
+                    .background(Capsule().fill(Color(red: 0.87, green: 0.89, blue: 0.96)))
             }
         }
     }
@@ -319,7 +330,7 @@ struct SleepMeditationView: View {
                         }
                     }
                 }
-                if !player.isPlaying && time > 1 {
+                if !player.isPlaying && time > 1 && !self.isInterrupted {
                     self.isRunning = false
                     self.isDone = true
                     self.syncTimer?.invalidate()
