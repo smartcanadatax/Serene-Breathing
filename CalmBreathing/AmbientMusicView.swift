@@ -121,7 +121,6 @@ final class AmbientMusicEngine: NSObject, ObservableObject {
         progress = 0
         currentTrack = nil
         UIApplication.shared.isIdleTimerDisabled = false
-        try? AVAudioSession.sharedInstance().setActive(false, options: .notifyOthersOnDeactivation)
     }
 
     private func startTimer() {

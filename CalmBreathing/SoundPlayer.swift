@@ -16,7 +16,7 @@ class SoundPlayer: ObservableObject {
         case ambience        = "Ambience"
         case ohm             = "Ohm"
         case natureMeditate  = "Nature Meditate"
-        case rainSleep       = "Rain Sleep"
+        case rainSleep       = "Gentle Rain"
         case peacefulMind    = "Peaceful Mind"
         case spiritualYoga   = "Spiritual Yoga"
         case zenWater        = "Zen Water"
@@ -29,7 +29,7 @@ class SoundPlayer: ObservableObject {
         case sleepMeditation       = "Sleep Meditation"
         case angelicMeditation     = "Angelic"
         case meditationRelaxation  = "Meditation & Relax"
-        case deepMeditation        = "Deep Meditation"
+        case deepMeditation        = "Journey Within"
         case spiritualMeditation   = "Spiritual"
         case meditationMiromax     = "Miromax Meditation"
         case relaxSleep            = "Relax & Sleep"
@@ -40,7 +40,7 @@ class SoundPlayer: ObservableObject {
         case meditationFree        = "Calm Meditation"
         case downpour              = "Downpour"
         case planetFrequencies     = "Planet Frequencies"
-        case sereneMindfulness     = "Serene Mindfulness"
+        case sereneMindfulness     = "Inner Peace"
         // New nature
         case immersiveNature       = "Immersive Nature"
         case relaxingNature        = "Relaxing Nature"
@@ -53,7 +53,7 @@ class SoundPlayer: ObservableObject {
         case veryDeepSleep         = "Very Deep Sleep"
         // Quietphase ambient
         case calmAmbient           = "Calm Ambient"
-        case zenAmbient            = "Zen Ambient"
+        case zenAmbient            = "Mindful Zen"
         case meditationFlow        = "Meditation Flow"
         case slowAmbient           = "Slow Ambient"
         case yogaAmbient           = "Yoga Ambient"
@@ -70,6 +70,11 @@ class SoundPlayer: ObservableObject {
         case ambientBliss          = "Ambient Bliss"
         case cinematicAmbient      = "Cinematic Ambient"
         case relaxingRain          = "Relaxing Rain"
+        // New nature additions
+        case quietphaseAmbientMeditation = "Ambient Meditation"
+        case quietphaseZenMusic          = "Zen Music"
+        case rainSleepHolizna            = "Rain & Sleep"
+        case sleepBlueHour               = "Blue Hour"
 
         var id: String { rawValue }
 
@@ -131,6 +136,10 @@ class SoundPlayer: ObservableObject {
             case .ambientBliss:          return "heart.fill"
             case .cinematicAmbient:      return "music.note.list"
             case .relaxingRain:          return "cloud.rain.fill"
+            case .quietphaseAmbientMeditation: return "sparkles"
+            case .quietphaseZenMusic:          return "music.note"
+            case .rainSleepHolizna:            return "cloud.drizzle.fill"
+            case .sleepBlueHour:               return "moon.fill"
             }
         }
 
@@ -190,6 +199,10 @@ class SoundPlayer: ObservableObject {
             case .ambientBliss:          return "Blissful ambient meditation"
             case .cinematicAmbient:      return "Cinematic ambient tones"
             case .relaxingRain:          return "Relaxing rain & music"
+            case .quietphaseAmbientMeditation: return "Ambient meditation tones"
+            case .quietphaseZenMusic:          return "Peaceful zen music"
+            case .rainSleepHolizna:            return "Rain sounds for deep sleep"
+            case .sleepBlueHour:               return "Twilight tones for sleep"
             }
         }
 
@@ -249,6 +262,10 @@ class SoundPlayer: ObservableObject {
             case .ambientBliss:          return Color(red: 0.50, green: 0.22, blue: 0.40)
             case .cinematicAmbient:      return Color(red: 0.20, green: 0.18, blue: 0.50)
             case .relaxingRain:          return Color(red: 0.15, green: 0.25, blue: 0.50)
+            case .quietphaseAmbientMeditation: return Color(red: 0.25, green: 0.20, blue: 0.58)
+            case .quietphaseZenMusic:          return Color(red: 0.10, green: 0.35, blue: 0.55)
+            case .rainSleepHolizna:            return Color(red: 0.12, green: 0.20, blue: 0.48)
+            case .sleepBlueHour:               return Color(red: 0.08, green: 0.15, blue: 0.50)
             }
         }
     }
@@ -346,12 +363,17 @@ class SoundPlayer: ObservableObject {
             case .ambientBliss:          return ("playstarz_music-ambient-meditation-486609", "mp3")
             case .cinematicAmbient:      return ("yevhenastafiev-cinematic-ambient-481810", "mp3")
             case .relaxingRain:          return ("clavier-music-relaxing-ambient-music-rain-354479", "mp3")
+            case .quietphaseAmbientMeditation: return ("quietphase-ambient-meditation-485723", "mp3")
+            case .quietphaseZenMusic:          return ("quietphase-music-zen-490876",          "mp3")
+            case .rainSleepHolizna:            return ("rain_sleep_holizna",                   "mp3")
+            case .sleepBlueHour:               return ("sleep_blue_hour",                      "mp3")
             }
         }()
 
         guard let file = bundledFile,
               let url = Bundle.main.url(forResource: file.name, withExtension: file.ext, subdirectory: "Audio"),
               let p = try? AVAudioPlayer(contentsOf: url) else { return }
+        try? AVAudioSession.sharedInstance().setActive(true)
         p.numberOfLoops = -1
         p.volume        = 0
         p.prepareToPlay()
@@ -412,7 +434,7 @@ class SoundPlayer: ObservableObject {
 
     /// Plays ambient rain track during guided meditation sessions.
     func playMeditationMusic() {
-        guard let url = Bundle.main.url(forResource: "rain_sleep",
+        guard let url = Bundle.main.url(forResource: "peaceful_mind",
                                         withExtension: "mp3",
                                         subdirectory: "Audio"),
               let p = try? AVAudioPlayer(contentsOf: url) else { return }

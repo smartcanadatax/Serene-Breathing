@@ -426,6 +426,30 @@ struct MeditationTimerView: View {
         .onReceive(NotificationCenter.default.publisher(for: .watchToggleTimer)) { _ in
             toggleTimer()
         }
+        .onReceive(NotificationCenter.default.publisher(for: AVAudioSession.interruptionNotification)) { note in
+            guard let info = note.userInfo,
+                  let typeVal = info[AVAudioSessionInterruptionTypeKey] as? UInt,
+                  let type = AVAudioSession.InterruptionType(rawValue: typeVal) else { return }
+            switch type {
+            case .began:
+                soundPlayer.stop()
+                ambientEngine.pause()
+            case .ended:
+                let opts = (info[AVAudioSessionInterruptionOptionKey] as? UInt)
+                    .map { AVAudioSession.InterruptionOptions(rawValue: $0) } ?? []
+                if opts.contains(.shouldResume), isRunning {
+                    try? AVAudioSession.sharedInstance().setActive(true)
+                    if let ambTrack = selectedAmbientTrack {
+                        ambientEngine.resume()
+                    } else if !silentBellMode {
+                        let sound = selectedSound ?? .sereneMindfulness
+                        soundPlayer.setVolume(Float(savedVolume))
+                        soundPlayer.play(sound, forceRestart: true)
+                    }
+                }
+            @unknown default: break
+            }
+        }
         .onDisappear {
             stopTimer()
             soundPlayer.stop()
