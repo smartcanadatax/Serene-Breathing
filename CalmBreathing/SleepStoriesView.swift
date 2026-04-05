@@ -422,7 +422,7 @@ private struct StoryCard: View {
         HStack(spacing: 16) {
             ZStack {
                 Circle()
-                    .fill(Color.white)
+                    .fill(Color.calmAccent.opacity(0.15))
                     .frame(width: 56, height: 56)
                 Image(systemName: story.icon)
                     .font(.system(size: 22))
@@ -432,28 +432,26 @@ private struct StoryCard: View {
             VStack(alignment: .leading, spacing: 4) {
                 Text(story.title)
                     .font(.system(size: 16, weight: .semibold, design: .rounded))
-                    .foregroundColor(.white)
+                    .foregroundColor(.calmDeep)
                 Text(story.subtitle)
                     .font(.system(size: 13, weight: .regular))
-                    .foregroundColor(.white.opacity(0.70))
+                    .foregroundColor(.calmMid)
                 Text(story.duration)
                     .font(.system(size: 11, weight: .medium))
-                    .foregroundColor(.calmAccent.opacity(0.80))
+                    .foregroundColor(.calmAccent)
             }
 
             Spacer()
 
             Image(systemName: "play.circle.fill")
                 .font(.system(size: 30))
-                .foregroundColor(.white)
+                .foregroundColor(.calmAccent)
         }
         .padding(.horizontal, 16)
         .padding(.vertical, 14)
         .background(
             RoundedRectangle(cornerRadius: 16)
-                .fill(Color.white.opacity(0.08))
-                .overlay(RoundedRectangle(cornerRadius: 16)
-                    .stroke(Color.white.opacity(0.12), lineWidth: 1))
+                .fill(Color(red: 0.87, green: 0.89, blue: 0.96))
         )
     }
 }
