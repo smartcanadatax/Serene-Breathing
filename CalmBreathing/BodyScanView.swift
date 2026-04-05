@@ -146,9 +146,6 @@ struct BodyScanView: View {
     private var introView: some View {
         VStack(spacing: 28) {
             VStack(spacing: 12) {
-                Text("Body Scan Meditation")
-                    .font(.system(size: 24, weight: .semibold, design: .rounded))
-                    .foregroundColor(.white)
                 Text("A gentle 8-minute guided journey through your body, releasing tension from head to toe.")
                     .font(.system(size: 15, weight: .regular))
                     .foregroundColor(.white.opacity(0.90))
