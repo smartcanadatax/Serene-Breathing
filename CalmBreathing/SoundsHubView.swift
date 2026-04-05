@@ -3,22 +3,15 @@ import SwiftUI
 // MARK: - Sounds Hub (combined Library + Ambient in one page)
 
 struct SoundsHubView: View {
+    @Environment(\.dismiss) private var dismiss
+    @Environment(\.presentationMode) private var presentationMode
     @EnvironmentObject var premium:     PremiumStore
     @EnvironmentObject var soundPlayer: SoundPlayer
     @EnvironmentObject var userPrefs:   UserPreferencesStore
     @StateObject private var ambientEngine = AmbientMusicEngine()
 
     @State private var topTab: Int = 0
-    @State private var soundCategory: SoundLibraryCategory = .nature
-    @State private var ambientCategory: AmbientCategory = .focus
     @State private var showPaywall = false
-
-    private var libraryTracks: [SoundPlayer.SoundType] {
-        SoundPlayer.SoundType.allCases.filter { $0.libraryCategory == soundCategory }
-    }
-    private var ambientTracks: [AmbientTrack] {
-        allAmbientTracks.filter { $0.category == ambientCategory }
-    }
 
     var body: some View {
         ZStack(alignment: .bottom) {
@@ -27,14 +20,24 @@ struct SoundsHubView: View {
             VStack(spacing: 0) {
                 // Nav bar
                 HStack {
-                    Color.clear.frame(width: 36, height: 36)
+                    if presentationMode.wrappedValue.isPresented {
+                        Button { dismiss() } label: {
+                            Image(systemName: "chevron.left")
+                                .font(.system(size: 16, weight: .semibold))
+                                .foregroundColor(.white)
+                                .frame(width: 44, height: 44)
+                                .contentShape(Rectangle())
+                        }
+                    } else {
+                        Color.clear.frame(width: 44, height: 44)
+                    }
                     Spacer()
                     Text("Sounds")
                         .font(.system(size: 17, weight: .semibold, design: .rounded))
                         .foregroundColor(.white)
                     Spacer()
                     SleepTimerButton()
-                        .frame(width: 36, height: 36)
+                        .frame(width: 44, height: 44)
                         .background(Circle().fill(Color.white.opacity(0.25)))
                 }
                 .padding(.horizontal, 16)
@@ -65,28 +68,11 @@ struct SoundsHubView: View {
                 .padding(.horizontal, 20)
                 .padding(.bottom, 12)
 
-                // Category chips
-                ScrollView(.horizontal, showsIndicators: false) {
-                    HStack(spacing: 8) {
-                        if topTab == 0 {
-                            ForEach(SoundLibraryCategory.allCases, id: \.self) { cat in
-                                categoryChip(cat.rawValue, icon: cat.icon, selected: soundCategory == cat) { soundCategory = cat }
-                            }
-                        } else {
-                            ForEach(AmbientCategory.allCases, id: \.self) { cat in
-                                categoryChip(cat.rawValue, icon: cat.icon, selected: ambientCategory == cat) { ambientCategory = cat }
-                            }
-                        }
-                    }
-                    .padding(.horizontal, 20)
-                }
-                .padding(.bottom, 10)
-
                 // Grid content
                 if topTab == 0 {
                     ScrollView(showsIndicators: false) {
                         LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 10) {
-                            ForEach(libraryTracks) { sound in
+                            ForEach(SoundPlayer.SoundType.allCases) { sound in
                                 SoundGridCard(sound: sound)
                             }
                         }
@@ -98,7 +84,7 @@ struct SoundsHubView: View {
                 } else {
                     ScrollView(showsIndicators: false) {
                         LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 10) {
-                            ForEach(ambientTracks) { track in
+                            ForEach(allAmbientTracks) { track in
                                 AmbientGridCard(track: track, engine: ambientEngine)
                             }
                         }
@@ -130,21 +116,6 @@ struct SoundsHubView: View {
         }
     }
 
-    private func categoryChip(_ label: String, icon: String, selected: Bool, action: @escaping () -> Void) -> some View {
-        Button(action: action) {
-            HStack(spacing: 5) {
-                Image(systemName: icon)
-                    .font(.system(size: 11, weight: .semibold))
-                Text(label)
-                    .font(.system(size: 13, weight: selected ? .semibold : .regular, design: .rounded))
-            }
-            .foregroundColor(selected ? .calmDeep : .white.opacity(0.80))
-            .padding(.horizontal, 14)
-            .padding(.vertical, 8)
-            .background(Capsule().fill(selected ? Color.white : Color.white.opacity(0.15)))
-        }
-        .buttonStyle(.plain)
-    }
 }
 
 // MARK: - Sound Grid Card
@@ -172,11 +143,11 @@ private struct SoundGridCard: View {
                 HStack(alignment: .top) {
                     ZStack {
                         Circle()
-                            .fill(isActive ? brandPurple.opacity(0.20) : Color.white.opacity(0.12))
+                            .fill(isActive ? brandPurple.opacity(0.15) : brandPurple.opacity(0.08))
                             .frame(width: 40, height: 40)
                         Image(systemName: isLocked ? "lock.fill" : (isActive ? "pause.fill" : "play.fill"))
                             .font(.system(size: 14, weight: .semibold))
-                            .foregroundColor(isLocked ? brandPurple.opacity(0.35) : (isActive ? brandPurple : .white.opacity(0.80)))
+                            .foregroundColor(isLocked ? brandPurple.opacity(0.35) : brandPurple)
                     }
                     Spacer()
                     if isActive {
@@ -189,7 +160,7 @@ private struct SoundGridCard: View {
                         } label: {
                             Image(systemName: isFav ? "heart.fill" : "heart")
                                 .font(.system(size: 13))
-                                .foregroundColor(isFav ? Color(red: 1.0, green: 0.40, blue: 0.55) : .white.opacity(0.30))
+                                .foregroundColor(isFav ? Color(red: 1.0, green: 0.40, blue: 0.55) : brandPurple.opacity(0.30))
                                 .frame(width: 28, height: 28)
                                 .contentShape(Rectangle())
                         }
@@ -199,21 +170,21 @@ private struct SoundGridCard: View {
                 VStack(alignment: .leading, spacing: 3) {
                     Text(sound.rawValue)
                         .font(.system(size: 13, weight: .semibold, design: .rounded))
-                        .foregroundColor(isLocked ? .white.opacity(0.40) : .white)
+                        .foregroundColor(isLocked ? .calmDeep.opacity(0.40) : .calmDeep)
                         .lineLimit(1)
                     Text(isLocked ? "Premium" : sound.subtitle)
                         .font(.system(size: 11, weight: .regular))
-                        .foregroundColor(isLocked ? brandPurple.opacity(0.50) : .white.opacity(0.55))
+                        .foregroundColor(isLocked ? brandPurple.opacity(0.50) : .calmMid)
                         .lineLimit(1)
                 }
             }
             .padding(12)
             .background(
                 RoundedRectangle(cornerRadius: 14)
-                    .fill(isActive ? brandPurple.opacity(0.20) : Color.white.opacity(0.08))
+                    .fill(isActive ? brandPurple.opacity(0.12) : Color(red: 0.87, green: 0.89, blue: 0.96))
                     .overlay(
                         RoundedRectangle(cornerRadius: 14)
-                            .stroke(isActive ? brandPurple.opacity(0.45) : Color.white.opacity(0.10), lineWidth: 1)
+                            .stroke(isActive ? brandPurple.opacity(0.40) : Color.clear, lineWidth: 1)
                     )
             )
         }
@@ -240,11 +211,11 @@ private struct AmbientGridCard: View {
                 HStack(alignment: .top) {
                     ZStack {
                         Circle()
-                            .fill(isActive ? brandPurple.opacity(0.20) : Color.white.opacity(0.12))
+                            .fill(isActive ? brandPurple.opacity(0.15) : brandPurple.opacity(0.08))
                             .frame(width: 40, height: 40)
                         Image(systemName: isPlaying ? "pause.fill" : "play.fill")
                             .font(.system(size: 14, weight: .semibold))
-                            .foregroundColor(isActive ? brandPurple : .white.opacity(0.80))
+                            .foregroundColor(brandPurple)
                     }
                     Spacer()
                     if isActive {
@@ -256,21 +227,21 @@ private struct AmbientGridCard: View {
                 VStack(alignment: .leading, spacing: 3) {
                     Text(track.title)
                         .font(.system(size: 13, weight: .semibold, design: .rounded))
-                        .foregroundColor(.white)
+                        .foregroundColor(.calmDeep)
                         .lineLimit(1)
                     Text(track.subtitle)
                         .font(.system(size: 11, weight: .regular))
-                        .foregroundColor(.white.opacity(0.55))
+                        .foregroundColor(.calmMid)
                         .lineLimit(1)
                 }
             }
             .padding(12)
             .background(
                 RoundedRectangle(cornerRadius: 14)
-                    .fill(isActive ? brandPurple.opacity(0.20) : Color.white.opacity(0.08))
+                    .fill(isActive ? brandPurple.opacity(0.12) : Color(red: 0.87, green: 0.89, blue: 0.96))
                     .overlay(
                         RoundedRectangle(cornerRadius: 14)
-                            .stroke(isActive ? brandPurple.opacity(0.45) : Color.white.opacity(0.10), lineWidth: 1)
+                            .stroke(isActive ? brandPurple.opacity(0.40) : Color.clear, lineWidth: 1)
                     )
             )
         }
@@ -312,11 +283,15 @@ private struct AmbientMiniPlayer: View {
                     Image(systemName: engine.isPlaying ? "pause.circle.fill" : "play.circle.fill")
                         .font(.system(size: 36))
                         .foregroundColor(.calmAccent)
+                        .frame(width: 44, height: 44)
+                        .contentShape(Rectangle())
                 }
                 Button { engine.stop() } label: {
                     Image(systemName: "xmark.circle.fill")
                         .font(.system(size: 36))
                         .foregroundColor(Color(red: 0.541, green: 0.357, blue: 0.804).opacity(0.50))
+                        .frame(width: 44, height: 44)
+                        .contentShape(Rectangle())
                 }
             }
             .padding(.horizontal, 20)

@@ -43,6 +43,34 @@ struct DisclaimerFooter: View {
     }
 }
 
+// MARK: - Shiny Serene Title
+struct SereneTitle: View {
+    private let shinyGradient = LinearGradient(
+        stops: [
+            .init(color: Color(red: 1.00, green: 0.98, blue: 1.00), location: 0.0),
+            .init(color: Color(red: 0.94, green: 0.90, blue: 0.99), location: 0.15),
+            .init(color: Color(red: 0.78, green: 0.70, blue: 0.95), location: 0.40),
+            .init(color: Color(red: 0.86, green: 0.80, blue: 0.97), location: 0.60),
+            .init(color: Color(red: 0.94, green: 0.91, blue: 0.99), location: 0.82),
+            .init(color: Color(red: 1.00, green: 0.98, blue: 1.00), location: 1.0),
+        ],
+        startPoint: .top,
+        endPoint: .bottom
+    )
+
+    var body: some View {
+        VStack(spacing: 2) {
+            Text("Serene")
+                .font(.custom("Georgia-BoldItalic", size: 36).leading(.tight))
+                .foregroundStyle(shinyGradient)
+            Text("BREATHING")
+                .font(.system(size: 11, weight: .bold))
+                .kerning(6)
+                .foregroundStyle(shinyGradient)
+        }
+    }
+}
+
 // MARK: - Root View
 struct ContentView: View {
     @AppStorage("hasAgreedToTerms")  private var hasAgreedToTerms  = false
@@ -50,11 +78,13 @@ struct ContentView: View {
     @EnvironmentObject var journal: JournalStore
 
     var body: some View {
-        Group {
+        ZStack {
             if !hasAgreedToTerms {
                 TermsGateView()
+                    .transition(.identity)
             } else if !hasSeenOnboarding {
                 OnboardingView()
+                    .transition(.identity)
             } else {
                 TabView {
                     NavigationStack {
@@ -65,7 +95,7 @@ struct ContentView: View {
                     }
 
                     NavigationStack {
-                        BreathingView()
+                        BreathingHubView()
                     }
                     .tabItem {
                         Label("Breathe", systemImage: "lungs.fill")
@@ -82,7 +112,7 @@ struct ContentView: View {
                         MeditationHubView()
                     }
                     .tabItem {
-                        Label("Session", systemImage: "moon.stars.fill")
+                        Label("Session", systemImage: "figure.mind.and.body")
                     }
 
                     NavigationStack {
@@ -94,8 +124,10 @@ struct ContentView: View {
                     }
                 }
                 .tint(.white)
+                .transition(.identity)
             }
         }
-        .transaction { $0.animation = nil }
+        .animation(nil, value: hasSeenOnboarding)
+        .animation(nil, value: hasAgreedToTerms)
     }
 }

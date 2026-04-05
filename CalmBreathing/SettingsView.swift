@@ -241,7 +241,7 @@ struct SettingsView: View {
                                     HStack(spacing: 8) {
                                         Image(systemName: "music.note")
                                             .font(.system(size: 12))
-                                            .foregroundColor(.calmAccent)
+                                            .foregroundColor(.white)
                                         Text(credit.title)
                                             .font(.system(size: 14, weight: .regular))
                                             .foregroundColor(.calmDeep)

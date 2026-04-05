@@ -206,7 +206,7 @@ struct MeditationTimerView: View {
 
                 // Now-playing badge when running
                 if isRunning {
-                    if let ambTrack = selectedAmbientTrack {
+                    if !silentBellMode, let ambTrack = selectedAmbientTrack {
                         HStack(spacing: 6) {
                             Image(systemName: ambTrack.category.icon).font(.caption2)
                             Text("\(ambTrack.title) playing")
@@ -215,7 +215,7 @@ struct MeditationTimerView: View {
                         }
                         .foregroundColor(.white.opacity(0.65))
                         .padding(.top, 8)
-                    } else if let s = selectedSound {
+                    } else if !silentBellMode, let s = selectedSound {
                         HStack(spacing: 6) {
                             Image(systemName: s.icon).font(.caption2)
                             Text("\(s.rawValue) playing")
@@ -302,15 +302,26 @@ struct MeditationTimerView: View {
                             )
                     }
 
-                    Button {
-                        activeSheet = .sound
-                    } label: {
-                        Image(systemName: "music.note")
-                            .font(.system(size: 19))
-                            .foregroundColor(.white.opacity(0.95))
-                            .frame(width: 54, height: 54)
-                            .background(Circle().fill(Color.white.opacity(0.08)))
+                    if !silentBellMode {
+                        Button {
+                            activeSheet = .sound
+                        } label: {
+                            Image(systemName: "music.note")
+                                .font(.system(size: 19))
+                                .foregroundColor(.white.opacity(0.95))
+                                .frame(width: 54, height: 54)
+                                .background(Circle().fill(Color.white.opacity(0.08)))
+                        }
+                    } else {
+                        Color.clear.frame(width: 54, height: 54)
                     }
+                }
+
+                if silentBellMode {
+                    Text("For background music, use Meditation Timer")
+                        .font(.system(size: 12, weight: .regular))
+                        .foregroundColor(.white.opacity(0.55))
+                        .padding(.top, 8)
                 }
 
                 Text(focusGuidanceText)
@@ -343,7 +354,7 @@ struct MeditationTimerView: View {
                             .contentShape(Rectangle())
                     }
                     Spacer()
-                    Text("Meditation Timer")
+                    Text(silentBellMode ? "Silent Meditation" : "Meditation Timer")
                         .font(.system(size: 17, weight: .semibold, design: .rounded))
                         .foregroundColor(.white)
                     Spacer()

@@ -271,20 +271,16 @@ struct GuidedMeditationView: View {
 
             // Start button
             Button(action: startSession) {
-                HStack(spacing: 10) {
-                    Image(systemName: "play.fill")
+                HStack(spacing: 8) {
                     Text("Begin Meditation")
-                        .fontWeight(.medium)
+                        .font(.system(size: 17, weight: .semibold, design: .rounded))
+                    Image(systemName: "chevron.right")
+                        .font(.system(size: 13, weight: .semibold))
                 }
-                .font(.system(size: 17, design: .rounded))
-                .foregroundColor(.calmDeep)
+                .foregroundColor(.calmAccent)
                 .frame(maxWidth: .infinity)
                 .padding(.vertical, 18)
-                .background(
-                    Capsule()
-                        .fill(Color.calmAccent)
-                        .shadow(color: .calmAccent.opacity(0.45), radius: 16)
-                )
+                .background(Capsule().fill(Color.white).shadow(color: .black.opacity(0.10), radius: 16))
             }
             .padding(.horizontal, 32)
             .padding(.top, 28)

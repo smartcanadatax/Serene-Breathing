@@ -40,6 +40,7 @@ struct MorningMeditationView: View {
     @State private var currentIndex = 0
     @State private var isRunning = false
     @State private var isDone = false
+    @State private var sessionStartDate = Date()
     @State private var syncTimer: Timer?
     @State private var progress: Double = 0
     @State private var audioPlayer: AVAudioPlayer?
@@ -306,10 +307,12 @@ struct MorningMeditationView: View {
 
     private func startSession() {
         isRunning = true
+        sessionStartDate = Date()
         currentIndex = 0
         progress = 0
         reachedNearEnd = false
         UIApplication.shared.isIdleTimerDisabled = true
+        HapticManager.start()
         playAudio()
         startBgMusic()
         startSyncTimer()
@@ -364,6 +367,8 @@ struct MorningMeditationView: View {
                     self.syncTimer?.invalidate()
                     self.syncTimer = nil
                     UIApplication.shared.isIdleTimerDisabled = false
+                    HapticManager.complete()
+                    HealthKitManager.shared.saveMindfulSession(startDate: self.sessionStartDate, endDate: Date())
                     self.bgPlayer?.stop()
                     self.bgPlayer = nil
                 }

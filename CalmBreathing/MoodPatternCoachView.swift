@@ -64,16 +64,15 @@ struct MoodPatternCoachView: View {
             VStack(spacing: 24) {
                 HStack {
                     Button { dismiss() } label: {
-                        HStack(spacing: 6) {
-                            Image(systemName: "chevron.left")
-                            Text("Back")
-                        }
-                        .font(.system(size: 14, weight: .medium))
-                        .foregroundColor(.calmDeep)
+                        Image(systemName: "chevron.left")
+                            .font(.system(size: 16, weight: .semibold))
+                            .foregroundColor(.white)
+                            .frame(width: 44, height: 44)
+                            .contentShape(Rectangle())
                     }
                     Spacer()
                 }
-                .padding(.horizontal, 24)
+                .padding(.horizontal, 16)
                 .padding(.top, 16)
 
                 // Header
@@ -84,14 +83,14 @@ struct MoodPatternCoachView: View {
                             .frame(width: 80, height: 80)
                         Image(systemName: "chart.line.uptrend.xyaxis")
                             .font(.system(size: 34))
-                            .foregroundColor(.calmDeep)
+                            .foregroundColor(.white)
                     }
                     Text("Mood Pattern Coach")
                         .font(.system(size: 26, weight: .semibold, design: .rounded))
-                        .foregroundColor(.calmDeep)
+                        .foregroundColor(.white)
                     Text("I analyze your last 7 days of mood data and suggest the best guided session from the app — based on your actual patterns, not just today.")
                         .font(.system(size: 14))
-                        .foregroundColor(.calmMid)
+                        .foregroundColor(.white.opacity(0.75))
                         .multilineTextAlignment(.center)
                         .padding(.horizontal, 16)
                 }

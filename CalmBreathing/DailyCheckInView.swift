@@ -426,7 +426,7 @@ struct DailyCheckInView: View {
         } message: {
             Text("Please select how you're feeling before getting your insight.")
         }
-        .fullScreenCover(isPresented: $showCoachChat) { CoachChatView().environmentObject(journal) }
+        .fullScreenCover(isPresented: $showCoachChat) { CoachChatView().environmentObject(journal).environmentObject(premium) }
         .fullScreenCover(isPresented: $showMorning)  { MorningMeditationView().environmentObject(journal) }
         .fullScreenCover(isPresented: $showBodyScan) { BodyScanView().environmentObject(journal) }
         .fullScreenCover(isPresented: $showBreath)   { BreathingView() }

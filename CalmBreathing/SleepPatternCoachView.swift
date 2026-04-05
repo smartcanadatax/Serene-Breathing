@@ -82,16 +82,15 @@ struct SleepPatternCoachView: View {
             VStack(spacing: 24) {
                 HStack {
                     Button { dismiss() } label: {
-                        HStack(spacing: 6) {
-                            Image(systemName: "chevron.left")
-                            Text("Back")
-                        }
-                        .font(.system(size: 14, weight: .medium))
-                        .foregroundColor(.calmDeep)
+                        Image(systemName: "chevron.left")
+                            .font(.system(size: 16, weight: .semibold))
+                            .foregroundColor(.white)
+                            .frame(width: 44, height: 44)
+                            .contentShape(Rectangle())
                     }
                     Spacer()
                 }
-                .padding(.horizontal, 24)
+                .padding(.horizontal, 16)
                 .padding(.top, 16)
 
                 // Header
@@ -102,14 +101,14 @@ struct SleepPatternCoachView: View {
                             .frame(width: 80, height: 80)
                         Image(systemName: "moon.zzz.fill")
                             .font(.system(size: 34))
-                            .foregroundColor(.calmDeep)
+                            .foregroundColor(.white)
                     }
                     Text("Sleep Pattern Coach")
                         .font(.system(size: 26, weight: .semibold, design: .rounded))
-                        .foregroundColor(.calmDeep)
+                        .foregroundColor(.white)
                     Text("I analyze your last 7 nights of sleep data and suggest the best guided session from the app to help you sleep better.")
                         .font(.system(size: 14))
-                        .foregroundColor(.calmMid)
+                        .foregroundColor(.white.opacity(0.75))
                         .multilineTextAlignment(.center)
                         .padding(.horizontal, 16)
                 }

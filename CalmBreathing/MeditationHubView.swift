@@ -4,6 +4,8 @@ import SwiftUI
 // Session tab root — lists all meditation features
 
 struct MeditationHubView: View {
+    @Environment(\.dismiss) private var dismiss
+    @Environment(\.presentationMode) private var presentationMode
     @EnvironmentObject var premium: PremiumStore
     @State private var showPaywall = false
 
@@ -13,18 +15,29 @@ struct MeditationHubView: View {
 
             ScrollView(showsIndicators: false) {
                 VStack(spacing: 0) {
-                    // Header
-                    VStack(spacing: 6) {
-                        AppLogoView(size: 64)
-                            .padding(.top, 20)
+                    // Nav bar
+                    HStack {
+                        if presentationMode.wrappedValue.isPresented {
+                            Button { dismiss() } label: {
+                                Image(systemName: "chevron.left")
+                                    .font(.system(size: 16, weight: .semibold))
+                                    .foregroundColor(.white)
+                                    .frame(width: 44, height: 44)
+                                    .contentShape(Rectangle())
+                            }
+                        } else {
+                            Color.clear.frame(width: 44, height: 44)
+                        }
+                        Spacer()
                         Text("Meditation")
-                            .font(.system(size: 28, weight: .bold, design: .rounded))
+                            .font(.system(size: 17, weight: .semibold, design: .rounded))
                             .foregroundColor(.white)
-                        Text("Guided sessions for mind & body")
-                            .font(.system(size: 14, weight: .regular, design: .rounded))
-                            .foregroundColor(.white.opacity(0.70))
+                        Spacer()
+                        Color.clear.frame(width: 44, height: 44)
                     }
-                    .padding(.bottom, 24)
+                    .padding(.horizontal, 16)
+                    .padding(.top, 16)
+                    .padding(.bottom, 14)
 
                     // Sessions
                     VStack(spacing: 10) {
@@ -72,7 +85,7 @@ struct MeditationHubView: View {
                         )
 
                         MeditationHubRow(
-                            icon: "sparkles",
+                            icon: "wand.and.stars",
                             title: "Personalized Meditation",
                             subtitle: "A session tailored just for you",
                             destination: AnyView(PersonalizedMeditationView()),

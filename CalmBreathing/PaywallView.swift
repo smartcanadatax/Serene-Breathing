@@ -179,7 +179,7 @@ struct PaywallView: View {
         HStack(spacing: 14) {
             Image(systemName: icon)
                 .font(.system(size: 14))
-                .foregroundColor(.calmAccent)
+                .foregroundColor(.white)
                 .frame(width: 22)
             Text(text)
                 .font(.system(size: 14, weight: .regular))

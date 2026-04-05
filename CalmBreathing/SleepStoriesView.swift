@@ -29,6 +29,7 @@ struct AISleepStoryView: View {
                 inputView
             }
         }
+        .onDisappear { synthesizer.stopSpeaking(at: .immediate) }
         .navigationBarTitleDisplayMode(.inline)
         .toolbarBackground(.hidden, for: .navigationBar)
         .toolbar {

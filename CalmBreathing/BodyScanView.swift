@@ -29,6 +29,7 @@ struct BodyScanView: View {
     @State private var currentIndex = 0
     @State private var isRunning = false
     @State private var isDone = false
+    @State private var sessionStartDate = Date()
     @State private var syncTimer: Timer?
     @State private var progress: Double = 0
     @State private var audioPlayer: AVAudioPlayer?
@@ -332,6 +333,7 @@ struct BodyScanView: View {
     private func startScan() {
         HapticManager.start()
         isRunning = true
+        sessionStartDate = Date()
         currentIndex = 0
         progress = 0
         reachedNearEnd = false
@@ -398,6 +400,7 @@ struct BodyScanView: View {
                     self.isDone = true
                     HapticManager.complete()
                     UIApplication.shared.isIdleTimerDisabled = false
+                    HealthKitManager.shared.saveMindfulSession(startDate: self.sessionStartDate, endDate: Date())
                     self.syncTimer?.invalidate()
                     self.syncTimer = nil
                     self.bgPlayer?.stop()

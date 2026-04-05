@@ -9,7 +9,10 @@ struct SereneBreathingApp: App {
     @StateObject private var premium       = PremiumStore()
     @AppStorage("darkMode") private var darkMode = false
     @AppStorage("hasAgreedToTerms") private var hasAgreedToTerms = false
+    @AppStorage("hasSeenOnboarding") private var hasSeenOnboarding = false
+    @AppStorage("hasRequestedHealth") private var hasRequestedHealth = false
     @State private var showLaunch = true
+    @State private var showHealthPermission = false
 
     init() {
         _ = PhoneSession.shared   // activate WatchConnectivity on launch
@@ -56,7 +59,22 @@ struct SereneBreathingApp: App {
                 if showLaunch {
                     LaunchAnimationView {
                         showLaunch = false
+                        // Show Health permission after onboarding is done
+                        if hasAgreedToTerms && hasSeenOnboarding && !hasRequestedHealth {
+                            showHealthPermission = true
+                        }
                     }
+                }
+            }
+            .fullScreenCover(isPresented: $showHealthPermission) {
+                HealthPermissionView {
+                    // Allow tapped — request system permission
+                    hasRequestedHealth = true
+                    showHealthPermission = false
+                    HealthKitManager.shared.requestAuthorization { _ in }
+                } onSkip: {
+                    hasRequestedHealth = true
+                    showHealthPermission = false
                 }
             }
         }

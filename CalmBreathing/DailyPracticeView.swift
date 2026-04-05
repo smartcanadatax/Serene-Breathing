@@ -338,10 +338,11 @@ struct DailyPracticeView: View {
     @State private var phaseTimer: Timer?
     @State private var countdownTimer: Timer?
     @State private var audioPlayer: AVAudioPlayer?
+    @State private var bgPlayer: AVAudioPlayer?
     @State private var audioSyncTimer: Timer?
     @State private var lastPhaseIdx   = -1
     @State private var visualCountdownTimer: Timer?
-    private let completionSynth = AVSpeechSynthesizer()
+    @State private var completionPlayer: AVAudioPlayer?
 
     // Audio phase triggers (when the voice cue fires)
     private let audioCycleDuration: TimeInterval = 27.984
@@ -399,6 +400,7 @@ struct DailyPracticeView: View {
                 }
             }
         }
+        .onAppear { prepareBgMusic() }
         .onDisappear { stopTimers() }
         .onReceive(NotificationCenter.default.publisher(for: AVAudioSession.interruptionNotification)) { note in
             guard let info = note.userInfo,
@@ -519,14 +521,15 @@ struct DailyPracticeView: View {
                     DispatchQueue.main.asyncAfter(deadline: .now() + 0.4) { startBreathing() }
                 } label: {
                     HStack(spacing: 8) {
-                        Image(systemName: "wind")
                         Text("Begin Today's Practice")
+                            .font(.system(size: 16, weight: .semibold, design: .rounded))
+                        Image(systemName: "chevron.right")
+                            .font(.system(size: 13, weight: .semibold))
                     }
-                    .font(.system(size: 16, weight: .semibold, design: .rounded))
-                    .foregroundColor(Color(red: 0.08, green: 0.18, blue: 0.40))
+                    .foregroundColor(.calmAccent)
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 16)
-                    .background(Capsule().fill(practice.accentColor).shadow(color: practice.accentColor.opacity(0.35), radius: 12))
+                    .background(Capsule().fill(Color.white).shadow(color: .black.opacity(0.10), radius: 12))
                 }
                 .padding(.horizontal, 24)
                 .padding(.top, 24)
@@ -681,7 +684,21 @@ struct DailyPracticeView: View {
     private func startBreathing() {
         UIApplication.shared.isIdleTimerDisabled = true
         playAudio()
+        startBgMusic()
         startAudioSync()
+    }
+
+    private func prepareBgMusic() {
+        guard let url = Bundle.main.url(forResource: "serene_mindfulness", withExtension: "mp3", subdirectory: "Audio"),
+              let player = try? AVAudioPlayer(contentsOf: url) else { return }
+        player.numberOfLoops = -1
+        player.volume = 0.07
+        player.prepareToPlay()
+        bgPlayer = player
+    }
+
+    private func startBgMusic() {
+        bgPlayer?.play()
     }
 
     // Watches audio position — when a new voice cue fires, triggers a fresh 4-second visual countdown
@@ -780,13 +797,13 @@ struct DailyPracticeView: View {
     }
 
     private func playCompletionSpeech() {
-        let utt = AVSpeechUtterance(string: "Well done. You have finished your breathing session.")
-        utt.voice = AVSpeechSynthesisVoice(identifier: "com.apple.ttsbundle.Nicky-compact")
-                   ?? AVSpeechSynthesisVoice(language: "en-US")
-        utt.rate = 0.42
-        utt.pitchMultiplier = 0.9
-        utt.volume = 0.85
-        completionSynth.speak(utt)
+        guard let url = Bundle.main.url(forResource: "breathing_complete", withExtension: "mp3", subdirectory: "Audio"),
+              let player = try? AVAudioPlayer(contentsOf: url) else { return }
+        player.numberOfLoops = 0
+        player.volume = 0.85
+        player.prepareToPlay()
+        player.play()
+        completionPlayer = player
     }
 
     private func stopTimers() {
@@ -800,6 +817,9 @@ struct DailyPracticeView: View {
         visualCountdownTimer = nil
         audioPlayer?.stop()
         audioPlayer = nil
+        bgPlayer?.stop()
+        bgPlayer = nil
+        prepareBgMusic()
         UIApplication.shared.isIdleTimerDisabled = false
     }
 }

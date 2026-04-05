@@ -5,6 +5,8 @@ import AVFoundation
 
 struct AIBreathingCoachView: View {
 
+    @Environment(\.dismiss) private var dismiss
+
     private let moods = ["Stressed", "Anxious", "Can't Sleep", "Overwhelmed", "Sad", "Unfocused", "Tired", "Angry"]
 
     @State private var userInput    = ""
@@ -36,7 +38,18 @@ struct AIBreathingCoachView: View {
     private var inputView: some View {
         ScrollView(showsIndicators: false) {
             VStack(spacing: 28) {
-                Spacer(minLength: 32)
+                HStack {
+                    Button { dismiss() } label: {
+                        Image(systemName: "chevron.left")
+                            .font(.system(size: 16, weight: .semibold))
+                            .foregroundColor(.white)
+                            .frame(width: 44, height: 44)
+                            .contentShape(Rectangle())
+                    }
+                    Spacer()
+                }
+                .padding(.horizontal, 16)
+                .padding(.top, 16)
 
                 // Header
                 VStack(spacing: 10) {
@@ -50,10 +63,10 @@ struct AIBreathingCoachView: View {
                     }
                     Text("AI Breathing Coach")
                         .font(.system(size: 26, weight: .semibold, design: .rounded))
-                        .foregroundColor(.calmDeep)
+                        .foregroundColor(.white)
                     Text("Tell me how you feel and I'll create a personalized guided session just for you.")
                         .font(.system(size: 14, weight: .regular))
-                        .foregroundColor(.calmMid)
+                        .foregroundColor(.white.opacity(0.75))
                         .multilineTextAlignment(.center)
                         .padding(.horizontal, 12)
                 }

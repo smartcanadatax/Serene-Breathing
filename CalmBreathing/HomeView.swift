@@ -129,7 +129,7 @@ struct HomeView: View {
 
                     // Meditation group
                     NavigationLink(destination: MeditationHubView().environmentObject(premium)) {
-                        FeatureGroup(title: "Meditation", subtitle: "Guided & timed sessions", icon: "brain.head.profile")
+                        FeatureGroup(title: "Meditation", subtitle: "Guided & timed sessions", icon: "figure.mind.and.body")
                     }
                     .buttonStyle(.plain)
 
@@ -466,6 +466,7 @@ struct FeatureGroup: View {
     let title: String
     let subtitle: String
     let icon: String
+    var customImage: String? = nil
 
     var body: some View {
         HStack(spacing: 16) {
@@ -474,9 +475,18 @@ struct FeatureGroup: View {
                     .fill(Color.white)
                     .frame(width: 50, height: 50)
                     .shadow(color: Color(red: 0.541, green: 0.357, blue: 0.804).opacity(0.15), radius: 4, x: 0, y: 2)
-                Image(systemName: icon)
-                    .font(.system(size: 20))
-                    .foregroundColor(Color(red: 0.541, green: 0.357, blue: 0.804))
+                if let customImage {
+                    Image(customImage)
+                        .renderingMode(.template)
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: 30, height: 30)
+                        .foregroundColor(Color(red: 0.541, green: 0.357, blue: 0.804))
+                } else {
+                    Image(systemName: icon)
+                        .font(.system(size: 20))
+                        .foregroundColor(Color(red: 0.541, green: 0.357, blue: 0.804))
+                }
             }
             VStack(alignment: .leading, spacing: 3) {
                 Text(title)

@@ -20,11 +20,13 @@ extension SoundPlayer.SoundType {
     var libraryCategory: SoundLibraryCategory {
         switch self {
         case .ocean, .forest, .meditationRiver, .ambience, .downpour,
-             .immersiveNature, .relaxingNature, .alexNatureAmbient, .soothingNature:
+             .immersiveNature, .relaxingNature, .alexNatureAmbient, .soothingNature,
+             .natureMeditate, .quietphaseAmbientMeditation, .quietphaseZenMusic:
             return .nature
-        case .rainSleep, .sleepMeditation, .relaxSleep, .yogaRelaxing,
+        case .rainSleep, .sleepMeditation, .relaxSleep,
              .stillWaters, .deepSleepBg, .sleepCMajor, .veryDeepSleep,
-             .slowAmbient, .spaceAmbient, .dreamscape, .cinematicAmbient, .relaxingRain:
+             .slowAmbient, .spaceAmbient, .dreamscape, .cinematicAmbient, .relaxingRain,
+             .rainSleepHolizna:
             return .sleep
         default:
             return .meditation
@@ -41,6 +43,7 @@ struct RelaxingSoundsView: View {
     @EnvironmentObject var premium:     PremiumStore
     @State private var selectedCategory: SoundLibraryCategory = .nature
     @State private var showPaywallFromNav = false
+    @State private var showFilterSheet = false
 
     private var tracks: [SoundPlayer.SoundType] {
         SoundPlayer.SoundType.allCases.filter { $0.libraryCategory == selectedCategory }
@@ -57,33 +60,28 @@ struct RelaxingSoundsView: View {
                         Image(systemName: "chevron.left")
                             .font(.system(size: 16, weight: .semibold))
                             .foregroundColor(.white)
-                            .frame(width: 36, height: 36)
+                            .frame(width: 44, height: 44)
                             .background(Circle().fill(Color.white.opacity(0.25)))
+                            .contentShape(Rectangle())
                     }
                     Spacer()
                     Text("Sounds Library")
                         .font(.system(size: 17, weight: .semibold, design: .rounded))
                         .foregroundColor(.white)
                     Spacer()
-                    HStack(spacing: 10) {
+                    HStack(spacing: 8) {
                         SleepTimerButton()
+                        Button { showFilterSheet = true } label: {
+                            Image(systemName: "line.3.horizontal.decrease")
+                                .font(.system(size: 15, weight: .semibold))
+                                .foregroundColor(.white)
+                                .frame(width: 44, height: 44)
+                                .contentShape(Rectangle())
+                        }
                     }
-                    .frame(width: 36, height: 36)
-                    .background(Circle().fill(Color.white.opacity(0.25)))
                 }
                 .padding(.horizontal, 16)
                 .padding(.top, 16)
-
-                // Category picker
-                Picker("", selection: $selectedCategory) {
-                    ForEach(SoundLibraryCategory.allCases, id: \.self) { cat in
-                        Text(cat.rawValue).tag(cat)
-                    }
-                }
-                .pickerStyle(.segmented)
-                .padding(.horizontal, 20)
-                .padding(.top, 12)
-                .padding(.bottom, 8)
 
                 ScrollView(showsIndicators: false) {
                     LazyVStack(spacing: 10) {
@@ -108,6 +106,52 @@ struct RelaxingSoundsView: View {
         }
         .navigationBarHidden(true)
         .animation(.easeInOut(duration: 0.3), value: soundPlayer.playing)
+        .sheet(isPresented: $showFilterSheet) {
+            VStack(spacing: 24) {
+                Text("Category")
+                    .font(.system(size: 17, weight: .semibold, design: .rounded))
+                    .foregroundColor(.calmDeep)
+                    .padding(.top, 24)
+
+                VStack(spacing: 12) {
+                    ForEach(SoundLibraryCategory.allCases, id: \.self) { cat in
+                        Button {
+                            selectedCategory = cat
+                            showFilterSheet = false
+                        } label: {
+                            HStack(spacing: 14) {
+                                Image(systemName: cat.icon)
+                                    .font(.system(size: 18))
+                                    .foregroundColor(selectedCategory == cat ? .white : Color(red: 0.541, green: 0.357, blue: 0.804))
+                                    .frame(width: 36, height: 36)
+                                    .background(Circle().fill(selectedCategory == cat ? Color(red: 0.541, green: 0.357, blue: 0.804) : Color(red: 0.541, green: 0.357, blue: 0.804).opacity(0.10)))
+                                Text(cat.rawValue)
+                                    .font(.system(size: 16, weight: selectedCategory == cat ? .semibold : .regular, design: .rounded))
+                                    .foregroundColor(.calmDeep)
+                                Spacer()
+                                if selectedCategory == cat {
+                                    Image(systemName: "checkmark")
+                                        .font(.system(size: 14, weight: .semibold))
+                                        .foregroundColor(Color(red: 0.541, green: 0.357, blue: 0.804))
+                                }
+                            }
+                            .padding(.horizontal, 20)
+                            .padding(.vertical, 14)
+                            .background(
+                                RoundedRectangle(cornerRadius: 14)
+                                    .fill(selectedCategory == cat ? Color(red: 0.541, green: 0.357, blue: 0.804).opacity(0.08) : Color(red: 0.87, green: 0.89, blue: 0.96))
+                            )
+                        }
+                        .buttonStyle(.plain)
+                        .padding(.horizontal, 20)
+                    }
+                }
+
+                Spacer()
+            }
+            .presentationDetents([.medium])
+            .presentationDragIndicator(.visible)
+        }
         .fullScreenCover(isPresented: $showPaywallFromNav) {
             PaywallView(isPresented: $showPaywallFromNav)
                 .environmentObject(premium)

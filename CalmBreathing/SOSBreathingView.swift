@@ -17,6 +17,7 @@ struct SOSBreathingView: View {
     @State private var phaseTimer: Timer?
     @State private var countdownTimer: Timer?
     @State private var audioPlayer: AVAudioPlayer?
+    @State private var bgPlayer: AVAudioPlayer?
     @State private var audioSyncTimer: Timer?
     @State private var visualCountdownTimer: Timer?
     @State private var lastPhaseIdx      = -1
@@ -48,7 +49,32 @@ struct SOSBreathingView: View {
                 completionOverlay
                     .transition(.opacity)
             }
+
+            // Back button
+            if !showCompletion {
+                VStack {
+                    HStack {
+                        Button { stopAll(); dismiss() } label: {
+                            Image(systemName: "chevron.left")
+                                .font(.system(size: 16, weight: .semibold))
+                                .foregroundColor(.white.opacity(0.85))
+                                .frame(width: 44, height: 44)
+                                .contentShape(Rectangle())
+                        }
+                        Spacer()
+                        Text("Quick Calm")
+                            .font(.system(size: 17, weight: .semibold, design: .rounded))
+                            .foregroundColor(.white)
+                        Spacer()
+                        Color.clear.frame(width: 44, height: 44)
+                    }
+                    .padding(.horizontal, 16)
+                    .padding(.top, 16)
+                    Spacer()
+                }
+            }
         }
+        .onAppear { prepareBgMusic() }
         .onDisappear { stopAll() }
     }
 
@@ -109,12 +135,16 @@ struct SOSBreathingView: View {
                     withAnimation { showDisclaimer = false }
                     DispatchQueue.main.asyncAfter(deadline: .now() + 0.4) { startBreathing() }
                 } label: {
-                    Text("I understand — Begin")
-                        .font(.system(size: 16, weight: .semibold, design: .rounded))
-                        .foregroundColor(.calmDeep)
-                        .frame(maxWidth: .infinity)
-                        .padding(.vertical, 16)
-                        .background(Capsule().fill(Color.calmAccent).shadow(color: .calmAccent.opacity(0.35), radius: 10))
+                    HStack(spacing: 8) {
+                        Text("I understand — Begin")
+                            .font(.system(size: 16, weight: .semibold, design: .rounded))
+                        Image(systemName: "chevron.right")
+                            .font(.system(size: 13, weight: .semibold))
+                    }
+                    .foregroundColor(.calmAccent)
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 16)
+                    .background(Capsule().fill(Color.white).shadow(color: .black.opacity(0.10), radius: 12))
                 }
 
                 Button { dismiss() } label: {
@@ -167,10 +197,10 @@ struct SOSBreathingView: View {
             Button { stopAll(); dismiss() } label: {
                 Text("End Session")
                     .font(.system(size: 14, weight: .regular))
-                    .foregroundColor(.calmDeep)
+                    .foregroundColor(.calmAccent)
                     .padding(.horizontal, 28)
                     .padding(.vertical, 10)
-                    .background(Capsule().fill(Color(red: 0.87, green: 0.89, blue: 0.96)))
+                    .background(Capsule().fill(Color(red: 0.87, green: 0.89, blue: 0.96)).shadow(color: .black.opacity(0.08), radius: 8))
             }
             .padding(.bottom, 48)
         }
@@ -182,7 +212,21 @@ struct SOSBreathingView: View {
         isRunning = true
         UIApplication.shared.isIdleTimerDisabled = true
         playAudio()
+        startBgMusic()
         startAudioSync()
+    }
+
+    private func prepareBgMusic() {
+        guard let url = Bundle.main.url(forResource: "zen_water", withExtension: "mp3", subdirectory: "Audio"),
+              let player = try? AVAudioPlayer(contentsOf: url) else { return }
+        player.numberOfLoops = -1
+        player.volume = 0.07
+        player.prepareToPlay()
+        bgPlayer = player
+    }
+
+    private func startBgMusic() {
+        bgPlayer?.play()
     }
 
     private func startAudioSync() {
@@ -326,6 +370,9 @@ struct SOSBreathingView: View {
         visualCountdownTimer = nil
         audioPlayer?.stop()
         audioPlayer = nil
+        bgPlayer?.stop()
+        bgPlayer = nil
+        prepareBgMusic()
         isRunning = false
         UIApplication.shared.isIdleTimerDisabled = false
     }

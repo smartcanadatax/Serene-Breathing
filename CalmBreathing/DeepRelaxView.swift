@@ -130,11 +130,15 @@ struct DeepRelaxView: View {
     @State private var currentIndex = 0
     @State private var isRunning = false
     @State private var isDone = false
+    @State private var sessionStartDate = Date()
     @State private var syncTimer: Timer?
     @State private var progress: Double = 0
     @State private var audioPlayer: AVAudioPlayer?
+    @State private var bgPlayer: AVAudioPlayer?
     @State private var isInterrupted = false
     @State private var lastAudioTime: Double = 0
+    @State private var selectedBgMusic: BgMusicOption = BgMusicOption(name: "Ocean", filename: "ocean", ext: "m4a")
+    @State private var showMusicPicker = false
 
     private var currentPrompt: String { prompts[min(currentIndex, prompts.count - 1)] }
 
@@ -214,7 +218,13 @@ struct DeepRelaxView: View {
                             .font(.system(size: 17, weight: .semibold, design: .rounded))
                             .foregroundColor(.white)
                         Spacer()
-                        Color.clear.frame(width: 44, height: 44)
+                        Button { showMusicPicker = true } label: {
+                            Image(systemName: "music.note")
+                                .font(.system(size: 16, weight: .semibold))
+                                .foregroundColor(.white.opacity(0.85))
+                                .frame(width: 44, height: 44)
+                                .contentShape(Rectangle())
+                        }
                     }
                     .padding(.horizontal, 16)
                     .padding(.top, 16)
@@ -223,6 +233,16 @@ struct DeepRelaxView: View {
             }
         }
         .navigationBarHidden(true)
+        .onAppear { prepareBgMusic() }
+        .onChange(of: selectedBgMusic) { _, _ in
+            bgPlayer?.stop()
+            bgPlayer = nil
+            prepareBgMusic()
+            if isRunning { bgPlayer?.play() }
+        }
+        .sheet(isPresented: $showMusicPicker) {
+            MeditationMusicPickerSheet(selectedMusic: $selectedBgMusic)
+        }
         .onReceive(NotificationCenter.default.publisher(for: AVAudioSession.interruptionNotification)) { n in
             handleInterruption(n)
         }
@@ -235,6 +255,7 @@ struct DeepRelaxView: View {
         .onDisappear {
             stopSession()
             audioPlayer?.stop()
+            bgPlayer?.stop()
         }
     }
 
@@ -264,12 +285,16 @@ struct DeepRelaxView: View {
                 .padding(.horizontal, 8)
 
             Button { startSession() } label: {
-                Label("Begin Deep Relax", systemImage: "play.fill")
-                    .font(.system(size: 16, weight: .semibold, design: .rounded))
-                    .foregroundColor(.calmDeep)
-                    .frame(maxWidth: .infinity)
-                    .padding(.vertical, 16)
-                    .background(Capsule().fill(Color.calmAccent).shadow(color: .calmAccent.opacity(0.35), radius: 12))
+                HStack(spacing: 8) {
+                    Text("Begin Deep Relax")
+                        .font(.system(size: 16, weight: .semibold, design: .rounded))
+                    Image(systemName: "chevron.right")
+                        .font(.system(size: 13, weight: .semibold))
+                }
+                .foregroundColor(.calmAccent)
+                .frame(maxWidth: .infinity)
+                .padding(.vertical, 16)
+                .background(Capsule().fill(Color.white).shadow(color: .black.opacity(0.10), radius: 12))
             }
         }
     }
@@ -297,10 +322,10 @@ struct DeepRelaxView: View {
             Button(action: stopSession) {
                 Text("End Session")
                     .font(.system(size: 14, weight: .regular))
-                    .foregroundColor(.calmDeep)
+                    .foregroundColor(.calmAccent)
                     .padding(.horizontal, 24)
                     .padding(.vertical, 10)
-                    .background(Capsule().fill(Color(red: 0.87, green: 0.89, blue: 0.96)))
+                    .background(Capsule().fill(Color(red: 0.87, green: 0.89, blue: 0.96)).shadow(color: .black.opacity(0.08), radius: 8))
             }
         }
     }
@@ -350,9 +375,7 @@ struct DeepRelaxView: View {
             }
 
             Button {
-                isDone = false
-                currentIndex = 0
-                progress = 0
+                dismiss()
             } label: {
                 Text("Done")
                     .font(.system(size: 16, weight: .semibold, design: .rounded))
@@ -383,11 +406,22 @@ struct DeepRelaxView: View {
 
     private func startSession() {
         isRunning = true
+        sessionStartDate = Date()
         currentIndex = 0
         progress = 0
         UIApplication.shared.isIdleTimerDisabled = true
+        HapticManager.start()
         playAudio()
+        startBgMusic()
         startSyncTimer()
+    }
+
+    private func prepareBgMusic() {
+        bgPlayer = makeBgPlayer(for: selectedBgMusic)
+    }
+
+    private func startBgMusic() {
+        bgPlayer?.play()
     }
 
     private func playAudio() {
@@ -432,6 +466,10 @@ struct DeepRelaxView: View {
                     self.syncTimer?.invalidate()
                     self.syncTimer = nil
                     UIApplication.shared.isIdleTimerDisabled = false
+                    HapticManager.complete()
+                    HealthKitManager.shared.saveMindfulSession(startDate: self.sessionStartDate, endDate: Date())
+                    self.bgPlayer?.stop()
+                    self.bgPlayer = nil
                 }
             }
         }
@@ -444,11 +482,13 @@ struct DeepRelaxView: View {
         if type == .began {
             isInterrupted = true
             audioPlayer?.pause()
+            bgPlayer?.pause()
         } else if type == .ended {
             lastAudioTime = 0
             isInterrupted = false
             try? AVAudioSession.sharedInstance().setActive(true)
             audioPlayer?.play()
+            bgPlayer?.play()
         }
     }
 
@@ -459,6 +499,9 @@ struct DeepRelaxView: View {
         isInterrupted = false
         lastAudioTime = 0
         UIApplication.shared.isIdleTimerDisabled = false
+        bgPlayer?.stop()
+        bgPlayer = nil
+        prepareBgMusic()
         if let player = audioPlayer {
             let steps = 20
             let interval = 2.0 / Double(steps)

@@ -70,6 +70,7 @@
 		AA200053 /* MeditationHubView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB200053 /* MeditationHubView.swift */; };
 		AA200054 /* SoundsHubView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB200054 /* SoundsHubView.swift */; };
 		AA200055 /* MeditationMusicPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB200055 /* MeditationMusicPicker.swift */; };
+		AA200056 /* HealthPermissionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB200056 /* HealthPermissionView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -160,6 +161,7 @@
 		BB200053 /* MeditationHubView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MeditationHubView.swift; sourceTree = "<group>"; };
 		BB200054 /* SoundsHubView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SoundsHubView.swift; sourceTree = "<group>"; };
 		BB200055 /* MeditationMusicPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MeditationMusicPicker.swift; sourceTree = "<group>"; };
+		BB200056 /* HealthPermissionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HealthPermissionView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -242,6 +244,7 @@
 				BB200053 /* MeditationHubView.swift */,
 				BB200054 /* SoundsHubView.swift */,
 				BB200055 /* MeditationMusicPicker.swift */,
+				BB200056 /* HealthPermissionView.swift */,
 				BB200048 /* AppLogoView.swift */,
 				BB200049 /* HapticManager.swift */,
 				BB200027 /* SOSBreathingView.swift */,
@@ -449,6 +452,7 @@
 				AA200053 /* MeditationHubView.swift in Sources */,
 				AA200054 /* SoundsHubView.swift in Sources */,
 				AA200055 /* MeditationMusicPicker.swift in Sources */,
+				AA200056 /* HealthPermissionView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -534,7 +538,7 @@
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 4;
-				WATCHOS_DEPLOYMENT_TARGET = 26.2;
+				WATCHOS_DEPLOYMENT_TARGET = 8.0;
 			};
 			name = Debug;
 		};
@@ -608,7 +612,7 @@
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 4;
-				WATCHOS_DEPLOYMENT_TARGET = 26.2;
+				WATCHOS_DEPLOYMENT_TARGET = 8.0;
 			};
 			name = Release;
 		};
@@ -659,6 +663,8 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = Q6FAV95A27;
 				GENERATE_INFOPLIST_FILE = YES;
+				CODE_SIGN_ENTITLEMENTS = CalmBreathing/CalmBreathing.entitlements;
+				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "Serene Breathing saves your meditation sessions as Mindful Minutes in Apple Health.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -687,6 +693,8 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = Q6FAV95A27;
 				GENERATE_INFOPLIST_FILE = YES;
+				CODE_SIGN_ENTITLEMENTS = CalmBreathing/CalmBreathing.entitlements;
+				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "Serene Breathing saves your meditation sessions as Mindful Minutes in Apple Health.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;

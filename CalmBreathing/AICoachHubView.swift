@@ -103,6 +103,29 @@ struct AICoachHubView: View {
                     .buttonStyle(.plain)
                     .padding(.horizontal, 24)
 
+                    // ── What Serene Can Help With ───────────────────────
+                    VStack(alignment: .leading, spacing: 12) {
+                        Text("What Serene Can Help With")
+                            .font(.system(size: 15, weight: .semibold, design: .rounded))
+                            .foregroundColor(.white)
+                            .padding(.horizontal, 24)
+
+                        VStack(spacing: 0) {
+                            SereneFeatureRow(icon: "lungs.fill",                  label: "Box Breathing, 4-7-8, Custom Breathing",   section: "Breathe")
+                            SereneFeatureRow(icon: "bolt.heart.fill",             label: "SOS Breathing, Quick Relief",               section: "Breathe")
+                            SereneFeatureRow(icon: "calendar.badge.checkmark",    label: "Daily Practice",                            section: "Breathe")
+                            SereneFeatureRow(icon: "brain.head.profile",          label: "Meditation Timer, Silent Meditation",       section: "Session")
+                            SereneFeatureRow(icon: "sunrise.fill",                label: "Morning Meditation",                        section: "Session")
+                            SereneFeatureRow(icon: "moon.stars.fill",             label: "Sleep Meditation, Sleep Stories",           section: "Session")
+                            SereneFeatureRow(icon: "figure.mind.and.body",        label: "Body Scan, Still Waters, Deep Relax",       section: "Session")
+                            SereneFeatureRow(icon: "wand.and.stars",              label: "Personalized Meditation",                   section: "Session")
+                            SereneFeatureRow(icon: "waveform",                    label: "Relaxing Sounds, Ambient Music",            section: "Sounds")
+                            SereneFeatureRow(icon: "book.fill",                   label: "AI Sleep Stories",                          section: "Sounds")
+                        }
+                        .background(RoundedRectangle(cornerRadius: 18).fill(Color(red: 0.87, green: 0.89, blue: 0.96)))
+                        .padding(.horizontal, 24)
+                    }
+
                     DisclaimerFooter().padding(.bottom, 80)
                     }  // LazyVStack
                 }  // ScrollView
@@ -124,6 +147,33 @@ struct AICoachHubView: View {
         .fullScreenCover(isPresented: $showPaywall) {
             PaywallView(isPresented: $showPaywall).environmentObject(premium)
         }
+    }
+}
+
+// MARK: - Feature Row
+
+private struct SereneFeatureRow: View {
+    let icon: String
+    let label: String
+    let section: String
+
+    var body: some View {
+        HStack(spacing: 12) {
+            Image(systemName: icon)
+                .font(.system(size: 15))
+                .foregroundColor(.calmAccent)
+                .frame(width: 28)
+            Text(label)
+                .font(.system(size: 13, weight: .medium, design: .rounded))
+                .foregroundColor(.calmDeep)
+            Spacer()
+            Text(section)
+                .font(.system(size: 11, weight: .medium))
+                .foregroundColor(.calmMid)
+        }
+        .padding(.horizontal, 16)
+        .padding(.vertical, 12)
+        .overlay(Divider().padding(.leading, 56), alignment: .bottom)
     }
 }
 
