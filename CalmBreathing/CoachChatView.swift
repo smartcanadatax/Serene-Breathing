@@ -105,7 +105,7 @@ struct CoachChatView: View {
 
     enum ActiveFeature: Identifiable {
         case disclaimer
-        case breathing, morningMeditation, sleepMeditation, bodyScan, quickRelief
+        case breathing, morningMeditation, sleepMeditation, bodyScan
         case dailyPractice, stillWaters, deepRelax, quickCalm, sleepStories
         case sounds, personalizedMeditation
         var id: Self { self }
@@ -240,7 +240,6 @@ struct CoachChatView: View {
             case .morningMeditation:     MorningMeditationView().environmentObject(journal)
             case .sleepMeditation:       SleepMeditationView().environmentObject(journal)
             case .bodyScan:              BodyScanView().environmentObject(journal)
-            case .quickRelief:           NavigationStack { QuickReliefHubView() }
             case .dailyPractice:         DailyPracticeView()
             case .stillWaters:           StillWatersView().environmentObject(journal)
             case .deepRelax:             DeepRelaxView().environmentObject(journal)
@@ -264,7 +263,6 @@ struct CoachChatView: View {
         case .morningMeditation:           activeFeature = .morningMeditation
         case .sleepMeditation:             activeFeature = .sleepMeditation
         case .bodyScan:                    activeFeature = .bodyScan
-        case .quickRelief:                 activeFeature = .quickRelief
         case .dailyPractice:               activeFeature = .dailyPractice
         case .stillWaters:                 activeFeature = .stillWaters
         case .deepRelax:                   activeFeature = .deepRelax
