@@ -420,6 +420,9 @@ struct MeditationTimerView: View {
             }
         }
         .navigationBarHidden(true)
+        .onAppear {
+            UIApplication.shared.isIdleTimerDisabled = true
+        }
         .onReceive(NotificationCenter.default.publisher(for: .watchToggleTimer)) { _ in
             toggleTimer()
         }
@@ -637,7 +640,6 @@ struct MeditationTimerView: View {
         timer = nil
         soundPlayer.stop()
         ambientEngine.pause()
-        UIApplication.shared.isIdleTimerDisabled = false
     }
 
     private func stopTimer() {
