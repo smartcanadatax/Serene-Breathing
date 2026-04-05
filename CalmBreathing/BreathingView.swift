@@ -113,6 +113,10 @@ struct BreathingView: View {
     @State private var completionPlayer: AVAudioPlayer?
     @State private var lastAudioPhase: Phase = .ready
     @State private var audioSyncTimer: Timer?
+    @State private var selectedDuration: Int = 0   // 0 = unlimited
+    @State private var sessionSecondsLeft: Int = 0
+    @State private var sessionTimer: Timer?
+    @State private var pendingStop: Bool = false
 
     // Exact timestamps measured via silence detection
     private let boxCycleDuration:  TimeInterval = 15.672
@@ -185,6 +189,11 @@ struct BreathingView: View {
                             Text("Cycle \(cycleCount + 1)")
                                 .font(.caption2)
                                 .foregroundColor(.white.opacity(0.90))
+                            if selectedDuration > 0 {
+                                Text(pendingStop ? "Finishing cycle..." : sessionTimeLabel)
+                                    .font(.system(size: 11, weight: .regular, design: .monospaced))
+                                    .foregroundColor(.white.opacity(0.55))
+                            }
                         }
                     }
                 }
@@ -265,10 +274,11 @@ struct BreathingView: View {
                 customHold: $customHold,
                 customExhale: $customExhale,
                 isRunning: isRunning,
-                showPaywall: $showPaywall
+                showPaywall: $showPaywall,
+                selectedDuration: $selectedDuration
             )
             .environmentObject(premium)
-            .presentationDetents([selectedPattern == .custom ? .height(490) : .height(340)])
+            .presentationDetents([selectedPattern == .custom ? .height(580) : .height(430)])
             .presentationDragIndicator(.visible)
         }
         .fullScreenCover(isPresented: $showPaywall) {
@@ -311,12 +321,23 @@ struct BreathingView: View {
     }
 
     // MARK: - Control Logic
+    private var sessionTimeLabel: String {
+        let m = sessionSecondsLeft / 60
+        let s = sessionSecondsLeft % 60
+        return String(format: "%d:%02d", m, s)
+    }
+
     private func startBreathing() {
         isRunning = true
         cycleCount = 0
+        pendingStop = false
         sessionStartDate = Date()
         HapticManager.start()
         UIApplication.shared.isIdleTimerDisabled = true
+        if selectedDuration > 0 {
+            sessionSecondsLeft = selectedDuration * 60
+            startSessionTimer()
+        }
         startBgMusic()
         playBreathingAudio()
         if (selectedPattern == .box || selectedPattern == .f478), audioPlayer != nil {
@@ -326,15 +347,34 @@ struct BreathingView: View {
         }
     }
 
+    private func startSessionTimer() {
+        sessionTimer?.invalidate()
+        sessionTimer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { _ in
+            DispatchQueue.main.async {
+                if sessionSecondsLeft > 1 {
+                    sessionSecondsLeft -= 1
+                } else {
+                    sessionSecondsLeft = 0
+                    sessionTimer?.invalidate()
+                    sessionTimer = nil
+                    pendingStop = true
+                }
+            }
+        }
+    }
+
     private func stopBreathing() {
         isRunning = false
+        pendingStop = false
         UIApplication.shared.isIdleTimerDisabled = false
         phaseTimer?.invalidate()
         countdownTimer?.invalidate()
         audioSyncTimer?.invalidate()
+        sessionTimer?.invalidate()
         phaseTimer = nil
         countdownTimer = nil
         audioSyncTimer = nil
+        sessionTimer = nil
         audioPlayer?.stop()
         audioPlayer = nil
         bgPlayer?.stop()
@@ -391,6 +431,11 @@ struct BreathingView: View {
                     // Exhale → Inhale transition = one full cycle completed
                     if newPhase == .inhale && lastAudioPhase == .exhale {
                         cycleCount += 1
+                        if pendingStop {
+                            stopBreathing()
+                            playCompletionAudio()
+                            return
+                        }
                     }
                     phase = newPhase
                     lastAudioPhase = newPhase
@@ -540,7 +585,12 @@ struct BreathingView: View {
                     self.runPhase(.exhale)
                 case .exhale:
                     self.cycleCount += 1
-                    self.runPhase(.inhale)
+                    if self.pendingStop {
+                        self.stopBreathing()
+                        self.playCompletionAudio()
+                    } else {
+                        self.runPhase(.inhale)
+                    }
                 case .ready:
                     break
                 }
@@ -673,6 +723,7 @@ private struct BreathingSettingsSheet: View {
     @Binding var customExhale: Double
     let isRunning: Bool
     @Binding var showPaywall: Bool
+    @Binding var selectedDuration: Int
     @Environment(\.dismiss) private var dismiss
 
     private let brandPurple = Color(red: 0.541, green: 0.357, blue: 0.804)
@@ -758,11 +809,43 @@ private struct BreathingSettingsSheet: View {
                     .opacity(isRunning ? 0.50 : 1)
                 }
 
+                // Duration picker
+                VStack(alignment: .leading, spacing: 10) {
+                    Text("SESSION DURATION")
+                        .font(.system(size: 11, weight: .semibold))
+                        .foregroundColor(.white.opacity(0.55))
+                        .tracking(0.8)
+                    HStack(spacing: 8) {
+                        ForEach([0, 1, 2, 3, 4, 5], id: \.self) { mins in
+                            Button {
+                                guard !isRunning else { return }
+                                selectedDuration = mins
+                            } label: {
+                                Text(mins == 0 ? "∞" : "\(mins)m")
+                                    .font(.system(size: 14, weight: selectedDuration == mins ? .semibold : .regular, design: .rounded))
+                                    .foregroundColor(selectedDuration == mins ? brandPurple : .white)
+                                    .frame(maxWidth: .infinity)
+                                    .padding(.vertical, 9)
+                                    .background(
+                                        RoundedRectangle(cornerRadius: 10)
+                                            .fill(selectedDuration == mins ? brandPurple.opacity(0.22) : Color.white.opacity(0.12))
+                                            .overlay(RoundedRectangle(cornerRadius: 10)
+                                                .stroke(selectedDuration == mins ? brandPurple.opacity(0.55) : Color.clear, lineWidth: 1.5))
+                                    )
+                            }
+                            .disabled(isRunning)
+                        }
+                    }
+                }
+                .padding(.horizontal, 24)
+                .padding(.top, 16)
+                .opacity(isRunning ? 0.50 : 1)
+
                 if isRunning {
-                    Text("Stop the session to change pattern")
+                    Text("Stop the session to change settings")
                         .font(.system(size: 12, weight: .regular))
                         .foregroundColor(.white.opacity(0.55))
-                        .padding(.top, 20)
+                        .padding(.top, 16)
                 }
 
                 Spacer()
