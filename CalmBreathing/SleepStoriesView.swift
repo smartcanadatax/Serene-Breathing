@@ -342,11 +342,6 @@ struct SleepStoriesView: View {
                                 .contentShape(Rectangle())
                         }
                         Spacer()
-                        Text("Sleep Stories")
-                            .font(.system(size: 17, weight: .semibold, design: .rounded))
-                            .foregroundColor(.white)
-                        Spacer()
-                        Color.clear.frame(width: 44, height: 44)
                     }
                     .padding(.horizontal, 16)
                     .padding(.top, 16)
