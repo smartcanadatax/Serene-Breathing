@@ -627,7 +627,8 @@ struct MoodSection: View {
                 }
 
                 // Weekly mood trend line chart
-                JournalCard(title: "Mood Trend", icon: "chart.line.uptrend.xyaxis") {
+                JournalCard(title: "Mood Trend", icon: "chart.line.uptrend.xyaxis",
+                            bgColor: Color(red: 0.88, green: 0.82, blue: 0.97)) {
                     MoodTrendChart(entries: entries)
                 }
 
@@ -832,7 +833,8 @@ struct SleepSection: View {
                     }
 
                     // Sleep trend chart
-                    JournalCard(title: "Sleep Trend", icon: "moon.fill") {
+                    JournalCard(title: "Sleep Trend", icon: "moon.fill",
+                                bgColor: Color(red: 0.88, green: 0.82, blue: 0.97)) {
                         SleepTrendChart(entries: entries)
                     }
 
