@@ -335,9 +335,9 @@
           <p>Log daily gratitude entries, track your mood over time, and build a streak — all stored privately on your device.</p>
         </div>
         <div class="feature-card">
-          <div class="feature-icon">❤️</div>
-          <h3>Apple Health</h3>
-          <p>Mindful minutes are automatically written to Apple Health so your wellness data stays in one place.</p>
+          <div class="feature-icon">📓</div>
+          <h3>Progress & Streaks</h3>
+          <p>Track your meditation streak, mood trends, sleep patterns, and breathing history — all stored privately on your device.</p>
         </div>
       </div>
     </div>
@@ -356,6 +356,7 @@
         <div class="privacy-badge">🤖 AI features use Groq API</div>
         <div class="privacy-badge">❤️ Apple Health — write only</div>
         <div class="privacy-badge">🚫 Never sold to anyone</div>
+        <div class="privacy-badge">📊 No analytics or tracking</div>
       </div>
     </div>
   </div>
@@ -364,7 +365,50 @@
   <section id="privacy">
     <div class="card">
       <h2>🛡️ Privacy Policy</h2>
-      <p class="updated">Last updated: April 1, 2026 · <strong>1000936219 Ontario Inc.</strong></p>
+      <p class="updated">Last updated: April 5, 2026 · <strong>1000936219 Ontario Inc.</strong></p>
+
+      <h3>Data Collection Summary</h3>
+      <table style="width:100%; border-collapse:collapse; font-size:13px; margin-bottom:8px;">
+        <thead>
+          <tr style="border-bottom:1px solid rgba(255,255,255,0.12);">
+            <th style="text-align:left; padding:8px 0; opacity:0.55; font-weight:600;">Data Type</th>
+            <th style="text-align:left; padding:8px 0; opacity:0.55; font-weight:600;">Where It Goes</th>
+            <th style="text-align:left; padding:8px 0; opacity:0.55; font-weight:600;">Shared?</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr style="border-bottom:1px solid rgba(255,255,255,0.06);">
+            <td style="padding:8px 0; opacity:0.75;">Mood &amp; sleep journal entries</td>
+            <td style="padding:8px 0; opacity:0.75;">On device only</td>
+            <td style="padding:8px 0; opacity:0.75;">Never</td>
+          </tr>
+          <tr style="border-bottom:1px solid rgba(255,255,255,0.06);">
+            <td style="padding:8px 0; opacity:0.75;">Gratitude journal entries</td>
+            <td style="padding:8px 0; opacity:0.75;">On device only</td>
+            <td style="padding:8px 0; opacity:0.75;">Never</td>
+          </tr>
+          <tr style="border-bottom:1px solid rgba(255,255,255,0.06);">
+            <td style="padding:8px 0; opacity:0.75;">Meditation logs &amp; streaks</td>
+            <td style="padding:8px 0; opacity:0.75;">On device only</td>
+            <td style="padding:8px 0; opacity:0.75;">Never</td>
+          </tr>
+          <tr style="border-bottom:1px solid rgba(255,255,255,0.06);">
+            <td style="padding:8px 0; opacity:0.75;">AI chat &amp; coach messages</td>
+            <td style="padding:8px 0; opacity:0.75;">Sent to Groq (encrypted)</td>
+            <td style="padding:8px 0; opacity:0.75;">Groq only, not stored by us</td>
+          </tr>
+          <tr style="border-bottom:1px solid rgba(255,255,255,0.06);">
+            <td style="padding:8px 0; opacity:0.75;">In-app purchases</td>
+            <td style="padding:8px 0; opacity:0.75;">Processed by Apple</td>
+            <td style="padding:8px 0; opacity:0.75;">We receive no payment data</td>
+          </tr>
+          <tr>
+            <td style="padding:8px 0; opacity:0.75;">Analytics &amp; tracking</td>
+            <td style="padding:8px 0; opacity:0.75;">None collected</td>
+            <td style="padding:8px 0; opacity:0.75;">Never</td>
+          </tr>
+        </tbody>
+      </table>
 
       <h3>Information We Collect</h3>
       <p>Serene Breathing does not collect, store, or transmit personal data for advertising, analytics, or profiling purposes. No account or login is required. All preferences, journal entries, meditation logs, mood tracking, and settings are stored locally on your device and are never shared with us.</p>
@@ -373,13 +417,23 @@
       <p>All data you record in the app — including mood journal entries, sleep journal entries, meditation session logs, breathing history, and streak data — is stored exclusively on your device using Apple's UserDefaults. This data is never uploaded to any server, never shared with us, and is accessible only by you. Deleting the app permanently removes all of this data.</p>
 
       <h3>Apple Health Integration</h3>
-      <p>With your permission, Serene Breathing may write mindful session minutes to the Apple Health app on your device. This data is stored locally by Apple's HealthKit framework and is never transmitted to us or any third party. You can revoke Health access at any time in your iPhone Settings → Health → Data Access & Devices. No Health data is ever read or collected by Serene Breathing.</p>
+      <p>With your permission, Serene Breathing writes completed meditation sessions as Mindful Minutes to the Apple Health app on your device. This data is stored locally by Apple's HealthKit framework and is never transmitted to us or any third party. You can revoke Health access at any time in iPhone Settings → Health → Data Access & Devices. No Health data is ever read by Serene Breathing — write only.</p>
 
       <h3>Gratitude Journal</h3>
       <p>Your gratitude journal entries are stored entirely on your device. They are never transmitted to any server, never read by us, and never shared with any third party — including AI services. Your private thoughts stay private.</p>
 
       <h3>AI Features & Groq API</h3>
-      <p>When you use AI-powered features — including Chat with Serene, Daily Check-In insights, Mood Pattern Coach, Sleep Pattern Coach, and AI Breathing Coach — the text you submit is sent over an encrypted connection to <strong>Groq, Inc.</strong> (groq.com) solely to generate a response. This data is subject to <a href="https://groq.com/privacy-policy/">Groq's Privacy Policy</a>. We do not log or store these interactions. Your gratitude journal, meditation logs, and all other on-device data are never sent to Groq or any other AI service. All core features work entirely on-device without any network connection.</p>
+      <p>The following AI-powered features send data to <strong>Groq, Inc.</strong> (groq.com) over an encrypted HTTPS connection solely to generate a response:</p>
+      <ul>
+        <li><strong>Chat with Serene</strong> — your typed messages and conversation history are sent to Groq</li>
+        <li><strong>Daily Check-In</strong> — your mood rating and any notes you enter are sent to Groq</li>
+        <li><strong>Mood Pattern Coach</strong> — an aggregated summary of your last 7 days of mood ratings (not raw journal entries) is sent to Groq</li>
+        <li><strong>Sleep Pattern Coach</strong> — an aggregated summary of your last 7 nights of sleep data (not raw entries) is sent to Groq</li>
+        <li><strong>AI Breathing Coach</strong> — the feeling or emotion text you enter is sent to Groq</li>
+        <li><strong>AI Sleep Stories</strong> — the story theme you select is sent to Groq</li>
+        <li><strong>Personalized Meditation</strong> — your session preferences are sent to Groq</li>
+      </ul>
+      <p style="margin-top:10px;">Groq does not use your data to train its models. See <a href="https://groq.com/privacy-policy/">Groq's Privacy Policy</a> for full details. We do not log, store, or have access to these interactions. Your gratitude journal entries, breathing history, meditation logs, and streak data are <strong>never</strong> sent to Groq or any other external service. All non-AI features work entirely on-device with no network connection required.</p>
 
       <h3>No Tracking or Profiling</h3>
       <p>We do not track your behaviour within the app. There is no analytics SDK, no crash reporting tool, and no advertising network embedded in this app.</p>
