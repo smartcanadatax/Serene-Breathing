@@ -419,36 +419,44 @@ private struct StoryCard: View {
     let story: SleepStory
 
     var body: some View {
-        HStack(spacing: 16) {
-            ZStack {
-                Circle()
-                    .fill(Color.calmAccent.opacity(0.15))
-                    .frame(width: 56, height: 56)
-                Image(systemName: story.icon)
-                    .font(.system(size: 22))
+        VStack(alignment: .leading, spacing: 14) {
+            HStack(spacing: 14) {
+                ZStack {
+                    Circle()
+                        .fill(Color.calmAccent.opacity(0.15))
+                        .frame(width: 64, height: 64)
+                    Image(systemName: story.icon)
+                        .font(.system(size: 26))
+                        .foregroundColor(.calmAccent)
+                }
+
+                VStack(alignment: .leading, spacing: 4) {
+                    Text(story.title)
+                        .font(.system(size: 17, weight: .semibold, design: .rounded))
+                        .foregroundColor(.calmDeep)
+                    Text(story.subtitle)
+                        .font(.system(size: 13, weight: .regular))
+                        .foregroundColor(.calmMid)
+                    Text(story.duration)
+                        .font(.system(size: 11, weight: .medium))
+                        .foregroundColor(.calmAccent)
+                }
+
+                Spacer()
+
+                Image(systemName: "play.circle.fill")
+                    .font(.system(size: 34))
                     .foregroundColor(.calmAccent)
             }
 
-            VStack(alignment: .leading, spacing: 4) {
-                Text(story.title)
-                    .font(.system(size: 16, weight: .semibold, design: .rounded))
-                    .foregroundColor(.calmDeep)
-                Text(story.subtitle)
-                    .font(.system(size: 13, weight: .regular))
-                    .foregroundColor(.calmMid)
-                Text(story.duration)
-                    .font(.system(size: 11, weight: .medium))
-                    .foregroundColor(.calmAccent)
-            }
-
-            Spacer()
-
-            Image(systemName: "play.circle.fill")
-                .font(.system(size: 30))
-                .foregroundColor(.calmAccent)
+            Text(story.description)
+                .font(.system(size: 13, weight: .regular))
+                .foregroundColor(.calmMid)
+                .lineSpacing(4)
+                .fixedSize(horizontal: false, vertical: true)
         }
-        .padding(.horizontal, 16)
-        .padding(.vertical, 14)
+        .padding(.horizontal, 18)
+        .padding(.vertical, 18)
         .background(
             RoundedRectangle(cornerRadius: 16)
                 .fill(Color(red: 0.87, green: 0.89, blue: 0.96))
