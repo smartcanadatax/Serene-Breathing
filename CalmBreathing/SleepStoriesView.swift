@@ -482,6 +482,14 @@ private struct StoryPlayerView: View {
         VStack(spacing: 0) {
             Spacer()
 
+            // Story title above orb
+            Text(story.title)
+                .font(.system(size: 18, weight: .semibold, design: .rounded))
+                .foregroundColor(.white)
+                .multilineTextAlignment(.center)
+                .padding(.horizontal, 32)
+                .padding(.bottom, 16)
+
             // Progress orb
             ZStack {
                 Circle()
@@ -501,16 +509,9 @@ private struct StoryPlayerView: View {
                 LotusOrbView(isAnimating: true)
                     .frame(width: 160, height: 160)
 
-                VStack(spacing: 8) {
-                    Image(systemName: story.icon)
-                        .font(.system(size: 36))
-                        .foregroundColor(.white)
-                    Text(story.title)
-                        .font(.system(size: 13, weight: .medium, design: .rounded))
-                        .foregroundColor(.white.opacity(0.80))
-                        .multilineTextAlignment(.center)
-                        .padding(.horizontal, 24)
-                }
+                Image(systemName: story.icon)
+                    .font(.system(size: 36))
+                    .foregroundColor(.white)
             }
             .padding(.bottom, 40)
 
