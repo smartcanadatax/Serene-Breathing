@@ -568,7 +568,7 @@ private struct StoryPlayerView: View {
                     .foregroundColor(.calmDeep)
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 16)
-                    .background(Capsule().fill(Color.calmAccent))
+                    .background(Capsule().fill(Color(red: 0.87, green: 0.89, blue: 0.96)).shadow(color: .black.opacity(0.08), radius: 8))
             }
             .padding(.horizontal, 24)
             .padding(.bottom, 48)
