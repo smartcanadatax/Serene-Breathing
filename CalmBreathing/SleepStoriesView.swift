@@ -376,10 +376,6 @@ struct SleepStoriesView: View {
                     }
                     .padding(.top, 20)
 
-                    Text("Sleep Stories")
-                        .font(.system(size: 24, weight: .semibold, design: .rounded))
-                        .foregroundColor(.white)
-
                     Text("Calming narrated stories to quiet your mind and guide you gently into sleep.")
                         .font(.system(size: 14, weight: .regular))
                         .foregroundColor(.white.opacity(0.80))
