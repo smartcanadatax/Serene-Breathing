@@ -40,20 +40,24 @@ struct SereneBreathingApp: App {
     
     var body: some Scene {
         WindowGroup {
-            if showLaunch {
-                LaunchAnimationView {
-                    withAnimation { showLaunch = false }
+            ZStack {
+                if hasAgreedToTerms {
+                    ContentView()
+                        .environmentObject(soundPlayer)
+                        .environmentObject(userPrefs)
+                        .environmentObject(journal)
+                        .environmentObject(premium)
+                        .preferredColorScheme(darkMode ? .dark : .light)
+                } else {
+                    TermsGateView()
+                        .preferredColorScheme(darkMode ? .dark : .light)
                 }
-            } else if hasAgreedToTerms {
-                ContentView()
-                    .environmentObject(soundPlayer)
-                    .environmentObject(userPrefs)
-                    .environmentObject(journal)
-                    .environmentObject(premium)
-                    .preferredColorScheme(darkMode ? .dark : .light)
-            } else {
-                TermsGateView()
-                    .preferredColorScheme(darkMode ? .dark : .light)
+
+                if showLaunch {
+                    LaunchAnimationView {
+                        showLaunch = false
+                    }
+                }
             }
         }
     }
