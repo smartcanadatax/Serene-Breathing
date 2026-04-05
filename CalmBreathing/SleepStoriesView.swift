@@ -329,23 +329,32 @@ struct SleepStoriesView: View {
                 storyListView
                     .transition(.opacity)
             }
-        }
-        .navigationBarTitleDisplayMode(.inline)
-        .toolbarBackground(.hidden, for: .navigationBar)
-        .toolbar {
-            ToolbarItem(placement: .navigationBarLeading) {
-                Button { dismiss() } label: {
-                    Image(systemName: "chevron.left")
-                        .font(.system(size: 16, weight: .semibold))
-                        .foregroundColor(.white.opacity(0.85))
+
+            // Custom nav bar overlay
+            if selectedStory == nil {
+                VStack {
+                    HStack {
+                        Button { dismiss() } label: {
+                            Image(systemName: "chevron.left")
+                                .font(.system(size: 16, weight: .semibold))
+                                .foregroundColor(.white.opacity(0.85))
+                                .frame(width: 44, height: 44)
+                                .contentShape(Rectangle())
+                        }
+                        Spacer()
+                        Text("Sleep Stories")
+                            .font(.system(size: 17, weight: .semibold, design: .rounded))
+                            .foregroundColor(.white)
+                        Spacer()
+                        Color.clear.frame(width: 44, height: 44)
+                    }
+                    .padding(.horizontal, 16)
+                    .padding(.top, 16)
+                    Spacer()
                 }
             }
-            ToolbarItem(placement: .principal) {
-                Text("Sleep Stories")
-                    .font(.system(size: 17, weight: .semibold, design: .rounded))
-                    .foregroundColor(.white)
-            }
         }
+        .navigationBarHidden(true)
         .animation(.easeInOut(duration: 0.4), value: selectedStory?.id)
     }
 
@@ -459,6 +468,7 @@ private struct StoryPlayerView: View {
     @State private var progress: Double = 0
     @State private var isDone = false
     @State private var syncTimer: Timer?
+    @State private var hasStarted = false
 
     var body: some View {
         if isDone {
@@ -604,7 +614,8 @@ private struct StoryPlayerView: View {
             DispatchQueue.main.async {
                 guard let p = audioPlayer else { return }
                 progress = p.duration > 0 ? min(1.0, p.currentTime / p.duration) : 0
-                if !p.isPlaying && p.currentTime > 1 {
+                if p.isPlaying { hasStarted = true }
+                if !p.isPlaying && hasStarted {
                     isDone = true
                     syncTimer?.invalidate()
                     syncTimer = nil
