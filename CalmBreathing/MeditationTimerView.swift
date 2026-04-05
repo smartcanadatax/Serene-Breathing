@@ -200,6 +200,9 @@ struct MeditationTimerView: View {
 
             VStack(spacing: 0) {
 
+                // Space for custom nav bar overlay
+                Color.clear.frame(height: 60)
+
                 // ── Settings Button (idle only) ──────────────────────────
                 if !isRunning && !isPaused {
                     HStack {
@@ -219,7 +222,7 @@ struct MeditationTimerView: View {
                         .buttonStyle(.plain)
                         Spacer()
                     }
-                    .padding(.top, 20)
+                    .padding(.top, 8)
                 }
 
                 // Now-playing badge when running
@@ -346,6 +349,46 @@ struct MeditationTimerView: View {
 
             if isDone { completionOverlay }
             if showMoodPrompt { moodPromptOverlay }
+
+            // ── Custom nav bar overlay ────────────────────────────────
+            VStack {
+                HStack {
+                    Button {
+                        stopTimer()
+                        dismiss()
+                    } label: {
+                        Image(systemName: "chevron.left")
+                            .font(.system(size: 16, weight: .semibold))
+                            .foregroundColor(.white)
+                            .frame(width: 44, height: 44)
+                            .contentShape(Rectangle())
+                    }
+                    Spacer()
+                    Text("Meditation Timer")
+                        .font(.system(size: 17, weight: .semibold, design: .rounded))
+                        .foregroundColor(.white)
+                    Spacer()
+                    if !premium.isPremium {
+                        Button { activeSheet = .paywall } label: {
+                            HStack(spacing: 4) {
+                                Image(systemName: "crown.fill")
+                                    .font(.system(size: 11))
+                                Text("Premium")
+                                    .font(.system(size: 12, weight: .semibold))
+                            }
+                            .foregroundColor(.calmDeep)
+                            .padding(.horizontal, 10)
+                            .padding(.vertical, 7)
+                            .background(Capsule().fill(Color.calmAccent))
+                        }
+                    } else {
+                        Color.clear.frame(width: 44, height: 44)
+                    }
+                }
+                .padding(.horizontal, 16)
+                .padding(.top, 16)
+                Spacer()
+            }
         }
         .sheet(item: $activeSheet) { sheet in
             switch sheet {
@@ -387,44 +430,7 @@ struct MeditationTimerView: View {
                     .environmentObject(premium)
             }
         }
-        .navigationBarTitleDisplayMode(.inline)
-        .navigationBarBackButtonHidden(true)
-        .toolbarBackground(.hidden, for: .navigationBar)
-        .toolbar {
-            ToolbarItem(placement: .navigationBarLeading) {
-                Button {
-                    stopTimer()
-                    dismiss()
-                } label: {
-                    Image(systemName: "chevron.left")
-                        .font(.system(size: 16, weight: .semibold))
-                        .foregroundColor(.white)
-                }
-            }
-            ToolbarItem(placement: .principal) {
-                Text("Meditation Timer")
-                    .font(.system(size: 17, weight: .semibold, design: .rounded))
-                    .foregroundColor(.white)
-            }
-            ToolbarItem(placement: .navigationBarTrailing) {
-                HStack(spacing: 10) {
-                    if !premium.isPremium {
-                        Button { activeSheet = .paywall } label: {
-                            HStack(spacing: 4) {
-                                Image(systemName: "crown.fill")
-                                    .font(.system(size: 11))
-                                Text("Premium")
-                                    .font(.system(size: 12, weight: .semibold))
-                            }
-                            .foregroundColor(.calmDeep)
-                            .padding(.horizontal, 12)
-                            .padding(.vertical, 8)
-                            .background(Capsule().fill(Color.calmAccent))
-                        }
-                    }
-                }
-            }
-        }
+        .navigationBarHidden(true)
         .onReceive(NotificationCenter.default.publisher(for: .watchToggleTimer)) { _ in
             toggleTimer()
         }
