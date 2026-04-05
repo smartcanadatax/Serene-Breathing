@@ -212,7 +212,7 @@ struct MeditationTimerView: View {
                                 .font(.caption2)
                             SoundWaveMini()
                         }
-                        .foregroundColor(.calmAccent.opacity(0.65))
+                        .foregroundColor(.white.opacity(0.65))
                         .padding(.top, 8)
                     } else if let s = selectedSound {
                         HStack(spacing: 6) {
@@ -221,7 +221,7 @@ struct MeditationTimerView: View {
                                 .font(.caption2)
                             SoundWaveMini()
                         }
-                        .foregroundColor(.calmAccent.opacity(0.65))
+                        .foregroundColor(.white.opacity(0.65))
                         .padding(.top, 8)
                     } else if silentBellMode {
                         HStack(spacing: 6) {
