@@ -43,7 +43,11 @@ struct MorningMeditationView: View {
     @State private var syncTimer: Timer?
     @State private var progress: Double = 0
     @State private var audioPlayer: AVAudioPlayer?
+    @State private var bgPlayer: AVAudioPlayer?
     @State private var isInterrupted = false
+    @State private var reachedNearEnd = false
+    @State private var selectedBgMusic: BgMusicOption = BgMusicOption(name: "Serene", filename: "serene_mindfulness")
+    @State private var showMusicPicker = false
 
     private var totalDuration: Double { prompts.map(\.duration).reduce(0, +) }
     private var currentPrompt: String { prompts[min(currentIndex, prompts.count - 1)].text }
@@ -96,7 +100,13 @@ struct MorningMeditationView: View {
                             .font(.system(size: 17, weight: .semibold, design: .rounded))
                             .foregroundColor(.white)
                         Spacer()
-                        Color.clear.frame(width: 44, height: 44)
+                        Button { showMusicPicker = true } label: {
+                            Image(systemName: "music.note")
+                                .font(.system(size: 16, weight: .semibold))
+                                .foregroundColor(.white.opacity(0.85))
+                                .frame(width: 44, height: 44)
+                                .contentShape(Rectangle())
+                        }
                     }
                     .padding(.horizontal, 16)
                     .padding(.top, 16)
@@ -105,9 +115,20 @@ struct MorningMeditationView: View {
             }
         }
         .navigationBarHidden(true)
+        .onAppear { prepareBgMusic() }
+        .onChange(of: selectedBgMusic) { _, _ in
+            bgPlayer?.stop()
+            bgPlayer = nil
+            prepareBgMusic()
+            if isRunning { bgPlayer?.play() }
+        }
+        .sheet(isPresented: $showMusicPicker) {
+            MeditationMusicPickerSheet(selectedMusic: $selectedBgMusic)
+        }
         .onDisappear {
             stopSession()
             audioPlayer?.stop()
+            bgPlayer?.stop()
         }
         .onReceive(NotificationCenter.default.publisher(for: AVAudioSession.interruptionNotification)) { note in
             guard let info = note.userInfo,
@@ -117,6 +138,7 @@ struct MorningMeditationView: View {
             case .began:
                 isInterrupted = true
                 audioPlayer?.pause()
+                bgPlayer?.pause()
             case .ended:
                 isInterrupted = false
                 let opts = (info[AVAudioSessionInterruptionOptionKey] as? UInt)
@@ -124,6 +146,7 @@ struct MorningMeditationView: View {
                 if opts.contains(.shouldResume) {
                     try? AVAudioSession.sharedInstance().setActive(true)
                     audioPlayer?.play()
+                    bgPlayer?.play()
                 }
             @unknown default: break
             }
@@ -135,9 +158,6 @@ struct MorningMeditationView: View {
     private var introView: some View {
         VStack(spacing: 28) {
             VStack(spacing: 12) {
-                Text("Morning Meditation")
-                    .font(.system(size: 24, weight: .semibold, design: .rounded))
-                    .foregroundColor(.white)
                 Text("A \(Int(totalDuration / 60))-minute guided session to start your day with clarity and calm.")
                     .font(.system(size: 15, weight: .regular))
                     .foregroundColor(.white.opacity(0.90))
@@ -159,12 +179,16 @@ struct MorningMeditationView: View {
                 .padding(.horizontal, 8)
 
             Button { startSession() } label: {
-                Label("Begin Morning Meditation", systemImage: "play.fill")
-                    .font(.system(size: 16, weight: .semibold, design: .rounded))
-                    .foregroundColor(.calmDeep)
-                    .frame(maxWidth: .infinity)
-                    .padding(.vertical, 16)
-                    .background(Capsule().fill(Color.calmAccent).shadow(color: .calmAccent.opacity(0.35), radius: 12))
+                HStack(spacing: 8) {
+                    Text("Begin Morning Meditation")
+                        .font(.system(size: 16, weight: .semibold, design: .rounded))
+                    Image(systemName: "chevron.right")
+                        .font(.system(size: 13, weight: .semibold))
+                }
+                .foregroundColor(.calmAccent)
+                .frame(maxWidth: .infinity)
+                .padding(.vertical, 16)
+                .background(Capsule().fill(Color.white).shadow(color: .black.opacity(0.10), radius: 12))
             }
         }
     }
@@ -195,10 +219,10 @@ struct MorningMeditationView: View {
             Button(action: stopSession) {
                 Text("End Session")
                     .font(.system(size: 14, weight: .regular))
-                    .foregroundColor(.calmDeep)
+                    .foregroundColor(.calmAccent)
                     .padding(.horizontal, 24)
                     .padding(.vertical, 10)
-                    .background(Capsule().fill(Color(red: 0.87, green: 0.89, blue: 0.96)))
+                    .background(Capsule().fill(Color(red: 0.87, green: 0.89, blue: 0.96)).shadow(color: .black.opacity(0.08), radius: 8))
             }
         }
     }
@@ -210,7 +234,7 @@ struct MorningMeditationView: View {
             Image(systemName: "sun.max.fill")
                 .font(.system(size: 54, weight: .regular))
                 .foregroundColor(.calmAccent)
-            Text("Beautiful Morning")
+            Text("Well Done")
                 .font(.system(size: 26, weight: .semibold, design: .rounded))
                 .foregroundColor(.white)
             Text("You've set a powerful intention. Carry this calm with you today.")
@@ -251,9 +275,7 @@ struct MorningMeditationView: View {
             }
 
             Button {
-                isDone = false
-                currentIndex = 0
-                progress = 0
+                dismiss()
             } label: {
                 Text("Done")
                     .font(.system(size: 16, weight: .semibold, design: .rounded))
@@ -286,9 +308,19 @@ struct MorningMeditationView: View {
         isRunning = true
         currentIndex = 0
         progress = 0
+        reachedNearEnd = false
         UIApplication.shared.isIdleTimerDisabled = true
         playAudio()
+        startBgMusic()
         startSyncTimer()
+    }
+
+    private func prepareBgMusic() {
+        bgPlayer = makeBgPlayer(for: selectedBgMusic)
+    }
+
+    private func startBgMusic() {
+        bgPlayer?.play()
     }
 
     private func playAudio() {
@@ -325,12 +357,15 @@ struct MorningMeditationView: View {
                         }
                     }
                 }
-                if !player.isPlaying && time > 1 && !self.isInterrupted {
+                if self.progress > 0.97 { self.reachedNearEnd = true }
+                if !player.isPlaying && self.reachedNearEnd && !self.isInterrupted {
                     self.isRunning = false
                     self.isDone = true
                     self.syncTimer?.invalidate()
                     self.syncTimer = nil
                     UIApplication.shared.isIdleTimerDisabled = false
+                    self.bgPlayer?.stop()
+                    self.bgPlayer = nil
                 }
             }
         }
@@ -341,6 +376,9 @@ struct MorningMeditationView: View {
         syncTimer = nil
         isRunning = false
         UIApplication.shared.isIdleTimerDisabled = false
+        bgPlayer?.stop()
+        bgPlayer = nil
+        prepareBgMusic()
         if let player = audioPlayer {
             let steps = 20
             let interval = 2.0 / Double(steps)

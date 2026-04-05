@@ -102,13 +102,15 @@ struct CoachChatView: View {
     @State private var inputText      = ""
     @State private var isResponding   = false
     @State private var showDisclaimer = false
-    @State private var showBreathing          = false
-    @State private var showMorningMeditation  = false
-    @State private var showSleepMeditation    = false
-    @State private var showBodyScan           = false
-    @State private var showQuickRelief        = false
-    @State private var showDailyPractice      = false
+    @State private var activeFeature: ActiveFeature?
     @FocusState private var inputFocused: Bool
+
+    enum ActiveFeature: Identifiable {
+        case breathing, morningMeditation, sleepMeditation, bodyScan, quickRelief
+        case dailyPractice, stillWaters, deepRelax, quickCalm, sleepStories
+        case sounds, personalizedMeditation
+        var id: Self { self }
+    }
 
     var body: some View {
         ZStack {
@@ -233,12 +235,22 @@ struct CoachChatView: View {
                 showDisclaimer = false
             }
         }
-        .fullScreenCover(isPresented: $showBreathing)         { BreathingView() }
-        .fullScreenCover(isPresented: $showMorningMeditation) { MorningMeditationView().environmentObject(journal) }
-        .fullScreenCover(isPresented: $showSleepMeditation)   { SleepMeditationView().environmentObject(journal) }
-        .fullScreenCover(isPresented: $showBodyScan)          { BodyScanView().environmentObject(journal) }
-        .fullScreenCover(isPresented: $showQuickRelief)       { QuickReliefHubView() }
-        .fullScreenCover(isPresented: $showDailyPractice)     { DailyPracticeView() }
+        .fullScreenCover(item: $activeFeature) { feature in
+            switch feature {
+            case .breathing:             BreathingView()
+            case .morningMeditation:     MorningMeditationView().environmentObject(journal)
+            case .sleepMeditation:       SleepMeditationView().environmentObject(journal)
+            case .bodyScan:              BodyScanView().environmentObject(journal)
+            case .quickRelief:           QuickReliefHubView()
+            case .dailyPractice:         DailyPracticeView()
+            case .stillWaters:           StillWatersView().environmentObject(journal)
+            case .deepRelax:             DeepRelaxView().environmentObject(journal)
+            case .quickCalm:             SOSBreathingView()
+            case .sleepStories:          SleepStoriesView()
+            case .sounds:                SoundsHubView()
+            case .personalizedMeditation: PersonalizedMeditationView().environmentObject(journal)
+            }
+        }
     }
 
     private var canSend: Bool {
@@ -249,12 +261,18 @@ struct CoachChatView: View {
 
     private func handleFeatureTap(_ feature: SuggestedFeature) {
         switch feature {
-        case .boxBreathing, .breathing478: showBreathing = true
-        case .morningMeditation:           showMorningMeditation = true
-        case .sleepMeditation:             showSleepMeditation = true
-        case .bodyScan:                    showBodyScan = true
-        case .quickRelief:                 showQuickRelief = true
-        case .dailyPractice:               showDailyPractice = true
+        case .boxBreathing, .breathing478: activeFeature = .breathing
+        case .morningMeditation:           activeFeature = .morningMeditation
+        case .sleepMeditation:             activeFeature = .sleepMeditation
+        case .bodyScan:                    activeFeature = .bodyScan
+        case .quickRelief:                 activeFeature = .quickRelief
+        case .dailyPractice:               activeFeature = .dailyPractice
+        case .stillWaters:                 activeFeature = .stillWaters
+        case .deepRelax:                   activeFeature = .deepRelax
+        case .quickCalm:                   activeFeature = .quickCalm
+        case .sleepStories:                activeFeature = .sleepStories
+        case .sounds:                      activeFeature = .sounds
+        case .personalizedMeditation:      activeFeature = .personalizedMeditation
         }
     }
 
@@ -267,35 +285,37 @@ struct CoachChatView: View {
         inputFocused = false
 
         messages.append(CoachChatMessage(role: "user", content: text))
-
-        // Monthly message limit check
-        if monthlyMessageCount() >= monthlyMessageLimit {
-            messages.append(CoachChatMessage(role: "assistant", content: "You've used your 30 free chat messages for this month. Upgrade to Premium for unlimited conversations with Serene. Your breathing and meditation sessions are always available."))
-            return
-        }
-        incrementMessageCount()
+        isResponding = true
 
         // Safety detection — never send to AI, always respond with hardcoded message
         let lower = text.lowercased()
         if crisisKeywords.contains(where: { lower.contains($0) }) {
-            messages.append(CoachChatMessage(role: "assistant", content: crisisResponse))
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
+                messages.append(CoachChatMessage(role: "assistant", content: crisisResponse))
+                isResponding = false
+            }
             return
         }
         if threatKeywords.contains(where: { lower.contains($0) }) {
-            messages.append(CoachChatMessage(role: "assistant", content: threatResponse))
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
+                messages.append(CoachChatMessage(role: "assistant", content: threatResponse))
+                isResponding = false
+            }
             return
         }
-        isResponding = true
 
         // Snapshot before appending placeholder
         let apiMessages = messages
 
-        // Append streaming placeholder
-        let placeholder = CoachChatMessage(role: "assistant", content: "", isStreaming: true)
-        messages.append(placeholder)
-        let targetID = placeholder.id
-
         Task {
+            // 1.5s delay — show typing indicator before response appears
+            try? await Task.sleep(nanoseconds: 1_500_000_000)
+
+            // Append streaming placeholder
+            let placeholder = CoachChatMessage(role: "assistant", content: "", isStreaming: true)
+            await MainActor.run { messages.append(placeholder) }
+            let targetID = placeholder.id
+
             do {
                 for try await chunk in CoachChatService.stream(messages: apiMessages) {
                     await MainActor.run {
@@ -315,6 +335,7 @@ struct CoachChatView: View {
                 if let idx = messages.firstIndex(where: { $0.id == targetID }) {
                     messages[idx].isStreaming = false
                     messages[idx].detectFeatures()
+                    messages[idx].mergeEmotionSuggestions(from: text)
                 }
                 isResponding = false
             }
@@ -335,13 +356,8 @@ private struct ChatBubble: View {
                 if isUser { Spacer(minLength: 56) }
 
                 if !isUser {
-                    ZStack {
-                        Circle().fill(Color(red: 0.541, green: 0.357, blue: 0.804).opacity(0.20))
-                            .frame(width: 30, height: 30)
-                        Image(systemName: "sparkles")
-                            .font(.system(size: 13, weight: .semibold))
-                            .foregroundColor(Color(red: 0.541, green: 0.357, blue: 0.804))
-                    }
+                    LotusOrbView(isAnimating: false)
+                        .frame(width: 30, height: 30)
                 }
 
                 Group {
@@ -427,12 +443,8 @@ private struct ChatDisclaimerSheet: View {
             VStack(spacing: 24) {
                 Spacer()
 
-                ZStack {
-                    Circle().fill(Color.white.opacity(0.20)).frame(width: 72, height: 72)
-                    Image(systemName: "sparkles")
-                        .font(.system(size: 30))
-                        .foregroundColor(.white)
-                }
+                LotusOrbView(isAnimating: true)
+                    .frame(width: 72, height: 72)
 
                 VStack(spacing: 10) {
                     Text("Before you chat with Serene")
@@ -497,14 +509,8 @@ private struct ChatDisclaimerSheet: View {
 private struct TypingIndicatorView: View {
     var body: some View {
         HStack(alignment: .bottom, spacing: 8) {
-            ZStack {
-                Circle()
-                    .fill(Color(red: 0.541, green: 0.357, blue: 0.804).opacity(0.20))
-                    .frame(width: 30, height: 30)
-                Image(systemName: "sparkles")
-                    .font(.system(size: 13))
-                    .foregroundColor(Color(red: 0.541, green: 0.357, blue: 0.804))
-            }
+            LotusOrbView(isAnimating: true)
+                .frame(width: 30, height: 30)
             TypingDotsView()
                 .padding(.horizontal, 14)
                 .padding(.vertical, 12)

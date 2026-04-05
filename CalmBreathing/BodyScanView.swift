@@ -32,7 +32,11 @@ struct BodyScanView: View {
     @State private var syncTimer: Timer?
     @State private var progress: Double = 0
     @State private var audioPlayer: AVAudioPlayer?
+    @State private var bgPlayer: AVAudioPlayer?
     @State private var isInterrupted = false
+    @State private var reachedNearEnd = false
+    @State private var selectedBgMusic: BgMusicOption = BgMusicOption(name: "Serene", filename: "serene_mindfulness")
+    @State private var showMusicPicker = false
 
     private var totalDuration: Double { audioPlayer?.duration ?? 501 }
     private var currentPrompt: String { prompts[min(currentIndex, prompts.count - 1)] }
@@ -55,7 +59,7 @@ struct BodyScanView: View {
                         .padding(.top, 72)
                         .padding(.bottom, 20)
                 }
-            } else {
+            } else if isRunning {
                 VStack { Spacer(); activeView; Spacer() }
                     .padding(.horizontal, 28)
             }
@@ -85,7 +89,13 @@ struct BodyScanView: View {
                             .font(.system(size: 17, weight: .semibold, design: .rounded))
                             .foregroundColor(.white)
                         Spacer()
-                        Color.clear.frame(width: 44, height: 44)
+                        Button { showMusicPicker = true } label: {
+                            Image(systemName: "music.note")
+                                .font(.system(size: 16, weight: .semibold))
+                                .foregroundColor(.white.opacity(0.85))
+                                .frame(width: 44, height: 44)
+                                .contentShape(Rectangle())
+                        }
                     }
                     .padding(.horizontal, 16)
                     .padding(.top, 16)
@@ -94,9 +104,20 @@ struct BodyScanView: View {
             }
         }
         .navigationBarHidden(true)
+        .onAppear { prepareBgMusic() }
+        .onChange(of: selectedBgMusic) { _, _ in
+            bgPlayer?.stop()
+            bgPlayer = nil
+            prepareBgMusic()
+            if isRunning { bgPlayer?.play() }
+        }
+        .sheet(isPresented: $showMusicPicker) {
+            MeditationMusicPickerSheet(selectedMusic: $selectedBgMusic)
+        }
         .onDisappear {
             stopScan()
             audioPlayer?.stop()
+            bgPlayer?.stop()
         }
         .onReceive(NotificationCenter.default.publisher(for: AVAudioSession.interruptionNotification)) { note in
             guard let info = note.userInfo,
@@ -106,6 +127,7 @@ struct BodyScanView: View {
             case .began:
                 isInterrupted = true
                 audioPlayer?.pause()
+                bgPlayer?.pause()
             case .ended:
                 isInterrupted = false
                 let opts = (info[AVAudioSessionInterruptionOptionKey] as? UInt)
@@ -113,6 +135,7 @@ struct BodyScanView: View {
                 if opts.contains(.shouldResume) {
                     try? AVAudioSession.sharedInstance().setActive(true)
                     audioPlayer?.play()
+                    bgPlayer?.play()
                 }
             @unknown default: break
             }
@@ -180,12 +203,16 @@ struct BodyScanView: View {
             Button {
                 startScan()
             } label: {
-                Label("Begin Body Scan", systemImage: "play.fill")
-                    .font(.system(size: 16, weight: .semibold, design: .rounded))
-                    .foregroundColor(.calmDeep)
-                    .frame(maxWidth: .infinity)
-                    .padding(.vertical, 16)
-                    .background(Capsule().fill(Color.calmAccent).shadow(color: .calmAccent.opacity(0.35), radius: 12))
+                HStack(spacing: 8) {
+                    Text("Begin Body Scan")
+                        .font(.system(size: 16, weight: .semibold, design: .rounded))
+                    Image(systemName: "chevron.right")
+                        .font(.system(size: 13, weight: .semibold))
+                }
+                .foregroundColor(.calmAccent)
+                .frame(maxWidth: .infinity)
+                .padding(.vertical, 16)
+                .background(Capsule().fill(Color.white).shadow(color: .black.opacity(0.10), radius: 12))
             }
         }
     }
@@ -216,10 +243,10 @@ struct BodyScanView: View {
             Button(action: stopScan) {
                 Text("End Session")
                     .font(.system(size: 14, weight: .regular))
-                    .foregroundColor(.calmDeep)
+                    .foregroundColor(.calmAccent)
                     .padding(.horizontal, 24)
                     .padding(.vertical, 10)
-                    .background(Capsule().fill(Color(red: 0.87, green: 0.89, blue: 0.96)))
+                    .background(Capsule().fill(Color(red: 0.87, green: 0.89, blue: 0.96)).shadow(color: .black.opacity(0.08), radius: 8))
             }
         }
     }
@@ -312,9 +339,19 @@ struct BodyScanView: View {
         isRunning = true
         currentIndex = 0
         progress = 0
+        reachedNearEnd = false
         UIApplication.shared.isIdleTimerDisabled = true
         playBodyScanAudio()
+        startBgMusic()
         startSyncTimer()
+    }
+
+    private func prepareBgMusic() {
+        bgPlayer = makeBgPlayer(for: selectedBgMusic)
+    }
+
+    private func startBgMusic() {
+        bgPlayer?.play()
     }
 
     private func playBodyScanAudio() {
@@ -357,14 +394,19 @@ struct BodyScanView: View {
                     }
                 }
 
+                // Track near-completion so reset of currentTime doesn't fool us
+                if self.progress > 0.97 { self.reachedNearEnd = true }
+
                 // Detect natural end of audio
-                if !player.isPlaying && time > 1 && !self.isInterrupted {
+                if !player.isPlaying && self.reachedNearEnd && !self.isInterrupted {
                     self.isRunning = false
                     self.isDone = true
                     HapticManager.complete()
                     UIApplication.shared.isIdleTimerDisabled = false
                     self.syncTimer?.invalidate()
                     self.syncTimer = nil
+                    self.bgPlayer?.stop()
+                    self.bgPlayer = nil
                 }
             }
         }
@@ -375,6 +417,9 @@ struct BodyScanView: View {
         syncTimer = nil
         isRunning = false
         UIApplication.shared.isIdleTimerDisabled = false
+        bgPlayer?.stop()
+        bgPlayer = nil
+        prepareBgMusic()
         // Fade out audio
         if let player = audioPlayer {
             let steps = 20

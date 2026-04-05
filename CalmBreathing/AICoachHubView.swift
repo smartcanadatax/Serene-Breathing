@@ -1,6 +1,8 @@
 import SwiftUI
 
 struct AICoachHubView: View {
+    @Environment(\.dismiss) private var dismiss
+    @Environment(\.presentationMode) private var presentationMode
     @EnvironmentObject var journal: JournalStore
     @EnvironmentObject var premium: PremiumStore
     @State private var showMood     = false
@@ -16,7 +18,17 @@ struct AICoachHubView: View {
             VStack(spacing: 0) {
                 // Nav bar
                 HStack {
-                    Color.clear.frame(width: 44, height: 44)
+                    if presentationMode.wrappedValue.isPresented {
+                        Button { dismiss() } label: {
+                            Image(systemName: "chevron.left")
+                                .font(.system(size: 16, weight: .semibold))
+                                .foregroundColor(.white)
+                                .frame(width: 44, height: 44)
+                                .background(Circle().fill(Color.white.opacity(0.15)))
+                        }
+                    } else {
+                        Color.clear.frame(width: 44, height: 44)
+                    }
                     Spacer()
                     Text("Serene")
                         .font(.system(size: 17, weight: .semibold, design: .rounded))
@@ -107,7 +119,7 @@ struct AICoachHubView: View {
             DailyCheckInView().environmentObject(journal).environmentObject(premium)
         }
         .fullScreenCover(isPresented: $showChat) {
-            CoachChatView().environmentObject(journal)
+            CoachChatView().environmentObject(journal).environmentObject(premium)
         }
         .fullScreenCover(isPresented: $showPaywall) {
             PaywallView(isPresented: $showPaywall).environmentObject(premium)
@@ -118,7 +130,6 @@ struct AICoachHubView: View {
 // MARK: - Featured Chat Card
 
 private struct FeaturedChatCard: View {
-    @State private var isPulsing = false
 
     var body: some View {
         ZStack {
@@ -138,24 +149,8 @@ private struct FeaturedChatCard: View {
 
             VStack(alignment: .leading, spacing: 14) {
                 HStack(spacing: 14) {
-                    ZStack {
-                        Circle()
-                            .stroke(Color.white.opacity(0.30), lineWidth: 1.5)
-                            .frame(width: 54, height: 54)
-                            .scaleEffect(isPulsing ? 1.55 : 1.0)
-                            .opacity(isPulsing ? 0 : 0.7)
-                            .animation(
-                                .easeOut(duration: 2.2).repeatForever(autoreverses: false),
-                                value: isPulsing
-                            )
-                        ZStack {
-                            Circle().fill(Color.white.opacity(0.20)).frame(width: 50, height: 50)
-                            Image(systemName: "sparkles")
-                                .font(.system(size: 22, weight: .semibold))
-                                .foregroundColor(.white)
-                        }
-                    }
-                    .onAppear { isPulsing = true }
+                    LotusOrbView(isAnimating: true)
+                        .frame(width: 54, height: 54)
                     VStack(alignment: .leading, spacing: 4) {
                         Text("Chat with Serene")
                             .font(.system(size: 17, weight: .semibold, design: .rounded))
@@ -166,6 +161,7 @@ private struct FeaturedChatCard: View {
                     }
                     Spacer()
                 }
+
 
                 Text("Talk to your personal AI wellness coach anytime. Get breathing recommendations, mood support, and mindfulness guidance in real time.")
                     .font(.system(size: 13, weight: .medium))

@@ -65,7 +65,7 @@ struct GratitudeJournalView: View {
                     VStack(alignment: .leading, spacing: 16) {
                         Label("Today I'm grateful for…", systemImage: "heart.fill")
                             .font(.system(size: 13, weight: .semibold))
-                            .foregroundColor(.white.opacity(0.85))
+                            .foregroundColor(Color(red: 0.541, green: 0.357, blue: 0.804))
 
                         if alreadySavedToday && !saved {
                             // Show today's saved entry
@@ -74,17 +74,17 @@ struct GratitudeJournalView: View {
                                     ForEach(entry.text.components(separatedBy: "\n").filter { !$0.isEmpty }, id: \.self) { line in
                                         HStack(alignment: .top, spacing: 10) {
                                             Text("•")
-                                                .foregroundColor(.calmAccent)
+                                                .foregroundColor(Color(red: 0.541, green: 0.357, blue: 0.804))
                                             Text(line)
                                                 .font(.system(size: 15, weight: .light))
-                                                .foregroundColor(.white.opacity(0.90))
+                                                .foregroundColor(Color(red: 0.10, green: 0.10, blue: 0.12).opacity(0.85))
                                                 .fixedSize(horizontal: false, vertical: true)
                                         }
                                     }
                                 }
                                 Text("You've already journaled today. Come back tomorrow!")
                                     .font(.system(size: 12, weight: .light))
-                                    .foregroundColor(.white.opacity(0.55))
+                                    .foregroundColor(Color(red: 0.10, green: 0.10, blue: 0.12).opacity(0.45))
                                     .padding(.top, 4)
                             }
                         } else {
@@ -101,7 +101,7 @@ struct GratitudeJournalView: View {
                                         .foregroundColor(.calmAccent)
                                     Text("Saved! See you tomorrow.")
                                         .font(.system(size: 14, weight: .medium))
-                                        .foregroundColor(.white.opacity(0.85))
+                                        .foregroundColor(Color(red: 0.10, green: 0.10, blue: 0.12).opacity(0.75))
                                 }
                                 .transition(.opacity.combined(with: .scale))
                             } else {
@@ -119,7 +119,11 @@ struct GratitudeJournalView: View {
                         }
                     }
                     .padding(18)
-                    .background(RoundedRectangle(cornerRadius: 20).fill(Color.white.opacity(0.10)))
+                    .background(
+                        RoundedRectangle(cornerRadius: 20)
+                            .fill(Color(red: 0.87, green: 0.89, blue: 0.96))
+                            .shadow(color: Color.black.opacity(0.08), radius: 6, x: 0, y: 2)
+                    )
                     .padding(.horizontal, 20)
 
                     // MARK: Past Entries
@@ -135,20 +139,24 @@ struct GratitudeJournalView: View {
                                 VStack(alignment: .leading, spacing: 6) {
                                     Text(entry.date, style: .date)
                                         .font(.system(size: 11, weight: .semibold))
-                                        .foregroundColor(.calmAccent.opacity(0.80))
+                                        .foregroundColor(Color(red: 0.541, green: 0.357, blue: 0.804))
                                     ForEach(entry.text.components(separatedBy: "\n").filter { !$0.isEmpty }, id: \.self) { line in
                                         HStack(alignment: .top, spacing: 8) {
-                                            Text("•").foregroundColor(.white.opacity(0.45))
+                                            Text("•").foregroundColor(Color(red: 0.10, green: 0.10, blue: 0.12).opacity(0.35))
                                             Text(line)
                                                 .font(.system(size: 13, weight: .light))
-                                                .foregroundColor(.white.opacity(0.80))
+                                                .foregroundColor(Color(red: 0.10, green: 0.10, blue: 0.12).opacity(0.80))
                                                 .fixedSize(horizontal: false, vertical: true)
                                         }
                                     }
                                 }
                                 .padding(14)
                                 .frame(maxWidth: .infinity, alignment: .leading)
-                                .background(RoundedRectangle(cornerRadius: 14).fill(Color.white.opacity(0.07)))
+                                .background(
+                                    RoundedRectangle(cornerRadius: 14)
+                                        .fill(Color(red: 0.87, green: 0.89, blue: 0.96))
+                                        .shadow(color: Color.black.opacity(0.08), radius: 6, x: 0, y: 2)
+                                )
                             }
                         }
                         .padding(.horizontal, 20)
@@ -170,16 +178,16 @@ struct GratitudeJournalView: View {
                 .frame(width: 20)
             TextField("Something you appreciate…", text: text)
                 .font(.system(size: 15, weight: .light))
-                .foregroundColor(.white)
-                .tint(.white)
+                .foregroundColor(Color(red: 0.10, green: 0.10, blue: 0.12))
+                .tint(Color(red: 0.541, green: 0.357, blue: 0.804))
                 .focused($focused, equals: focus)
                 .padding(.horizontal, 12)
                 .padding(.vertical, 10)
                 .background(
                     RoundedRectangle(cornerRadius: 12)
-                        .fill(Color.white.opacity(0.10))
+                        .fill(Color(red: 0.87, green: 0.89, blue: 0.96))
                         .overlay(RoundedRectangle(cornerRadius: 12)
-                            .stroke(focused == focus ? Color.calmAccent.opacity(0.60) : Color.clear, lineWidth: 1))
+                            .stroke(focused == focus ? Color(red: 0.541, green: 0.357, blue: 0.804).opacity(0.60) : Color.clear, lineWidth: 1))
                 )
                 .submitLabel(number < 3 ? .next : .done)
                 .onSubmit {

@@ -69,6 +69,7 @@
 		AA200051 /* LaunchAnimationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB200052 /* LaunchAnimationView.swift */; };
 		AA200053 /* MeditationHubView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB200053 /* MeditationHubView.swift */; };
 		AA200054 /* SoundsHubView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB200054 /* SoundsHubView.swift */; };
+		AA200055 /* MeditationMusicPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB200055 /* MeditationMusicPicker.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -158,6 +159,7 @@
 		BB200052 /* LaunchAnimationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LaunchAnimationView.swift; sourceTree = "<group>"; };
 		BB200053 /* MeditationHubView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MeditationHubView.swift; sourceTree = "<group>"; };
 		BB200054 /* SoundsHubView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SoundsHubView.swift; sourceTree = "<group>"; };
+		BB200055 /* MeditationMusicPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MeditationMusicPicker.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -239,6 +241,7 @@
 				BB200052 /* LaunchAnimationView.swift */,
 				BB200053 /* MeditationHubView.swift */,
 				BB200054 /* SoundsHubView.swift */,
+				BB200055 /* MeditationMusicPicker.swift */,
 				BB200048 /* AppLogoView.swift */,
 				BB200049 /* HapticManager.swift */,
 				BB200027 /* SOSBreathingView.swift */,
@@ -445,6 +448,7 @@
 				AA200051 /* LaunchAnimationView.swift in Sources */,
 				AA200053 /* MeditationHubView.swift in Sources */,
 				AA200054 /* SoundsHubView.swift in Sources */,
+				AA200055 /* MeditationMusicPicker.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

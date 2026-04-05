@@ -59,7 +59,7 @@ struct ProgressTabView: View {
                             Text("Premium").font(.system(size: 12, weight: .semibold))
                         }
                         .foregroundColor(.calmDeep)
-                        .padding(.horizontal, 10).padding(.vertical, 5)
+                        .padding(.horizontal, 12).padding(.vertical, 8)
                         .background(Capsule().fill(Color.calmAccent))
                     }
                 }
@@ -233,10 +233,14 @@ struct ChallengeSection: View {
     var body: some View {
         VStack(spacing: 20) {
             // Stats row
+            let quoteGradient = LinearGradient(
+                colors: [Color(red: 0.52, green: 0.30, blue: 0.80), Color(red: 0.68, green: 0.44, blue: 0.80)],
+                startPoint: .topLeading, endPoint: .bottomTrailing
+            )
             HStack(spacing: 12) {
-                StatCard(value: "\(journal.currentStreak)",       label: "Day Streak",  icon: "flame.fill",         color: Color(red: 1.0, green: 0.55, blue: 0.20))
-                StatCard(value: "\(doneInTier)/\(tierSize)",      label: "This Level",  icon: "checkmark.seal.fill",color: .calmAccent)
-                StatCard(value: "\(journal.totalChallengeDays)",  label: "Total Days",  icon: "calendar",           color: .calmTeal)
+                StatCard(value: "\(journal.currentStreak)",       label: "Day Streak",  icon: "flame.fill",         color: .white, gradient: quoteGradient)
+                StatCard(value: "\(doneInTier)/\(tierSize)",      label: "This Level",  icon: "checkmark.seal.fill",color: .white, gradient: quoteGradient)
+                StatCard(value: "\(journal.totalChallengeDays)",  label: "Total Days",  icon: "calendar",           color: .white, gradient: quoteGradient)
             }
 
             // Share streak
@@ -249,10 +253,10 @@ struct ChallengeSection: View {
                         Text("Share your \(journal.currentStreak)-day streak")
                             .font(.system(size: 13, weight: .medium))
                     }
-                    .foregroundColor(.calmDeep)
+                    .foregroundColor(Color(red: 0.10, green: 0.22, blue: 0.42))
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 11)
-                    .background(Capsule().fill(Color.calmAccent.opacity(0.85)))
+                    .background(Capsule().fill(Color(red: 0.87, green: 0.89, blue: 0.96)))
                 }
             }
 
@@ -264,7 +268,7 @@ struct ChallengeSection: View {
                         HStack {
                             Text("\(doneInTier) of \(tierSize) days completed")
                                 .font(.system(size: 13, weight: .regular))
-                                .foregroundColor(.white)
+                                .foregroundColor(Color(red: 0.10, green: 0.10, blue: 0.12))
                             Spacer()
                             Text("\(Int(tierPct * 100))%")
                                 .font(.system(size: 13, weight: .semibold))
@@ -272,7 +276,7 @@ struct ChallengeSection: View {
                         }
                         GeometryReader { geo in
                             ZStack(alignment: .leading) {
-                                Capsule().fill(Color.white.opacity(0.10)).frame(height: 6)
+                                Capsule().fill(Color(red: 0.10, green: 0.10, blue: 0.12).opacity(0.10)).frame(height: 6)
                                 Capsule()
                                     .fill(LinearGradient(colors: [.calmAccent, .calmTeal],
                                                          startPoint: .leading, endPoint: .trailing))
@@ -291,8 +295,7 @@ struct ChallengeSection: View {
                             ZStack {
                                 RoundedRectangle(cornerRadius: 6)
                                     .fill(filled  ? Color.calmAccent.opacity(0.85)
-                                         : current ? Color.white.opacity(0.18)
-                                                   : Color.white.opacity(0.06))
+                                                  : Color(red: 0.87, green: 0.89, blue: 0.96))
                                     .frame(height: 34)
                                     .overlay(
                                         RoundedRectangle(cornerRadius: 6)
@@ -305,7 +308,7 @@ struct ChallengeSection: View {
                                 } else {
                                     Text("\(dayNum)")
                                         .font(.system(size: 11, weight: current ? .semibold : .regular))
-                                        .foregroundColor(current ? .white : .white.opacity(0.35))
+                                        .foregroundColor(current ? Color(red: 0.541, green: 0.357, blue: 0.804) : Color(red: 0.10, green: 0.10, blue: 0.12).opacity(0.45))
                                 }
                             }
                             .onTapGesture {
@@ -328,7 +331,7 @@ struct ChallengeSection: View {
                             Text("You've already marked a day today. Come back tomorrow.")
                                 .font(.system(size: 12, weight: .medium))
                         }
-                        .foregroundColor(.white.opacity(0.70))
+                        .foregroundColor(Color(red: 0.10, green: 0.10, blue: 0.12).opacity(0.55))
                         .multilineTextAlignment(.center)
                         .padding(.horizontal, 8)
                         .padding(.top, 4)
@@ -380,7 +383,7 @@ struct ChallengeSection: View {
                                         .foregroundColor(badge.color)
                                     Text(badge.description)
                                         .font(.system(size: 12, weight: .regular))
-                                        .foregroundColor(.white.opacity(0.95))
+                                        .foregroundColor(Color(red: 0.10, green: 0.10, blue: 0.12).opacity(0.70))
                                 }
                                 Spacer()
                             }
@@ -394,7 +397,7 @@ struct ChallengeSection: View {
                                 VStack(spacing: 6) {
                                     ZStack {
                                         Circle()
-                                            .fill(earned ? badge.color.opacity(0.22) : Color.white.opacity(0.06))
+                                            .fill(earned ? badge.color.opacity(0.22) : Color(red: 0.541, green: 0.357, blue: 0.804).opacity(0.08))
                                             .frame(width: 44, height: 44)
                                         Text(badge.emoji)
                                             .font(.system(size: earned ? 22 : 18))
@@ -402,10 +405,10 @@ struct ChallengeSection: View {
                                     }
                                     Text(badge.title)
                                         .font(.system(size: 9, weight: .medium))
-                                        .foregroundColor(earned ? badge.color : .white.opacity(0.25))
+                                        .foregroundColor(earned ? badge.color : Color(red: 0.10, green: 0.10, blue: 0.12).opacity(0.30))
                                     Text("\(badge.requiredDays)d")
                                         .font(.system(size: 8))
-                                        .foregroundColor(.white.opacity(0.85))
+                                        .foregroundColor(Color(red: 0.10, green: 0.10, blue: 0.12).opacity(0.55))
                                 }
                                 .frame(maxWidth: .infinity)
                             }
@@ -422,7 +425,7 @@ struct ChallengeSection: View {
                         HStack(spacing: 14) {
                             ZStack {
                                 Circle()
-                                    .fill(earned ? badge.color.opacity(0.22) : Color.white.opacity(0.06))
+                                    .fill(earned ? badge.color.opacity(0.22) : Color(red: 0.541, green: 0.357, blue: 0.804).opacity(0.08))
                                     .frame(width: 48, height: 48)
                                 Text(badge.emoji)
                                     .font(.system(size: 24))
@@ -431,10 +434,10 @@ struct ChallengeSection: View {
                             VStack(alignment: .leading, spacing: 3) {
                                 Text(badge.title)
                                     .font(.system(size: 14, weight: .semibold, design: .rounded))
-                                    .foregroundColor(earned ? badge.color : .white.opacity(0.30))
+                                    .foregroundColor(earned ? badge.color : Color(red: 0.10, green: 0.10, blue: 0.12).opacity(0.30))
                                 Text(badge.description)
                                     .font(.system(size: 11, weight: .regular))
-                                    .foregroundColor(.white.opacity(earned ? 0.75 : 0.25))
+                                    .foregroundColor(earned ? Color(red: 0.10, green: 0.10, blue: 0.12).opacity(0.65) : Color(red: 0.10, green: 0.10, blue: 0.12).opacity(0.30))
                             }
                             Spacer()
                             if earned {
@@ -444,7 +447,7 @@ struct ChallengeSection: View {
                             }
                         }
                         if badge.title != MilestoneBadge.allCases.last?.title {
-                            Divider().background(Color.white.opacity(0.08))
+                            Divider().background(Color(red: 0.10, green: 0.10, blue: 0.12).opacity(0.10))
                         }
                     }
                 }
@@ -452,7 +455,9 @@ struct ChallengeSection: View {
 
             // Next badge progress
             if let next = journal.nextBadge {
-                JournalCard(title: "Next Badge", icon: "target") {
+                JournalCard(title: "Next Badge", icon: "target",
+                            bgColor: Color(red: 0.74, green: 0.64, blue: 0.91),
+                            headerColor: Color(red: 0.541, green: 0.357, blue: 0.804)) {
                     HStack(spacing: 14) {
                         Text(next.emoji).font(.system(size: 28))
                         VStack(alignment: .leading, spacing: 6) {
@@ -463,11 +468,11 @@ struct ChallengeSection: View {
                                 Spacer()
                                 Text("\(journal.daysToNextBadge) days to go")
                                     .font(.system(size: 12, weight: .regular))
-                                    .foregroundColor(.white.opacity(0.92))
+                                    .foregroundColor(Color(red: 0.10, green: 0.10, blue: 0.12).opacity(0.65))
                             }
                             GeometryReader { geo in
                                 ZStack(alignment: .leading) {
-                                    Capsule().fill(Color.white.opacity(0.10)).frame(height: 6)
+                                    Capsule().fill(Color(red: 0.10, green: 0.10, blue: 0.12).opacity(0.10)).frame(height: 6)
                                     let prev = MeditationBadge.allCases.last { journal.totalChallengeDays > $0.requiredDays }
                                     let from = Double(prev?.requiredDays ?? 0)
                                     let to   = Double(next.requiredDays)
@@ -488,7 +493,7 @@ struct ChallengeSection: View {
                 JournalCard(title: "Keep Going", icon: "star.fill") {
                     Text(streakMessage)
                         .font(.system(size: 14, weight: .regular))
-                        .foregroundColor(.white)
+                        .foregroundColor(Color(red: 0.10, green: 0.10, blue: 0.12))
                         .lineSpacing(4)
                 }
             }
@@ -536,10 +541,10 @@ struct MoodSection: View {
                         Text("Mood logged today — tap to update")
                             .font(.system(size: 14, weight: .medium, design: .rounded))
                     }
-                    .foregroundColor(.white.opacity(0.75))
+                    .foregroundColor(Color(red: 0.10, green: 0.10, blue: 0.12).opacity(0.75))
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 15)
-                    .background(Capsule().fill(Color.white.opacity(0.10)))
+                    .background(Capsule().fill(Color(red: 0.87, green: 0.89, blue: 0.96)).shadow(color: Color.black.opacity(0.08), radius: 6, x: 0, y: 2))
                 }
                 .buttonStyle(.plain)
             } else {
@@ -604,7 +609,9 @@ struct MoodSection: View {
                 let avgVal = Double(avg) / Double(entries.count)
                 let avgInt = Int(avgVal.rounded())
 
-                JournalCard(title: "Average Mood", icon: "chart.line.uptrend.xyaxis") {
+                JournalCard(title: "Average Mood", icon: "chart.line.uptrend.xyaxis",
+                            headerColor: .white.opacity(0.80),
+                            bgGradient: LinearGradient(colors: [Color(red: 0.52, green: 0.30, blue: 0.80), Color(red: 0.68, green: 0.44, blue: 0.80)], startPoint: .topLeading, endPoint: .bottomTrailing)) {
                     HStack(spacing: 16) {
                         Text(avgInt.moodEmoji).font(.system(size: 44))
                         VStack(alignment: .leading, spacing: 4) {
@@ -613,7 +620,7 @@ struct MoodSection: View {
                                 .foregroundColor(.white)
                             Text(String(format: "%.1f / 7.0 across \(entries.count) entries", avgVal))
                                 .font(.system(size: 12, weight: .regular))
-                                .foregroundColor(.white.opacity(0.95))
+                                .foregroundColor(.white.opacity(0.75))
                         }
                         Spacer()
                     }
@@ -645,7 +652,7 @@ struct MoodSection: View {
                                     HStack(spacing: 6) {
                                         Text(entry.mood.moodLabel)
                                             .font(.system(size: 14, weight: .medium))
-                                            .foregroundColor(.white)
+                                            .foregroundColor(Color(red: 0.10, green: 0.10, blue: 0.12))
                                         if entry.source == "post-session" {
                                             Text("after session")
                                                 .font(.system(size: 10, weight: .regular))
@@ -657,16 +664,16 @@ struct MoodSection: View {
                                     }
                                     Text(entry.date, style: .date)
                                         .font(.system(size: 11))
-                                        .foregroundColor(.white.opacity(0.70))
+                                        .foregroundColor(Color(red: 0.10, green: 0.10, blue: 0.12).opacity(0.50))
                                     if !entry.tags.isEmpty {
                                         HStack(spacing: 4) {
                                             ForEach(entry.tags, id: \.self) { tag in
                                                 Text(tag)
                                                     .font(.system(size: 10, weight: .medium))
-                                                    .foregroundColor(.white.opacity(0.75))
+                                                    .foregroundColor(Color(red: 0.10, green: 0.10, blue: 0.12).opacity(0.55))
                                                     .padding(.horizontal, 7)
                                                     .padding(.vertical, 3)
-                                                    .background(Capsule().fill(Color.white.opacity(0.08)))
+                                                    .background(Capsule().fill(Color(red: 0.541, green: 0.357, blue: 0.804).opacity(0.08)))
                                             }
                                         }
                                     }
@@ -674,7 +681,7 @@ struct MoodSection: View {
                                 Spacer()
                             }
                             if entry.id != entries.prefix(10).last?.id {
-                                Divider().background(Color.white.opacity(0.08))
+                                Divider().background(Color(red: 0.10, green: 0.10, blue: 0.12).opacity(0.10))
                             }
                         }
                     }
@@ -683,7 +690,9 @@ struct MoodSection: View {
 
             // Supportive card for latest mood
             if let latest = journal.moodEntries.first {
-                JournalCard(title: "Latest Check-In", icon: "heart.fill") {
+                JournalCard(title: "Latest Check-In", icon: "heart.fill",
+                            bgColor: Color(red: 0.74, green: 0.64, blue: 0.91),
+                            headerColor: .white.opacity(0.90)) {
                     HStack(alignment: .top, spacing: 12) {
                         Text(latest.mood.moodEmoji).font(.system(size: 28))
                         VStack(alignment: .leading, spacing: 6) {
@@ -692,7 +701,7 @@ struct MoodSection: View {
                                 .foregroundColor(latest.mood.moodColor)
                             Text(supportiveMessage(for: latest.mood))
                                 .font(.system(size: 13, weight: .regular))
-                                .foregroundColor(.white.opacity(0.78))
+                                .foregroundColor(Color(red: 0.10, green: 0.10, blue: 0.12).opacity(0.70))
                                 .lineSpacing(4)
                                 .fixedSize(horizontal: false, vertical: true)
                         }
@@ -778,10 +787,10 @@ struct SleepSection: View {
                             Text("Sleep logged today — tap to update")
                                 .font(.system(size: 14, weight: .medium, design: .rounded))
                         }
-                        .foregroundColor(.white.opacity(0.75))
+                        .foregroundColor(Color(red: 0.10, green: 0.10, blue: 0.12).opacity(0.75))
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 15)
-                        .background(Capsule().fill(Color.white.opacity(0.10)))
+                        .background(Capsule().fill(Color(red: 0.87, green: 0.89, blue: 0.96)).shadow(color: Color.black.opacity(0.08), radius: 6, x: 0, y: 2))
                     }
                     .buttonStyle(.plain)
                 } else {
@@ -812,10 +821,14 @@ struct SleepSection: View {
                     let avgQuality = Double(entries.map(\.quality).reduce(0, +)) / Double(entries.count)
                     let avgHours   = entries.map(\.hours).reduce(0, +) / Double(entries.count)
 
+                    let sleepGradient = LinearGradient(
+                        colors: [Color(red: 0.52, green: 0.30, blue: 0.80), Color(red: 0.68, green: 0.44, blue: 0.80)],
+                        startPoint: .topLeading, endPoint: .bottomTrailing
+                    )
                     HStack(spacing: 12) {
-                        StatCard(value: String(format: "%.1f", avgHours), label: "Avg Hours", icon: "moon.fill", color: Color(red: 0.55, green: 0.50, blue: 0.90))
-                        StatCard(value: String(format: "%.1f/5", avgQuality), label: "Avg Quality", icon: "star.fill", color: Color(red: 1.0, green: 0.80, blue: 0.25))
-                        StatCard(value: "\(entries.count)", label: "Entries", icon: "calendar", color: .calmTeal)
+                        StatCard(value: String(format: "%.1f", avgHours), label: "Avg Hours", icon: "moon.fill", color: .white, gradient: sleepGradient)
+                        StatCard(value: String(format: "%.1f/5", avgQuality), label: "Avg Quality", icon: "star.fill", color: .white, gradient: sleepGradient)
+                        StatCard(value: "\(entries.count)", label: "Entries", icon: "calendar", color: .white, gradient: sleepGradient)
                     }
 
                     // Sleep trend chart
@@ -830,20 +843,23 @@ struct SleepSection: View {
                             Text(insight.emoji).font(.system(size: 28))
                             Text(insight.message)
                                 .font(.system(size: 13, weight: .regular))
-                                .foregroundColor(.white)
+                                .foregroundColor(Color(red: 0.10, green: 0.10, blue: 0.12))
                                 .lineSpacing(4)
                                 .fixedSize(horizontal: false, vertical: true)
                         }
                     }
 
                     // Sleep tips
-                    JournalCard(title: "Sleep Tips", icon: "moon.stars.fill") {
+                    JournalCard(title: "Sleep Tips", icon: "moon.stars.fill",
+                                bgColor: Color(red: 0.74, green: 0.64, blue: 0.91),
+                                headerColor: Color(red: 0.541, green: 0.357, blue: 0.804)) {
                         VStack(alignment: .leading, spacing: 12) {
-                            SleepTipRow(emoji: "🧘", tip: "Meditate for 10 minutes before bed to calm your nervous system")
-                            SleepTipRow(emoji: "📱", tip: "Avoid screens for 30 minutes before sleep to reduce blue light exposure")
-                            SleepTipRow(emoji: "⏰", tip: "Go to bed and wake up at the same time every day — even weekends")
-                            SleepTipRow(emoji: "🌡️", tip: "Keep your room cool and comfortable for deeper, more restorative sleep")
-                            SleepTipRow(emoji: "🎵", tip: "Play a calming sound from the Sounds tab as you drift off")
+                            let tipColor = Color(red: 0.10, green: 0.10, blue: 0.12).opacity(0.75)
+                            SleepTipRow(emoji: "🧘", tip: "Meditate for 10 minutes before bed to calm your nervous system", textColor: tipColor)
+                            SleepTipRow(emoji: "📱", tip: "Avoid screens for 30 minutes before sleep to reduce blue light exposure", textColor: tipColor)
+                            SleepTipRow(emoji: "⏰", tip: "Go to bed and wake up at the same time every day — even weekends", textColor: tipColor)
+                            SleepTipRow(emoji: "🌡️", tip: "Keep your room cool and comfortable for deeper, more restorative sleep", textColor: tipColor)
+                            SleepTipRow(emoji: "🎵", tip: "Play a calming sound from the Sounds tab as you drift off", textColor: tipColor)
                         }
                     }
 
@@ -852,33 +868,33 @@ struct SleepSection: View {
                             ForEach(entries.prefix(10)) { entry in
                                 HStack(spacing: 12) {
                                     ZStack {
-                                        Circle().fill(entry.quality.moodColor.opacity(0.20)).frame(width: 38, height: 38)
+                                        Circle().fill(sleepQualityColor(entry.quality).opacity(0.20)).frame(width: 38, height: 38)
                                         Text("\(entry.quality)★")
                                             .font(.system(size: 12, weight: .semibold))
-                                            .foregroundColor(entry.quality.moodColor)
+                                            .foregroundColor(sleepQualityColor(entry.quality))
                                     }
                                     VStack(alignment: .leading, spacing: 3) {
                                         HStack(spacing: 8) {
                                             Text(String(format: "%.1f hrs", entry.hours))
                                                 .font(.system(size: 14, weight: .medium))
-                                                .foregroundColor(.white)
+                                                .foregroundColor(Color(red: 0.10, green: 0.10, blue: 0.12))
                                             if entry.dreamType > 0 {
                                                 Text(entry.dreamType == 1 ? "Light dreams" : "Vivid dreams")
                                                     .font(.system(size: 10, weight: .regular))
-                                                    .foregroundColor(.white.opacity(0.65))
+                                                    .foregroundColor(Color(red: 0.10, green: 0.10, blue: 0.12).opacity(0.65))
                                                     .padding(.horizontal, 7)
                                                     .padding(.vertical, 2)
-                                                    .background(Capsule().fill(Color.white.opacity(0.08)))
+                                                    .background(Capsule().fill(Color(red: 0.10, green: 0.10, blue: 0.12).opacity(0.08)))
                                             }
                                         }
                                         Text(entry.date, style: .date)
                                             .font(.system(size: 11))
-                                            .foregroundColor(.white.opacity(0.70))
+                                            .foregroundColor(Color(red: 0.10, green: 0.10, blue: 0.12).opacity(0.55))
                                     }
                                     Spacer()
                                 }
                                 if entry.id != entries.prefix(10).last?.id {
-                                    Divider().background(Color.white.opacity(0.08))
+                                    Divider().background(Color(red: 0.10, green: 0.10, blue: 0.12).opacity(0.10))
                                 }
                             }
                         }
@@ -924,7 +940,7 @@ func sleepQualityColor(_ q: Int) -> Color {
     switch q {
     case 1: return Color(red: 0.90, green: 0.35, blue: 0.35)
     case 2: return Color(red: 0.95, green: 0.60, blue: 0.30)
-    case 3: return Color(red: 0.75, green: 0.75, blue: 0.50)
+    case 3: return Color(red: 0.541, green: 0.357, blue: 0.804)
     case 4: return Color(red: 0.45, green: 0.75, blue: 0.95)
     case 5: return Color(red: 0.65, green: 0.85, blue: 0.55)
     default: return .white
@@ -941,6 +957,7 @@ func sleepQualityMessage(_ q: Int) -> String {
     default: return ""
     }
 }
+
 
 func sleepInsight(avgHours: Double, avgQuality: Double) -> (emoji: String, title: String, message: String) {
     switch (avgHours, avgQuality) {
@@ -1295,12 +1312,13 @@ struct SleepEntrySheet: View {
 struct SleepTipRow: View {
     let emoji: String
     let tip:   String
+    var textColor: Color = .white.opacity(0.72)
     var body: some View {
         HStack(alignment: .top, spacing: 10) {
             Text(emoji).font(.system(size: 16))
             Text(tip)
                 .font(.system(size: 13, weight: .regular))
-                .foregroundColor(.white.opacity(0.72))
+                .foregroundColor(textColor)
                 .lineSpacing(3)
                 .fixedSize(horizontal: false, vertical: true)
         }
@@ -1339,6 +1357,9 @@ struct MoodButton: View {
 struct JournalCard<Content: View>: View {
     let title:   String
     let icon:    String
+    var bgColor: Color = Color(red: 0.87, green: 0.89, blue: 0.96)
+    var headerColor: Color = Color(red: 0.10, green: 0.10, blue: 0.12).opacity(0.60)
+    var bgGradient: LinearGradient? = nil
     @ViewBuilder let content: () -> Content
 
     var body: some View {
@@ -1346,17 +1367,26 @@ struct JournalCard<Content: View>: View {
             HStack(spacing: 7) {
                 Image(systemName: icon)
                     .font(.system(size: 12, weight: .semibold))
-                    .foregroundColor(.calmAccent.opacity(0.80))
+                    .foregroundColor(headerColor)
                 Text(title.uppercased())
                     .font(.system(size: 11, weight: .semibold))
-                    .foregroundColor(.white.opacity(0.90))
+                    .foregroundColor(headerColor)
                     .tracking(1.2)
             }
             content()
         }
         .padding(18)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(RoundedRectangle(cornerRadius: 18).fill(Color.white.opacity(0.07)))
+        .background(
+            Group {
+                if let gradient = bgGradient {
+                    RoundedRectangle(cornerRadius: 18).fill(gradient)
+                } else {
+                    RoundedRectangle(cornerRadius: 18).fill(bgColor)
+                }
+            }
+        )
+        .shadow(color: Color.black.opacity(0.08), radius: 6, x: 0, y: 2)
     }
 }
 
@@ -1365,22 +1395,30 @@ struct StatCard: View {
     let label: String
     let icon:  String
     let color: Color
+    var bgColor:    Color = Color(red: 0.87, green: 0.89, blue: 0.96)
+    var valueColor: Color = Color(red: 0.10, green: 0.10, blue: 0.12)
+    var labelColor: Color = Color(red: 0.10, green: 0.10, blue: 0.12).opacity(0.60)
+    var gradient:   LinearGradient? = nil
 
     var body: some View {
         VStack(spacing: 6) {
             Image(systemName: icon)
                 .font(.system(size: 16))
-                .foregroundColor(color)
+                .foregroundColor(gradient != nil ? .white.opacity(0.90) : color)
             Text(value)
                 .font(.system(size: 20, weight: .semibold, design: .rounded))
-                .foregroundColor(.white)
+                .foregroundColor(gradient != nil ? .white : valueColor)
             Text(label)
                 .font(.system(size: 10, weight: .regular))
-                .foregroundColor(.white.opacity(0.92))
+                .foregroundColor(gradient != nil ? .white.opacity(0.75) : labelColor)
         }
         .frame(maxWidth: .infinity)
         .padding(.vertical, 14)
-        .background(RoundedRectangle(cornerRadius: 16).fill(Color.white.opacity(0.07)))
+        .background(
+            RoundedRectangle(cornerRadius: 16)
+                .fill(gradient.map { AnyShapeStyle($0) } ?? AnyShapeStyle(bgColor))
+        )
+        .shadow(color: Color.black.opacity(0.08), radius: 6, x: 0, y: 2)
     }
 }
 
@@ -1394,7 +1432,7 @@ struct MoodBarRow: View {
             Text(level.moodEmoji).font(.system(size: 16)).frame(width: 24)
             GeometryReader { geo in
                 ZStack(alignment: .leading) {
-                    Capsule().fill(Color.white.opacity(0.08)).frame(height: 8)
+                    Capsule().fill(Color(red: 0.10, green: 0.10, blue: 0.12).opacity(0.10)).frame(height: 8)
                     Capsule()
                         .fill(Color(red: 0.541, green: 0.357, blue: 0.804).opacity(0.80))
                         .frame(width: max(4, geo.size.width * percent), height: 8)
@@ -1403,7 +1441,7 @@ struct MoodBarRow: View {
             .frame(height: 8)
             Text("\(count)")
                 .font(.system(size: 12, weight: .semibold))
-                .foregroundColor(.white.opacity(0.95))
+                .foregroundColor(Color(red: 0.10, green: 0.10, blue: 0.12))
                 .frame(width: 24, alignment: .trailing)
         }
     }
@@ -1632,26 +1670,30 @@ struct GratitudeSectionView: View {
             Button { showJournal = true } label: {
                 HStack(spacing: 14) {
                     ZStack {
-                        Circle().fill(Color.calmAccent.opacity(0.20)).frame(width: 52, height: 52)
+                        Circle().fill(Color(red: 0.541, green: 0.357, blue: 0.804).opacity(0.12)).frame(width: 52, height: 52)
                         Image(systemName: "heart.text.square.fill")
                             .font(.system(size: 22))
-                            .foregroundColor(.calmAccent)
+                            .foregroundColor(Color(red: 0.541, green: 0.357, blue: 0.804))
                     }
                     VStack(alignment: .leading, spacing: 4) {
                         Text("Gratitude Journal")
                             .font(.system(size: 16, weight: .semibold, design: .rounded))
-                            .foregroundColor(.white)
+                            .foregroundColor(Color(red: 0.10, green: 0.10, blue: 0.12))
                         Text(journal.gratitudeEntryToday ? "Logged today ✓" : "Write today's entry")
                             .font(.system(size: 12))
-                            .foregroundColor(.white.opacity(0.65))
+                            .foregroundColor(Color(red: 0.10, green: 0.10, blue: 0.12).opacity(0.55))
                     }
                     Spacer()
                     Image(systemName: "chevron.right")
                         .font(.system(size: 13, weight: .semibold))
-                        .foregroundColor(.white.opacity(0.45))
+                        .foregroundColor(Color(red: 0.10, green: 0.10, blue: 0.12).opacity(0.35))
                 }
                 .padding(16)
-                .background(RoundedRectangle(cornerRadius: 18).fill(Color.white.opacity(0.10)))
+                .background(
+                    RoundedRectangle(cornerRadius: 18)
+                        .fill(Color(red: 0.87, green: 0.89, blue: 0.96))
+                        .shadow(color: Color.black.opacity(0.08), radius: 6, x: 0, y: 2)
+                )
             }
             .buttonStyle(.plain)
 
@@ -1668,15 +1710,17 @@ struct GratitudeSectionView: View {
             .padding(.horizontal, 4)
 
             // Streak
-            JournalCard(title: "Gratitude Streak", icon: "flame.fill") {
+            JournalCard(title: "Gratitude Streak", icon: "flame.fill",
+                        bgColor: Color(red: 0.74, green: 0.64, blue: 0.91),
+                        headerColor: Color(red: 0.50, green: 0.42, blue: 0.70)) {
                 let streak = gratitudeStreak
                 VStack(spacing: 6) {
                     Text("\(streak)")
                         .font(.system(size: 48, weight: .regular, design: .rounded))
-                        .foregroundColor(.white)
+                        .foregroundColor(Color(red: 0.40, green: 0.30, blue: 0.65))
                     Text(streak == 1 ? "day in a row" : "days in a row")
                         .font(.system(size: 13, weight: .regular))
-                        .foregroundColor(.white.opacity(0.70))
+                        .foregroundColor(Color(red: 0.40, green: 0.30, blue: 0.65).opacity(0.70))
                 }
                 .frame(maxWidth: .infinity)
                 .padding(.vertical, 8)
@@ -1690,19 +1734,19 @@ struct GratitudeSectionView: View {
                             VStack(alignment: .leading, spacing: 4) {
                                 Text(entry.date, style: .date)
                                     .font(.system(size: 10, weight: .semibold))
-                                    .foregroundColor(.calmAccent.opacity(0.80))
+                                    .foregroundColor(Color(red: 0.50, green: 0.42, blue: 0.70))
                                 ForEach(entry.text.components(separatedBy: "\n").filter { !$0.isEmpty }, id: \.self) { line in
                                     HStack(alignment: .top, spacing: 6) {
-                                        Text("•").foregroundColor(.white.opacity(0.40)).font(.system(size: 12))
+                                        Text("•").foregroundColor(Color(red: 0.40, green: 0.30, blue: 0.65).opacity(0.40)).font(.system(size: 12))
                                         Text(line)
                                             .font(.system(size: 13, weight: .regular))
-                                            .foregroundColor(.white.opacity(0.85))
+                                            .foregroundColor(Color(red: 0.10, green: 0.10, blue: 0.12).opacity(0.80))
                                             .fixedSize(horizontal: false, vertical: true)
                                     }
                                 }
                             }
                             if entry.id != journal.gratitudeEntries.prefix(5).last?.id {
-                                Divider().background(Color.white.opacity(0.10))
+                                Divider().background(Color(red: 0.40, green: 0.30, blue: 0.65).opacity(0.15))
                             }
                         }
                     }
