@@ -55,8 +55,7 @@ extension QuickReliefExercise {
             science: "Stanford research — fastest known technique to lower stress in real time.",
             color: Color(red: 0.541, green: 0.357, blue: 0.804),
             phases: [
-                ReliefPhase(label: "Inhale",  duration: 2, targetScale: 1.15),
-                ReliefPhase(label: "Sniff",   duration: 1, targetScale: 1.30),
+                ReliefPhase(label: "Inhale",  duration: 4, targetScale: 1.15),
                 ReliefPhase(label: "Exhale",  duration: 7, targetScale: 0.68),
             ],
             cycles: 6
@@ -154,11 +153,6 @@ struct QuickReliefView: View {
 
     // Audio phase map — keyed by exercise name, values are (cycleDuration, [(label, startTime, targetScale)])
     private let audioPhaseMap: [String: (cycleDuration: Double, phases: [(label: String, start: Double, scale: CGFloat)])] = [
-        "Stress Relief": (12.936, [
-            ("Inhale", 0.356, 1.15),
-            ("Sniff",  3.465, 1.30),
-            ("Exhale", 5.619, 0.68),
-        ]),
         "Anxiety Relief": (10.944, [
             ("Inhale", 0.3,  1.30),
             ("Exhale", 4.5,  0.68),
@@ -443,9 +437,8 @@ struct QuickReliefView: View {
     private func playVoiceAudio() -> Bool {
         let filename: String
         switch exercise.name {
-        case "Stress Relief": filename = "stress_relief_breathing"
-        case "Calm Down":     filename = "calm_down_breathing"
-        case "Pain Relief":   filename = "pain_relief_breathing"
+        case "Calm Down":  filename = "calm_down_breathing"
+        case "Pain Relief": filename = "pain_relief_breathing"
         default: return false
         }
         guard let url = Bundle.main.url(forResource: filename, withExtension: "mp3", subdirectory: "Audio"),
