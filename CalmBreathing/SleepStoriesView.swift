@@ -366,15 +366,10 @@ struct SleepStoriesView: View {
             LazyVStack(spacing: 0) {
                 // Header
                 VStack(spacing: 10) {
-                    ZStack {
-                        Circle()
-                            .fill(Color.white.opacity(0.10))
-                            .frame(width: 90, height: 90)
-                        Image(systemName: "moon.stars.fill")
-                            .font(.system(size: 40))
-                            .foregroundColor(.calmAccent)
-                    }
-                    .padding(.top, 20)
+                    Image(systemName: "moon.stars.fill")
+                        .font(.system(size: 36))
+                        .foregroundColor(.calmAccent)
+                        .padding(.top, 60)
 
                     Text("Calming narrated stories to quiet your mind and guide you gently into sleep.")
                         .font(.system(size: 14, weight: .regular))
