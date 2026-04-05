@@ -94,7 +94,6 @@ final class AmbientMusicEngine: NSObject, ObservableObject {
         player?.play()
         currentTrack = track
         isPlaying = true
-        UIApplication.shared.isIdleTimerDisabled = true
         startTimer()
     }
 
@@ -102,13 +101,11 @@ final class AmbientMusicEngine: NSObject, ObservableObject {
         player?.pause()
         isPlaying = false
         timer?.invalidate()
-        UIApplication.shared.isIdleTimerDisabled = false
     }
 
     func resume() {
         player?.play()
         isPlaying = true
-        UIApplication.shared.isIdleTimerDisabled = true
         startTimer()
     }
 
@@ -120,7 +117,6 @@ final class AmbientMusicEngine: NSObject, ObservableObject {
         isPlaying = false
         progress = 0
         currentTrack = nil
-        UIApplication.shared.isIdleTimerDisabled = false
     }
 
     private func startTimer() {
