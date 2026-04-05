@@ -37,7 +37,7 @@ enum MeditationBackground: String, CaseIterable {
     var bgGradient: LinearGradient {
         switch self {
         case .sky:
-            return LinearGradient(colors: [Color(red: 0.48, green: 0.80, blue: 0.98), Color(red: 0.30, green: 0.64, blue: 0.92), Color(red: 0.15, green: 0.48, blue: 0.84)], startPoint: .topLeading, endPoint: .bottomTrailing)
+            return LinearGradient(colors: [Color(red: 0.31, green: 0.44, blue: 0.77), Color(red: 0.30, green: 0.43, blue: 0.76), Color(red: 0.28, green: 0.41, blue: 0.74)], startPoint: .top, endPoint: .bottom)
         case .clouds:
             return LinearGradient(colors: [Color(red: 0.18, green: 0.30, blue: 0.58), Color(red: 0.08, green: 0.18, blue: 0.42)], startPoint: .top, endPoint: .bottom)
         case .sunset:
@@ -62,7 +62,7 @@ enum MeditationBackground: String, CaseIterable {
     var swatchGradient: LinearGradient {
         switch self {
         case .sky:
-            return LinearGradient(colors: [Color(red: 0.48, green: 0.80, blue: 0.98), Color(red: 0.15, green: 0.48, blue: 0.84)], startPoint: .top, endPoint: .bottom)
+            return LinearGradient(colors: [Color(red: 0.31, green: 0.44, blue: 0.77), Color(red: 0.28, green: 0.41, blue: 0.74)], startPoint: .top, endPoint: .bottom)
         case .clouds:
             return LinearGradient(colors: [Color(red: 0.70, green: 0.88, blue: 1.00), Color(red: 0.90, green: 0.95, blue: 1.00)], startPoint: .top, endPoint: .bottom)
         case .sunset:
