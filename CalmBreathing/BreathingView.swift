@@ -117,6 +117,7 @@ struct BreathingView: View {
     @State private var sessionSecondsLeft: Int = 0
     @State private var sessionTimer: Timer?
     @State private var pendingStop: Bool = false
+    @State private var completionPlayed: Bool = false
 
     // Exact timestamps measured via silence detection
     private let boxCycleDuration:  TimeInterval = 15.672
@@ -331,6 +332,7 @@ struct BreathingView: View {
         isRunning = true
         cycleCount = 0
         pendingStop = false
+        completionPlayed = false
         sessionStartDate = Date()
         HapticManager.start()
         UIApplication.shared.isIdleTimerDisabled = true
@@ -466,6 +468,8 @@ struct BreathingView: View {
     }
 
     private func playCompletionAudio() {
+        guard !completionPlayed else { return }
+        completionPlayed = true
         guard let url = Bundle.main.url(forResource: "breathing_well_done", withExtension: "mp3", subdirectory: "Audio"),
               let player = try? AVAudioPlayer(contentsOf: url) else { return }
         player.numberOfLoops = 0
