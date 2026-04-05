@@ -167,20 +167,18 @@ struct BodyScanView: View {
 
                 Text("A body scan is a mindfulness technique where you move your attention slowly through each part of your body — from head to toe. By noticing sensations without judgement, you release built-up tension, quiet a busy mind, and reconnect with the present moment.")
                     .font(.system(size: 13, weight: .regular))
-                    .foregroundColor(.white.opacity(0.88))
+                    .foregroundColor(.calmMid)
                     .lineSpacing(4)
 
                 Text("Regular practice is linked to reduced stress, better sleep, and a greater sense of calm. It is one of the most widely studied mindfulness exercises in clinical research.")
                     .font(.system(size: 13, weight: .regular))
-                    .foregroundColor(.white.opacity(0.88))
+                    .foregroundColor(.calmMid)
                     .lineSpacing(4)
             }
             .padding(16)
             .background(
                 RoundedRectangle(cornerRadius: 16)
-                    .fill(Color.white.opacity(0.07))
-                    .overlay(RoundedRectangle(cornerRadius: 16)
-                        .stroke(Color.white.opacity(0.10), lineWidth: 1))
+                    .fill(Color(red: 0.87, green: 0.89, blue: 0.96))
             )
 
             VStack(spacing: 10) {
