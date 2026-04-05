@@ -236,7 +236,7 @@ struct QuickReliefView: View {
         }
         .navigationBarHidden(true)
         .onAppear { prepareBgMusic() }
-        .onChange(of: selectedMusic) { _ in prepareBgMusic() }
+        .onChange(of: selectedMusic) { _, _ in prepareBgMusic() }
         .onDisappear { stopSession() }
         .sheet(isPresented: $showSettings) {
             QuickReliefSettingsSheet(selectedMusic: $selectedMusic)

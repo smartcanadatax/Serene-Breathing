@@ -1,6 +1,7 @@
 import SwiftUI
 import UIKit
 import StoreKit
+import AVFoundation
 
 // MARK: - Meditation Background Theme
 enum MeditationBackground: String, CaseIterable {

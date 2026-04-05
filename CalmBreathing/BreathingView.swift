@@ -285,7 +285,7 @@ struct BreathingView: View {
             PaywallView(isPresented: $showPaywall).environmentObject(premium)
         }
         .onAppear { prepareBgMusic() }
-        .onChange(of: selectedPattern) { _ in if !isRunning { prepareBgMusic() } }
+        .onChange(of: selectedPattern) { _, _ in if !isRunning { prepareBgMusic() } }
         .onDisappear { stopBreathing() }
         .onReceive(NotificationCenter.default.publisher(for: .watchStopBreathing)) { _ in
             stopBreathing()
