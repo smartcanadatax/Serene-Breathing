@@ -410,44 +410,44 @@ private struct StoryCard: View {
     let story: SleepStory
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 14) {
-            HStack(spacing: 14) {
+        VStack(alignment: .leading, spacing: 16) {
+            HStack(spacing: 16) {
                 ZStack {
                     Circle()
                         .fill(Color.calmAccent.opacity(0.15))
-                        .frame(width: 64, height: 64)
+                        .frame(width: 72, height: 72)
                     Image(systemName: story.icon)
-                        .font(.system(size: 26))
+                        .font(.system(size: 30))
                         .foregroundColor(.calmAccent)
                 }
 
-                VStack(alignment: .leading, spacing: 4) {
+                VStack(alignment: .leading, spacing: 5) {
                     Text(story.title)
-                        .font(.system(size: 17, weight: .semibold, design: .rounded))
+                        .font(.system(size: 18, weight: .semibold, design: .rounded))
                         .foregroundColor(.calmDeep)
                     Text(story.subtitle)
-                        .font(.system(size: 13, weight: .regular))
+                        .font(.system(size: 14, weight: .regular))
                         .foregroundColor(.calmMid)
                     Text(story.duration)
-                        .font(.system(size: 11, weight: .medium))
+                        .font(.system(size: 12, weight: .medium))
                         .foregroundColor(.calmAccent)
                 }
 
                 Spacer()
 
                 Image(systemName: "play.circle.fill")
-                    .font(.system(size: 34))
+                    .font(.system(size: 38))
                     .foregroundColor(.calmAccent)
             }
 
             Text(story.description)
-                .font(.system(size: 13, weight: .regular))
+                .font(.system(size: 14, weight: .regular))
                 .foregroundColor(.calmMid)
-                .lineSpacing(4)
+                .lineSpacing(5)
                 .fixedSize(horizontal: false, vertical: true)
         }
-        .padding(.horizontal, 18)
-        .padding(.vertical, 18)
+        .padding(.horizontal, 20)
+        .padding(.vertical, 22)
         .background(
             RoundedRectangle(cornerRadius: 16)
                 .fill(Color(red: 0.87, green: 0.89, blue: 0.96))
