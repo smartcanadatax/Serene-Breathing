@@ -203,28 +203,6 @@ struct MeditationTimerView: View {
                 // Space for custom nav bar overlay
                 Color.clear.frame(height: 60)
 
-                // ── Settings Button (idle only) ──────────────────────────
-                if !isRunning && !isPaused {
-                    HStack {
-                        Spacer()
-                        Button { activeSheet = .settings } label: {
-                            HStack(spacing: 6) {
-                                Image(systemName: "slider.horizontal.3")
-                                    .font(.system(size: 14))
-                                Text("Settings")
-                                    .font(.system(size: 13, weight: .semibold, design: .rounded))
-                            }
-                            .foregroundColor(Color(red: 0.10, green: 0.10, blue: 0.12))
-                            .padding(.horizontal, 18)
-                            .padding(.vertical, 10)
-                            .background(Capsule().fill(Color.white).shadow(color: .black.opacity(0.15), radius: 6))
-                        }
-                        .buttonStyle(.plain)
-                        Spacer()
-                    }
-                    .padding(.top, 8)
-                }
-
                 // Now-playing badge when running
                 if isRunning {
                     if let ambTrack = selectedAmbientTrack {
@@ -368,22 +346,33 @@ struct MeditationTimerView: View {
                         .font(.system(size: 17, weight: .semibold, design: .rounded))
                         .foregroundColor(.white)
                     Spacer()
-                    if !premium.isPremium {
-                        Button { activeSheet = .paywall } label: {
-                            HStack(spacing: 4) {
-                                Image(systemName: "crown.fill")
-                                    .font(.system(size: 11))
-                                Text("Premium")
-                                    .font(.system(size: 12, weight: .semibold))
+                    HStack(spacing: 8) {
+                        if !isRunning && !isPaused {
+                            Button { activeSheet = .settings } label: {
+                                Image(systemName: "slider.horizontal.3")
+                                    .font(.system(size: 15, weight: .medium))
+                                    .foregroundColor(.white)
+                                    .frame(width: 36, height: 36)
+                                    .background(Circle().fill(Color.white.opacity(0.20)))
                             }
-                            .foregroundColor(.calmDeep)
-                            .padding(.horizontal, 10)
-                            .padding(.vertical, 7)
-                            .background(Capsule().fill(Color.calmAccent))
+                            .buttonStyle(.plain)
                         }
-                    } else {
-                        Color.clear.frame(width: 44, height: 44)
+                        if !premium.isPremium {
+                            Button { activeSheet = .paywall } label: {
+                                HStack(spacing: 4) {
+                                    Image(systemName: "crown.fill")
+                                        .font(.system(size: 11))
+                                    Text("Premium")
+                                        .font(.system(size: 12, weight: .semibold))
+                                }
+                                .foregroundColor(.calmDeep)
+                                .padding(.horizontal, 10)
+                                .padding(.vertical, 7)
+                                .background(Capsule().fill(Color.calmAccent))
+                            }
+                        }
                     }
+                    .frame(minWidth: 44, alignment: .trailing)
                 }
                 .padding(.horizontal, 16)
                 .padding(.top, 16)
