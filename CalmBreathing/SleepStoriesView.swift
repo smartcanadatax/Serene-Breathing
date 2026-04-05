@@ -542,7 +542,7 @@ private struct StoryPlayerView: View {
 
             ZStack {
                 Circle()
-                    .fill(Color.calmAccent.opacity(0.15))
+                    .fill(Color(red: 0.87, green: 0.89, blue: 0.96))
                     .frame(width: 100, height: 100)
                 Image(systemName: "moon.stars.fill")
                     .font(.system(size: 44))
