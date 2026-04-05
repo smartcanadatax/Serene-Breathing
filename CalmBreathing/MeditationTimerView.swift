@@ -137,7 +137,6 @@ struct MeditationTimerView: View {
     @EnvironmentObject var journal:     JournalStore
     @EnvironmentObject var premium:     PremiumStore
     @Environment(\.requestReview) private var requestReview
-    @State private var showPaywall = false
     @AppStorage("meditationBackground") private var selectedBgRaw: String = MeditationBackground.sky.rawValue
     private var selectedBg: MeditationBackground {
         MeditationBackground(rawValue: selectedBgRaw) ?? .sky
@@ -149,7 +148,7 @@ struct MeditationTimerView: View {
     @State private var showMoodPrompt   = false
 
     // Background sound selection (persisted across navigation)
-    @AppStorage("meditationSelectedSound") private var selectedSoundRaw: String = ""
+    @AppStorage("meditationSelectedSound") private var selectedSoundRaw: String = "Inner Peace"
     private var selectedSound: SoundPlayer.SoundType? {
         get { SoundPlayer.SoundType(rawValue: selectedSoundRaw) }
         set { selectedSoundRaw = newValue?.rawValue ?? "" }
@@ -160,8 +159,11 @@ struct MeditationTimerView: View {
     @StateObject private var ambientEngine = AmbientMusicEngine()
     @State private var selectedAmbientTrack: AmbientTrack? = nil
     @State private var selectedAmbientCategory: AmbientCategory = .focus
-    @State private var showSoundSheet = false
-    @State private var showThemeSheet = false
+    enum ActiveSheet: Identifiable {
+        case sound, settings, paywall
+        var id: Self { self }
+    }
+    @State private var activeSheet: ActiveSheet?
     @AppStorage("meditationVolume") private var savedVolume: Double = 0.85
 
     init(startSilent: Bool = false) {
@@ -198,10 +200,26 @@ struct MeditationTimerView: View {
 
             VStack(spacing: 0) {
 
-                // ── Compact Settings Bar (idle only) ─────────────────────
+                // ── Settings Button (idle only) ──────────────────────────
                 if !isRunning && !isPaused {
-                    settingsBar
-                        .padding(.top, 20)
+                    HStack {
+                        Spacer()
+                        Button { activeSheet = .settings } label: {
+                            HStack(spacing: 6) {
+                                Image(systemName: "slider.horizontal.3")
+                                    .font(.system(size: 14))
+                                Text("Settings")
+                                    .font(.system(size: 13, weight: .semibold, design: .rounded))
+                            }
+                            .foregroundColor(Color(red: 0.10, green: 0.10, blue: 0.12))
+                            .padding(.horizontal, 18)
+                            .padding(.vertical, 10)
+                            .background(Capsule().fill(Color.white).shadow(color: .black.opacity(0.15), radius: 6))
+                        }
+                        .buttonStyle(.plain)
+                        Spacer()
+                    }
+                    .padding(.top, 20)
                 }
 
                 // Now-playing badge when running
@@ -303,7 +321,7 @@ struct MeditationTimerView: View {
                     }
 
                     Button {
-                        showSoundSheet = true
+                        activeSheet = .sound
                     } label: {
                         Image(systemName: "music.note")
                             .font(.system(size: 19))
@@ -327,7 +345,47 @@ struct MeditationTimerView: View {
             .padding(.horizontal, 24)
 
             if isDone { completionOverlay }
-        if showMoodPrompt { moodPromptOverlay }
+            if showMoodPrompt { moodPromptOverlay }
+        }
+        .sheet(item: $activeSheet) { sheet in
+            switch sheet {
+            case .sound:
+                SoundPickerSheet(
+                    selectedSound: Binding(
+                        get: { selectedSound },
+                        set: { selectedSoundRaw = $0?.rawValue ?? "" }
+                    ),
+                    silentBellMode:       $silentBellMode,
+                    selectedAmbientTrack: $selectedAmbientTrack
+                )
+                .environmentObject(premium)
+            case .settings:
+                let showPaywallBinding = Binding<Bool>(
+                    get: { false },
+                    set: { if $0 { activeSheet = .paywall } }
+                )
+                SettingsSheet(
+                    silentBellMode: $silentBellMode,
+                    selectedSound: Binding(
+                        get: { selectedSound },
+                        set: { selectedSoundRaw = $0?.rawValue ?? "" }
+                    ),
+                    selectedAmbientTrack: $selectedAmbientTrack,
+                    selectedDuration: $selectedDuration,
+                    timeRemaining: $timeRemaining,
+                    isRunning: isRunning,
+                    durations: durations,
+                    showPaywall: showPaywallBinding
+                )
+                .environmentObject(premium)
+            case .paywall:
+                let isPresentedBinding = Binding<Bool>(
+                    get: { true },
+                    set: { if !$0 { activeSheet = nil } }
+                )
+                PaywallView(isPresented: isPresentedBinding)
+                    .environmentObject(premium)
+            }
         }
         .navigationBarTitleDisplayMode(.inline)
         .navigationBarBackButtonHidden(true)
@@ -351,7 +409,7 @@ struct MeditationTimerView: View {
             ToolbarItem(placement: .navigationBarTrailing) {
                 HStack(spacing: 10) {
                     if !premium.isPremium {
-                        Button { showPaywall = true } label: {
+                        Button { activeSheet = .paywall } label: {
                             HStack(spacing: 4) {
                                 Image(systemName: "crown.fill")
                                     .font(.system(size: 11))
@@ -359,8 +417,8 @@ struct MeditationTimerView: View {
                                     .font(.system(size: 12, weight: .semibold))
                             }
                             .foregroundColor(.calmDeep)
-                            .padding(.horizontal, 10)
-                            .padding(.vertical, 5)
+                            .padding(.horizontal, 12)
+                            .padding(.vertical, 8)
                             .background(Capsule().fill(Color.calmAccent))
                         }
                     }
@@ -376,10 +434,6 @@ struct MeditationTimerView: View {
             soundPlayer.playing = nil
             ambientEngine.stop()
             UIApplication.shared.isIdleTimerDisabled = false
-        }
-        .fullScreenCover(isPresented: $showPaywall) {
-            PaywallView(isPresented: $showPaywall)
-                .environmentObject(premium)
         }
         .onChange(of: selectedSoundRaw) { _, _ in
             guard isRunning, !silentBellMode else { return }
@@ -406,80 +460,6 @@ struct MeditationTimerView: View {
                 soundPlayer.stop()
                 ambientEngine.stop()
             }
-        }
-        .sheet(isPresented: $showSoundSheet) {
-            SoundPickerSheet(
-                selectedSound: Binding(
-                    get: { selectedSound },
-                    set: { selectedSoundRaw = $0?.rawValue ?? "" }
-                ),
-                silentBellMode:       $silentBellMode,
-                selectedAmbientTrack: $selectedAmbientTrack
-            )
-            .environmentObject(premium)
-        }
-    }
-
-    // MARK: - Compact Settings Bar
-    private var settingsBar: some View {
-        HStack(spacing: 0) {
-            Image(systemName: "timer")
-                .font(.system(size: 13))
-                .foregroundColor(.black.opacity(0.55))
-                .padding(.leading, 14)
-
-            ScrollView(.horizontal, showsIndicators: false) {
-                HStack(spacing: 8) {
-                    ForEach(durations, id: \.self) { mins in
-                        let locked = mins > 10 && !premium.isPremium
-                        Button {
-                            if locked {
-                                showPaywall = true
-                            } else {
-                                selectedDuration = mins
-                                if !isRunning { timeRemaining = mins * 60 }
-                            }
-                        } label: {
-                            HStack(spacing: 4) {
-                                Text("\(mins) min")
-                                    .font(.system(size: 13, weight: selectedDuration == mins ? .semibold : .regular, design: .rounded))
-                                    .foregroundColor(locked ? .black.opacity(0.28) : .black.opacity(0.75))
-                                if locked {
-                                    Image(systemName: "lock.fill")
-                                        .font(.system(size: 9))
-                                        .foregroundColor(.black.opacity(0.25))
-                                }
-                            }
-                            .padding(.horizontal, 12)
-                            .padding(.vertical, 6)
-                            .background(
-                                Capsule()
-                                    .fill(selectedDuration == mins ? Color.white : Color.black.opacity(0.06))
-                                    .shadow(color: selectedDuration == mins ? Color.black.opacity(0.12) : Color.clear, radius: 4, x: 0, y: 2)
-                            )
-                        }
-                        .buttonStyle(.plain)
-                    }
-                }
-                .padding(.horizontal, 10)
-                .padding(.vertical, 8)
-            }
-        }
-        .background(
-            RoundedRectangle(cornerRadius: 14)
-                .fill(Color.white)
-                .shadow(color: Color.black.opacity(0.08), radius: 8, x: 0, y: 3)
-        )
-        .sheet(isPresented: $showThemeSheet) {
-            SettingsSheet(
-                silentBellMode: $silentBellMode,
-                selectedSound: Binding(
-                    get: { selectedSound },
-                    set: { selectedSoundRaw = $0?.rawValue ?? "" }
-                ),
-                selectedAmbientTrack: $selectedAmbientTrack
-            )
-            .environmentObject(premium)
         }
     }
 
@@ -528,7 +508,7 @@ struct MeditationTimerView: View {
             }
             .foregroundColor(isSelected ? .calmDeep : .white)
             .padding(.horizontal, 12)
-            .padding(.vertical, 7)
+            .padding(.vertical, 10)
             .background(
                 Capsule().fill(isSelected ? Color.calmAccent : Color.white.opacity(0.22))
             )
@@ -632,7 +612,8 @@ struct MeditationTimerView: View {
             } else {
                 ambientEngine.play(ambTrack)
             }
-        } else if let sound = selectedSound {
+        } else {
+            let sound = selectedSound ?? .sereneMindfulness
             soundPlayer.setVolume(Float(savedVolume))
             soundPlayer.play(sound, forceRestart: true)
         }
@@ -785,6 +766,11 @@ private struct SettingsSheet: View {
     @Binding var silentBellMode: Bool
     @Binding var selectedSound: SoundPlayer.SoundType?
     @Binding var selectedAmbientTrack: AmbientTrack?
+    @Binding var selectedDuration: Int
+    @Binding var timeRemaining: Int
+    let isRunning: Bool
+    let durations: [Int]
+    @Binding var showPaywall: Bool
     @AppStorage("meditationBackground") private var selectedBgRaw: String = MeditationBackground.sky.rawValue
     private var selectedBg: MeditationBackground { MeditationBackground(rawValue: selectedBgRaw) ?? .sky }
     @Environment(\.dismiss) private var dismiss
@@ -799,18 +785,20 @@ private struct SettingsSheet: View {
         .meditationMonda, .meditationFree, .planetFrequencies, .sereneMindfulness
     ]
 
+    private let brandPurple = Color(red: 0.541, green: 0.357, blue: 0.804)
+
     var body: some View {
         ZStack {
-            MeditationBgView(theme: selectedBg)
+            CalmBackground()
             VStack(spacing: 0) {
                 // Header
                 HStack {
                     Button { dismiss() } label: {
                         Image(systemName: "xmark")
                             .font(.system(size: 14, weight: .semibold))
-                            .foregroundColor(.white.opacity(0.65))
+                            .foregroundColor(.white.opacity(0.85))
                             .frame(width: 32, height: 32)
-                            .background(Circle().fill(Color.white.opacity(0.12)))
+                            .background(Circle().fill(Color.white.opacity(0.20)))
                     }
                     Spacer()
                     Text("Settings")
@@ -819,7 +807,7 @@ private struct SettingsSheet: View {
                     Spacer()
                     Button("Done") { dismiss() }
                         .font(.system(size: 15, weight: .semibold, design: .rounded))
-                        .foregroundColor(.calmAccent)
+                        .foregroundColor(.white)
                         .frame(width: 52, alignment: .trailing)
                 }
                 .padding(.horizontal, 20)
@@ -829,12 +817,57 @@ private struct SettingsSheet: View {
                 ScrollView(showsIndicators: false) {
                     LazyVStack(spacing: 16) {
 
+                        // ── Session Duration ─────────────────────────────
+                        settingsCard {
+                            VStack(alignment: .leading, spacing: 14) {
+                                Text("SESSION DURATION")
+                                    .font(.system(size: 11, weight: .semibold))
+                                    .foregroundColor(.white.opacity(0.60))
+                                    .tracking(0.8)
+                                let cols = [GridItem(.adaptive(minimum: 72), spacing: 10)]
+                                LazyVGrid(columns: cols, spacing: 10) {
+                                    ForEach(durations, id: \.self) { mins in
+                                        let locked = mins > 10 && !premium.isPremium
+                                        Button {
+                                            if locked {
+                                                showPaywall = true
+                                            } else {
+                                                selectedDuration = mins
+                                                if !isRunning { timeRemaining = mins * 60 }
+                                            }
+                                        } label: {
+                                            HStack(spacing: 4) {
+                                                Text("\(mins) min")
+                                                    .font(.system(size: 14, weight: selectedDuration == mins ? .semibold : .regular, design: .rounded))
+                                                    .foregroundColor(locked ? .white.opacity(0.30) : (selectedDuration == mins ? brandPurple : .white))
+                                                if locked {
+                                                    Image(systemName: "lock.fill")
+                                                        .font(.system(size: 10))
+                                                        .foregroundColor(brandPurple.opacity(0.35))
+                                                }
+                                            }
+                                            .frame(maxWidth: .infinity)
+                                            .padding(.vertical, 10)
+                                            .background(
+                                                RoundedRectangle(cornerRadius: 10)
+                                                    .fill(selectedDuration == mins ? brandPurple.opacity(0.30) : Color.white.opacity(0.12))
+                                                    .overlay(RoundedRectangle(cornerRadius: 10)
+                                                        .stroke(selectedDuration == mins ? brandPurple.opacity(0.50) : Color.clear, lineWidth: 1.5))
+                                            )
+                                        }
+                                        .buttonStyle(.plain)
+                                    }
+                                }
+                            }
+                            .padding(16)
+                        }
+
                         // ── Visual Theme ────────────────────────────────
                         settingsCard {
                             VStack(alignment: .leading, spacing: 14) {
                                 Text("VISUAL THEME")
                                     .font(.system(size: 11, weight: .semibold))
-                                    .foregroundColor(.white.opacity(0.50))
+                                    .foregroundColor(.white.opacity(0.60))
                                     .tracking(0.8)
                                 let cols = [GridItem(.adaptive(minimum: 52), spacing: 14)]
                                 LazyVGrid(columns: cols, spacing: 14) {
@@ -844,11 +877,11 @@ private struct SettingsSheet: View {
                                                 Circle()
                                                     .fill(theme.swatchGradient)
                                                     .frame(width: 36, height: 36)
-                                                    .overlay(Circle().stroke(Color.white, lineWidth: selectedBg == theme ? 2.5 : 0).padding(-1))
-                                                    .shadow(color: .black.opacity(0.25), radius: 4)
+                                                    .overlay(Circle().stroke(brandPurple, lineWidth: selectedBg == theme ? 2.5 : 0).padding(-1))
+                                                    .shadow(color: .black.opacity(0.12), radius: 4)
                                                 Text(theme.label)
                                                     .font(.system(size: 9, weight: selectedBg == theme ? .semibold : .regular, design: .rounded))
-                                                    .foregroundColor(.white.opacity(selectedBg == theme ? 1.0 : 0.55))
+                                                    .foregroundColor(selectedBg == theme ? brandPurple : .white.opacity(0.65))
                                             }
                                         }
                                         .buttonStyle(.plain)
@@ -863,37 +896,33 @@ private struct SettingsSheet: View {
                             VStack(alignment: .leading, spacing: 12) {
                                 Text("AMBIENT SOUNDS")
                                     .font(.system(size: 11, weight: .semibold))
-                                    .foregroundColor(.white.opacity(0.50))
+                                    .foregroundColor(.white.opacity(0.60))
                                     .tracking(0.8)
 
-                                // None
                                 soundRow(label: "None", icon: "speaker.slash.fill",
                                          isSelected: !silentBellMode && selectedSound == nil && selectedAmbientTrack == nil) {
                                     silentBellMode = false; selectedSound = nil; selectedAmbientTrack = nil
                                 }
-                                Divider().opacity(0.15)
-                                // Silent Bell
+                                Divider()
                                 soundRow(label: "Silent Bell", icon: "bell.fill", isSelected: silentBellMode) {
                                     silentBellMode = true; selectedSound = nil; selectedAmbientTrack = nil
                                 }
-                                Divider().opacity(0.15)
-                                // Nature
+                                Divider()
                                 ForEach(natureSounds, id: \.self) { sound in
                                     soundRow(label: sound.rawValue, icon: sound.icon,
                                              locked: !sound.isFree && !premium.isPremium,
                                              isSelected: selectedSound == sound && !silentBellMode) {
                                         silentBellMode = false; selectedSound = sound; selectedAmbientTrack = nil
                                     }
-                                    Divider().opacity(0.15)
+                                    Divider()
                                 }
-                                // Meditation
                                 ForEach(Array(meditationSounds.enumerated()), id: \.element) { idx, sound in
                                     soundRow(label: sound.rawValue, icon: sound.icon,
                                              locked: !sound.isFree && !premium.isPremium,
                                              isSelected: selectedSound == sound && !silentBellMode) {
                                         silentBellMode = false; selectedSound = sound; selectedAmbientTrack = nil
                                     }
-                                    if idx < meditationSounds.count - 1 { Divider().opacity(0.15) }
+                                    if idx < meditationSounds.count - 1 { Divider() }
                                 }
                             }
                             .padding(16)
@@ -911,24 +940,28 @@ private struct SettingsSheet: View {
     @ViewBuilder
     private func settingsCard<Content: View>(@ViewBuilder content: () -> Content) -> some View {
         content()
-            .background(RoundedRectangle(cornerRadius: 16).fill(Color.white.opacity(0.10)))
+            .background(RoundedRectangle(cornerRadius: 16).fill(Color.white.opacity(0.14)))
     }
 
     private func soundRow(label: String, icon: String, locked: Bool = false, isSelected: Bool, action: @escaping () -> Void) -> some View {
         Button(action: { if !locked { action() } }) {
             HStack(spacing: 12) {
-                Image(systemName: icon)
-                    .font(.system(size: 14))
-                    .foregroundColor(isSelected ? .calmAccent : .white.opacity(0.60))
-                    .frame(width: 24)
+                ZStack {
+                    Circle()
+                        .fill(isSelected ? brandPurple.opacity(0.35) : Color.white.opacity(0.15))
+                        .frame(width: 32, height: 32)
+                    Image(systemName: icon)
+                        .font(.system(size: 13))
+                        .foregroundColor(locked ? .white.opacity(0.25) : (isSelected ? .white : .white.opacity(0.75)))
+                }
                 Text(label)
                     .font(.system(size: 14, weight: isSelected ? .semibold : .regular, design: .rounded))
-                    .foregroundColor(locked ? .white.opacity(0.30) : .white)
+                    .foregroundColor(locked ? .white.opacity(0.35) : .white)
                 Spacer()
                 if locked {
                     Image(systemName: "lock.fill").font(.system(size: 11)).foregroundColor(.white.opacity(0.30))
                 } else if isSelected {
-                    Image(systemName: "speaker.wave.2.fill").font(.system(size: 12)).foregroundColor(.calmAccent)
+                    Image(systemName: "speaker.wave.2.fill").font(.system(size: 12)).foregroundColor(brandPurple)
                 }
             }
             .contentShape(Rectangle())
@@ -947,26 +980,28 @@ private struct TimerPickerSheet: View {
     private var selectedBg: MeditationBackground { MeditationBackground(rawValue: selectedBgRaw) ?? .sky }
     @Environment(\.dismiss) private var dismiss
 
+    private let brandPurple = Color(red: 0.541, green: 0.357, blue: 0.804)
+
     var body: some View {
         ZStack {
-            MeditationBgView(theme: selectedBg)
+            Color(red: 0.96, green: 0.96, blue: 0.98).ignoresSafeArea()
             VStack(spacing: 0) {
                 HStack {
                     Button { dismiss() } label: {
                         Image(systemName: "xmark")
                             .font(.system(size: 14, weight: .semibold))
-                            .foregroundColor(.white.opacity(0.65))
+                            .foregroundColor(Color(red: 0.40, green: 0.40, blue: 0.45))
                             .frame(width: 32, height: 32)
-                            .background(Circle().fill(Color.white.opacity(0.12)))
+                            .background(Circle().fill(Color(red: 0.90, green: 0.90, blue: 0.93)))
                     }
                     Spacer()
                     Text("Select Timer")
                         .font(.system(size: 17, weight: .semibold, design: .rounded))
-                        .foregroundColor(.white)
+                        .foregroundColor(.calmDeep)
                     Spacer()
                     Button("Done") { dismiss() }
                         .font(.system(size: 15, weight: .semibold, design: .rounded))
-                        .foregroundColor(.calmAccent)
+                        .foregroundColor(brandPurple)
                         .frame(width: 52, alignment: .trailing)
                 }
                 .padding(.horizontal, 20)
@@ -986,19 +1021,23 @@ private struct TimerPickerSheet: View {
                             HStack {
                                 Text("\(mins) min")
                                     .font(.system(size: 16, weight: selectedDuration == mins ? .semibold : .regular, design: .rounded))
-                                    .foregroundColor(locked ? .white.opacity(0.35) : .white)
+                                    .foregroundColor(locked ? Color(red: 0.60, green: 0.60, blue: 0.65) : .calmDeep)
                                 Spacer()
                                 if locked {
-                                    Image(systemName: "lock.fill").font(.system(size: 12)).foregroundColor(.white.opacity(0.35))
+                                    Image(systemName: "lock.fill").font(.system(size: 12)).foregroundColor(brandPurple.opacity(0.35))
                                 } else if selectedDuration == mins {
-                                    Image(systemName: "checkmark").font(.system(size: 13, weight: .semibold)).foregroundColor(.calmAccent)
+                                    Image(systemName: "checkmark").font(.system(size: 13, weight: .semibold)).foregroundColor(brandPurple)
                                 }
                             }
                             .padding(.horizontal, 20)
                             .padding(.vertical, 16)
                             .background(
                                 RoundedRectangle(cornerRadius: 14)
-                                    .fill(selectedDuration == mins ? Color.calmAccent.opacity(0.20) : Color.white.opacity(0.09))
+                                    .fill(selectedDuration == mins ? brandPurple.opacity(0.10) : Color.white)
+                                    .overlay(
+                                        RoundedRectangle(cornerRadius: 14)
+                                            .stroke(selectedDuration == mins ? brandPurple.opacity(0.35) : Color.clear, lineWidth: 1)
+                                    )
                             )
                         }
                         .buttonStyle(.plain)
@@ -1033,19 +1072,21 @@ private struct SoundPickerSheet: View {
         .meditationMonda, .meditationFree, .planetFrequencies, .sereneMindfulness
     ]
 
+    private let brandPurple = Color(red: 0.541, green: 0.357, blue: 0.804)
+
     var body: some View {
         ZStack {
-            MeditationBgView(theme: selectedBg)
+            Color(red: 0.96, green: 0.96, blue: 0.98).ignoresSafeArea()
             VStack(spacing: 0) {
                 // Header
                 HStack {
                     Text("Choose Sound")
                         .font(.system(size: 18, weight: .semibold, design: .rounded))
-                        .foregroundColor(.white)
+                        .foregroundColor(.calmDeep)
                     Spacer()
                     Button("Done") { dismiss() }
                         .font(.system(size: 15, weight: .semibold))
-                        .foregroundColor(.calmAccent)
+                        .foregroundColor(brandPurple)
                 }
                 .padding(.horizontal, 20)
                 .padding(.top, 20)
@@ -1061,13 +1102,13 @@ private struct SoundPickerSheet: View {
                                 isSelected: !silentBellMode && selectedSound == nil && selectedAmbientTrack == nil) {
                                 silentBellMode = false; selectedSound = nil; selectedAmbientTrack = nil; dismiss()
                             }
-                            Divider().padding(.leading, 52).opacity(0.25)
+                            Divider().padding(.leading, 52)
                             row(label: "Silent Bell", subtitle: "Bell rings every 5 min", icon: "bell.fill",
                                 isSelected: silentBellMode) {
                                 silentBellMode = true; selectedSound = nil; selectedAmbientTrack = nil; dismiss()
                             }
                         }
-                        .background(RoundedRectangle(cornerRadius: 14).fill(Color.white.opacity(0.12)))
+                        .background(RoundedRectangle(cornerRadius: 14).fill(Color.white))
                         .padding(.horizontal, 16)
 
                         // ── Nature Sounds ────────────────────────────────
@@ -1079,10 +1120,10 @@ private struct SoundPickerSheet: View {
                                     isSelected: selectedSound == sound && !silentBellMode) {
                                     silentBellMode = false; selectedSound = sound; selectedAmbientTrack = nil; dismiss()
                                 }
-                                if idx < natureSounds.count - 1 { Divider().padding(.leading, 52).opacity(0.25) }
+                                if idx < natureSounds.count - 1 { Divider().padding(.leading, 52) }
                             }
                         }
-                        .background(RoundedRectangle(cornerRadius: 14).fill(Color.white.opacity(0.12)))
+                        .background(RoundedRectangle(cornerRadius: 14).fill(Color.white))
                         .padding(.horizontal, 16)
 
                         // ── Meditation Music ─────────────────────────────
@@ -1094,10 +1135,10 @@ private struct SoundPickerSheet: View {
                                     isSelected: selectedSound == sound && !silentBellMode) {
                                     silentBellMode = false; selectedSound = sound; selectedAmbientTrack = nil; dismiss()
                                 }
-                                if idx < meditationSounds.count - 1 { Divider().padding(.leading, 52).opacity(0.25) }
+                                if idx < meditationSounds.count - 1 { Divider().padding(.leading, 52) }
                             }
                         }
-                        .background(RoundedRectangle(cornerRadius: 14).fill(Color.white.opacity(0.12)))
+                        .background(RoundedRectangle(cornerRadius: 14).fill(Color.white))
                         .padding(.horizontal, 16)
                         .padding(.bottom, 32)
                     }
@@ -1110,7 +1151,7 @@ private struct SoundPickerSheet: View {
     private func sectionHeader(_ title: String) -> some View {
         Text(title.uppercased())
             .font(.system(size: 11, weight: .semibold))
-            .foregroundColor(.white.opacity(0.55))
+            .foregroundColor(Color(red: 0.50, green: 0.50, blue: 0.55))
             .frame(maxWidth: .infinity, alignment: .leading)
             .padding(.horizontal, 28)
             .padding(.bottom, 4)
@@ -1120,27 +1161,31 @@ private struct SoundPickerSheet: View {
     private func row(label: String, subtitle: String, icon: String, locked: Bool = false, isSelected: Bool, action: @escaping () -> Void) -> some View {
         Button(action: { if !locked { action() } }) {
             HStack(spacing: 12) {
-                Image(systemName: icon)
-                    .font(.system(size: 15))
-                    .foregroundColor(isSelected ? .calmAccent : .white.opacity(0.65))
-                    .frame(width: 28)
+                ZStack {
+                    Circle()
+                        .fill(isSelected ? brandPurple.opacity(0.12) : Color(red: 0.92, green: 0.92, blue: 0.95))
+                        .frame(width: 36, height: 36)
+                    Image(systemName: icon)
+                        .font(.system(size: 14))
+                        .foregroundColor(locked ? brandPurple.opacity(0.30) : (isSelected ? brandPurple : Color(red: 0.25, green: 0.25, blue: 0.30)))
+                }
                 VStack(alignment: .leading, spacing: 2) {
                     Text(label)
                         .font(.system(size: 14, weight: isSelected ? .semibold : .regular, design: .rounded))
-                        .foregroundColor(locked ? .white.opacity(0.35) : .white)
+                        .foregroundColor(locked ? Color(red: 0.60, green: 0.60, blue: 0.65) : .calmDeep)
                     Text(subtitle)
                         .font(.system(size: 11))
-                        .foregroundColor(.white.opacity(0.50))
+                        .foregroundColor(Color(red: 0.55, green: 0.55, blue: 0.60))
                 }
                 Spacer()
                 if locked {
                     Image(systemName: "lock.fill")
                         .font(.system(size: 11))
-                        .foregroundColor(.white.opacity(0.35))
+                        .foregroundColor(brandPurple.opacity(0.35))
                 } else if isSelected {
                     Image(systemName: "checkmark")
                         .font(.system(size: 12, weight: .semibold))
-                        .foregroundColor(.calmAccent)
+                        .foregroundColor(brandPurple)
                 }
             }
             .padding(.horizontal, 16)

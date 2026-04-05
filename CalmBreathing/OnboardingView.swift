@@ -1,4 +1,5 @@
 import SwiftUI
+import UIKit
 import UserNotifications
 
 // MARK: - Onboarding View
@@ -125,11 +126,15 @@ struct OnboardingView: View {
                     .padding(.bottom, 36)
 
                     VStack(spacing: 16) {
-                        Text(pages[page].title)
-                            .font(.system(size: 30, weight: .semibold, design: .rounded))
-                            .foregroundColor(.white)
-                            .multilineTextAlignment(.center)
-                            .animation(.easeInOut(duration: 0.3), value: page)
+                        if page == 0 {
+                            SereneTitle()
+                        } else {
+                            Text(pages[page].title)
+                                .font(.system(size: 30, weight: .semibold, design: .rounded))
+                                .foregroundColor(.white)
+                                .multilineTextAlignment(.center)
+                                .animation(.easeInOut(duration: 0.3), value: page)
+                        }
 
                         Text(pages[page].body)
                             .font(.system(size: 16, weight: .regular, design: .rounded))
@@ -159,7 +164,11 @@ struct OnboardingView: View {
                     if page < totalPages - 1 {
                         withAnimation { page += 1 }
                     } else {
-                        requestNotificationPermission { hasSeenOnboarding = true }
+                        requestNotificationPermission {
+                            UIView.setAnimationsEnabled(false)
+                            hasSeenOnboarding = true
+                            UIView.setAnimationsEnabled(true)
+                        }
                     }
                 } label: {
                     Text(pages[page].buttonLabel)
@@ -167,8 +176,7 @@ struct OnboardingView: View {
                         .foregroundColor(.calmDeep)
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 16)
-                        .background(Capsule().fill(Color.calmAccent))
-                        .shadow(color: .calmAccent.opacity(0.35), radius: 12)
+                        .background(Capsule().fill(Color.white).shadow(color: .black.opacity(0.15), radius: 12))
                 }
                 .padding(.horizontal, 32)
                 .disabled(page == goalPage && userGoal.isEmpty)
@@ -176,7 +184,11 @@ struct OnboardingView: View {
 
                 // Skip
                 if page < totalPages - 1 {
-                    Button("Skip") { hasSeenOnboarding = true }
+                    Button("Skip") {
+                        UIView.setAnimationsEnabled(false)
+                        hasSeenOnboarding = true
+                        UIView.setAnimationsEnabled(true)
+                    }
                         .font(.system(size: 14, weight: .regular))
                         .foregroundColor(.white.opacity(0.60))
                         .padding(.top, 16)

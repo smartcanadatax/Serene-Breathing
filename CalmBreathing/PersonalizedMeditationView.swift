@@ -5,7 +5,7 @@ import UIKit
 // MARK: - Audio file map (add entries as you record each mood)
 private let personalizedMeditationAudioFiles: [MeditationMood: String] = [
     .stressed:   "meditation_stressed_3min",
-    .anxious:    "meditation_stressed_3min",
+    .anxious:    "meditation_anxious_3min",
     .cantSleep:  "meditation_cantsleep_3min",
     .overwhelmed:"meditation_overwhelmed_3min",
     .sad:        "meditation_sad_3min",
@@ -228,30 +228,10 @@ struct PersonalizedMeditationView: View {
             ScrollView {
                 VStack(spacing: 28) {
 
-                    Color.clear.frame(height: 60)
-
-                    // Header
-                    VStack(spacing: 8) {
-                        Image(systemName: "sparkles")
-                            .font(.system(size: 32, weight: .regular))
-                            .foregroundColor(.calmAccent)
-                        Text("Tell us how you feel — we'll guide you from there.")
-                            .font(.system(size: 14, weight: .regular))
-                            .foregroundColor(.white.opacity(0.72))
-                            .multilineTextAlignment(.center)
-                    }
-                    .padding(.top, 8)
+                    Color.clear.frame(height: 100)
 
                     // Mood picker — tap any card to begin immediately
                     VStack(alignment: .leading, spacing: 12) {
-                        Text("HOW ARE YOU FEELING?")
-                            .font(.system(size: 11, weight: .semibold))
-                            .foregroundColor(.white.opacity(0.55))
-                            .padding(.leading, 4)
-                        Text("Tap your mood to begin")
-                            .font(.system(size: 12, weight: .regular))
-                            .foregroundColor(.white.opacity(0.45))
-                            .padding(.leading, 4)
 
                         LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 10) {
                             ForEach(MeditationMood.allCases) { mood in
@@ -295,6 +275,12 @@ struct PersonalizedMeditationView: View {
                 }
                 .padding(.horizontal, 16)
                 .padding(.top, 16)
+                Text("Tell us how you feel — we'll guide you from there")
+                    .font(.system(size: 13, weight: .regular, design: .rounded))
+                    .foregroundColor(.white.opacity(0.70))
+                    .multilineTextAlignment(.center)
+                    .padding(.horizontal, 32)
+                    .padding(.top, 6)
                 Spacer()
             }
         }
@@ -351,6 +337,9 @@ struct PersonalizedMeditationPlayerView: View {
     @State private var showCompletion = false
     @State private var orbPulse = false
     @State private var hasStarted = false
+    @State private var bgPlayer: AVAudioPlayer?
+    @State private var selectedBgMusic: BgMusicOption = BgMusicOption(name: "Serene", filename: "serene_mindfulness")
+    @State private var showMusicPicker = false
 
     private var currentText: String {
         hasStarted ? mood.openingText : "Tap play to begin"
@@ -409,10 +398,14 @@ struct PersonalizedMeditationPlayerView: View {
                     Button {
                         if engine.isPlaying {
                             engine.stop()
+                            bgPlayer?.stop()
+                            bgPlayer = nil
                             hasStarted = false
                             orbPulse   = false
                         } else {
                             engine.start(mood: mood, sentences: sentences)
+                            bgPlayer = makeBgPlayer(for: selectedBgMusic)
+                            bgPlayer?.play()
                             hasStarted = true
                             orbPulse   = true
                         }
@@ -452,7 +445,13 @@ struct PersonalizedMeditationPlayerView: View {
                         .font(.system(size: 17, weight: .semibold, design: .rounded))
                         .foregroundColor(.white)
                     Spacer()
-                    Color.clear.frame(width: 44, height: 44)
+                    Button { showMusicPicker = true } label: {
+                        Image(systemName: "music.note")
+                            .font(.system(size: 16, weight: .semibold))
+                            .foregroundColor(.white.opacity(0.85))
+                            .frame(width: 44, height: 44)
+                            .contentShape(Rectangle())
+                    }
                 }
                 .padding(.horizontal, 16)
                 .padding(.top, 16)
@@ -471,6 +470,8 @@ struct PersonalizedMeditationPlayerView: View {
         .onChange(of: engine.progress) { _, newValue in
             if newValue >= 1.0 && hasStarted {
                 engine.markFinished()
+                bgPlayer?.stop()
+                bgPlayer = nil
                 orbPulse = false
                 HapticManager.complete()
                 withAnimation(.easeIn(duration: 0.6)) {
@@ -478,8 +479,19 @@ struct PersonalizedMeditationPlayerView: View {
                 }
             }
         }
+        .onChange(of: selectedBgMusic) { _, _ in
+            guard engine.isPlaying else { return }
+            bgPlayer?.stop()
+            bgPlayer = makeBgPlayer(for: selectedBgMusic)
+            bgPlayer?.play()
+        }
+        .sheet(isPresented: $showMusicPicker) {
+            MeditationMusicPickerSheet(selectedMusic: $selectedBgMusic)
+        }
         .onDisappear {
             engine.stop()
+            bgPlayer?.stop()
+            bgPlayer = nil
         }
     }
 }

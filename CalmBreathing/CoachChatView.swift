@@ -101,16 +101,16 @@ struct CoachChatView: View {
     ]
     @State private var inputText      = ""
     @State private var isResponding   = false
-    @State private var showDisclaimer = false
-    @State private var activeFeature: ActiveFeature?
     @FocusState private var inputFocused: Bool
 
     enum ActiveFeature: Identifiable {
+        case disclaimer
         case breathing, morningMeditation, sleepMeditation, bodyScan, quickRelief
         case dailyPractice, stillWaters, deepRelax, quickCalm, sleepStories
         case sounds, personalizedMeditation
         var id: Self { self }
     }
+    @State private var activeFeature: ActiveFeature?
 
     var body: some View {
         ZStack {
@@ -227,28 +227,27 @@ struct CoachChatView: View {
             }
         }
         .onAppear {
-            if !hasSeenDisclaimer { showDisclaimer = true }
-        }
-        .sheet(isPresented: $showDisclaimer) {
-            ChatDisclaimerSheet {
-                hasSeenDisclaimer = true
-                showDisclaimer = false
-            }
+            if !hasSeenDisclaimer { activeFeature = .disclaimer }
         }
         .fullScreenCover(item: $activeFeature) { feature in
             switch feature {
+            case .disclaimer:
+                ChatDisclaimerSheet {
+                    hasSeenDisclaimer = true
+                    activeFeature = nil
+                }
             case .breathing:             BreathingView()
             case .morningMeditation:     MorningMeditationView().environmentObject(journal)
             case .sleepMeditation:       SleepMeditationView().environmentObject(journal)
             case .bodyScan:              BodyScanView().environmentObject(journal)
-            case .quickRelief:           QuickReliefHubView()
+            case .quickRelief:           NavigationStack { QuickReliefHubView() }
             case .dailyPractice:         DailyPracticeView()
             case .stillWaters:           StillWatersView().environmentObject(journal)
             case .deepRelax:             DeepRelaxView().environmentObject(journal)
             case .quickCalm:             SOSBreathingView()
-            case .sleepStories:          SleepStoriesView()
+            case .sleepStories:          NavigationStack { SleepStoriesView() }
             case .sounds:                SoundsHubView()
-            case .personalizedMeditation: PersonalizedMeditationView().environmentObject(journal)
+            case .personalizedMeditation: NavigationStack { PersonalizedMeditationView().environmentObject(journal) }
             }
         }
     }

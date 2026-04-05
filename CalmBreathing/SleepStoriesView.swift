@@ -333,6 +333,13 @@ struct SleepStoriesView: View {
         .navigationBarTitleDisplayMode(.inline)
         .toolbarBackground(.hidden, for: .navigationBar)
         .toolbar {
+            ToolbarItem(placement: .navigationBarLeading) {
+                Button { dismiss() } label: {
+                    Image(systemName: "chevron.left")
+                        .font(.system(size: 16, weight: .semibold))
+                        .foregroundColor(.white.opacity(0.85))
+                }
+            }
             ToolbarItem(placement: .principal) {
                 Text("Sleep Stories")
                     .font(.system(size: 17, weight: .semibold, design: .rounded))
@@ -448,6 +455,7 @@ private struct StoryPlayerView: View {
     let onDone: () -> Void
 
     @State private var audioPlayer: AVAudioPlayer?
+    @State private var bgPlayer: AVAudioPlayer?
     @State private var progress: Double = 0
     @State private var isDone = false
     @State private var syncTimer: Timer?
@@ -516,10 +524,10 @@ private struct StoryPlayerView: View {
             } label: {
                 Text("End Story")
                     .font(.system(size: 14, weight: .regular))
-                    .foregroundColor(.white.opacity(0.55))
+                    .foregroundColor(.calmAccent)
                     .padding(.horizontal, 28)
                     .padding(.vertical, 10)
-                    .background(Capsule().fill(Color.white.opacity(0.08)))
+                    .background(Capsule().fill(Color(red: 0.87, green: 0.89, blue: 0.96)).shadow(color: .black.opacity(0.08), radius: 8))
             }
             .padding(.bottom, 48)
         }
@@ -568,6 +576,16 @@ private struct StoryPlayerView: View {
 
     // MARK: - Logic
 
+    private func startBgMusic() {
+        guard let url = Bundle.main.url(forResource: "deep_sleep_bg", withExtension: "mp3", subdirectory: "Audio"),
+              let player = try? AVAudioPlayer(contentsOf: url) else { return }
+        player.numberOfLoops = -1
+        player.volume = 0.07
+        player.prepareToPlay()
+        bgPlayer = player
+        player.play()
+    }
+
     private func startSession() {
         guard let url = Bundle.main.url(forResource: story.filename, withExtension: "mp3", subdirectory: "Audio"),
               let player = try? AVAudioPlayer(contentsOf: url) else { return }
@@ -577,6 +595,7 @@ private struct StoryPlayerView: View {
         player.prepareToPlay()
         audioPlayer = player
         UIApplication.shared.isIdleTimerDisabled = true
+        startBgMusic()
         DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
             player.play()
         }
@@ -590,6 +609,8 @@ private struct StoryPlayerView: View {
                     syncTimer?.invalidate()
                     syncTimer = nil
                     UIApplication.shared.isIdleTimerDisabled = false
+                    bgPlayer?.stop()
+                    bgPlayer = nil
                 }
             }
         }
@@ -599,6 +620,8 @@ private struct StoryPlayerView: View {
         syncTimer?.invalidate()
         syncTimer = nil
         UIApplication.shared.isIdleTimerDisabled = false
+        bgPlayer?.stop()
+        bgPlayer = nil
         guard let player = audioPlayer else { return }
         let steps = 20
         let interval = 1.5 / Double(steps)

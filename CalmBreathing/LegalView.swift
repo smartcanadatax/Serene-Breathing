@@ -226,7 +226,7 @@ struct TermsGateView: View {
                         .foregroundColor(.calmDeep)
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 17)
-                        .background(Capsule().fill(Color.calmAccent).shadow(color: .calmAccent.opacity(0.35), radius: 12))
+                        .background(Capsule().fill(Color.white).shadow(color: .black.opacity(0.15), radius: 12))
                 }
                 .padding(.horizontal, 24)
                 .padding(.bottom, 36)

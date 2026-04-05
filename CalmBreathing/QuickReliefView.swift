@@ -6,6 +6,13 @@ import UIKit
 struct BgMusicOption: Hashable, Equatable {
     let name: String
     let filename: String
+    let ext: String
+
+    init(name: String, filename: String, ext: String = "mp3") {
+        self.name = name
+        self.filename = filename
+        self.ext = ext
+    }
 }
 
 private let breathingMusicOptions: [BgMusicOption] = [
@@ -129,6 +136,7 @@ struct QuickReliefView: View {
 
     private let purple = Color(red: 0.541, green: 0.357, blue: 0.804)
 
+    @State private var showSettings  = false
     @State private var isRunning     = false
     @State private var isDone        = false
     @State private var phaseIndex    = 0
@@ -141,6 +149,7 @@ struct QuickReliefView: View {
     @State private var audioSyncTimer: Timer?
     @State private var selectedMusic:  BgMusicOption = breathingMusicOptions[0]
     @State private var bgPlayer:       AVAudioPlayer?
+    @State private var cuePlayer:      AVAudioPlayer?
     @State private var completionPlayer: AVAudioPlayer?
 
     // Audio phase map — keyed by exercise name, values are (cycleDuration, [(label, startTime, targetScale)])
@@ -152,7 +161,7 @@ struct QuickReliefView: View {
         ]),
         "Anxiety Relief": (10.944, [
             ("Inhale", 0.3,  1.30),
-            ("Exhale", 5.0,  0.68),
+            ("Exhale", 4.5,  0.68),
         ]),
         "Pain Relief": (15.408, [
             ("Inhale", 0.3,  1.30),
@@ -216,7 +225,14 @@ struct QuickReliefView: View {
                             .font(.system(size: 17, weight: .semibold, design: .rounded))
                             .foregroundColor(.white)
                         Spacer()
-                        Color.clear.frame(width: 44, height: 44)
+                        Button { showSettings = true } label: {
+                            Image(systemName: "slider.horizontal.3")
+                                .font(.system(size: 16, weight: .semibold))
+                                .foregroundColor(.white)
+                                .frame(width: 44, height: 44)
+                                .background(Circle().fill(Color.white.opacity(0.20)))
+                                .contentShape(Circle())
+                        }
                     }
                     .padding(.horizontal, 16)
                     .padding(.top, 16)
@@ -225,7 +241,14 @@ struct QuickReliefView: View {
             }
         }
         .navigationBarHidden(true)
+        .onAppear { prepareBgMusic() }
+        .onChange(of: selectedMusic) { _ in prepareBgMusic() }
         .onDisappear { stopSession() }
+        .sheet(isPresented: $showSettings) {
+            QuickReliefSettingsSheet(selectedMusic: $selectedMusic)
+                .presentationDetents([.height(200)])
+                .presentationDragIndicator(.visible)
+        }
     }
 
     // MARK: - Intro
@@ -248,16 +271,16 @@ struct QuickReliefView: View {
                     HStack(spacing: 14) {
                         Text(phase.label)
                             .font(.system(size: 14, weight: .medium, design: .rounded))
-                            .foregroundColor(purple)
+                            .foregroundColor(Color(red: 0.10, green: 0.10, blue: 0.12))
                             .frame(width: 60, alignment: .leading)
                         Text("\(phase.duration)s")
                             .font(.system(size: 14, weight: .regular))
-                            .foregroundColor(.white.opacity(0.80))
+                            .foregroundColor(Color(red: 0.10, green: 0.10, blue: 0.12).opacity(0.65))
                         Spacer()
                     }
                     .padding(.horizontal, 16)
                     .padding(.vertical, 8)
-                    .background(Capsule().fill(Color.white.opacity(0.06)))
+                    .background(Capsule().fill(Color(red: 0.87, green: 0.89, blue: 0.96)))
                 }
             }
 
@@ -279,39 +302,17 @@ struct QuickReliefView: View {
                 .foregroundColor(.white.opacity(0.45))
                 .multilineTextAlignment(.center)
 
-            // Music selector
-            HStack(spacing: 12) {
-                Image(systemName: "music.note")
-                    .font(.system(size: 14))
-                    .foregroundColor(purple)
-                    .frame(width: 20)
-                Text("Music")
-                    .font(.system(size: 14, weight: .medium, design: .rounded))
-                    .foregroundColor(.white.opacity(0.85))
-                Spacer()
-                Picker("", selection: $selectedMusic) {
-                    ForEach(breathingMusicOptions, id: \.filename) { opt in
-                        Text(opt.name).tag(opt)
-                    }
-                }
-                .pickerStyle(.menu)
-                .tint(purple)
-                .font(.system(size: 14, weight: .medium))
-            }
-            .padding(.horizontal, 16)
-            .padding(.vertical, 12)
-            .background(RoundedRectangle(cornerRadius: 14).fill(Color.white.opacity(0.08)))
-
             Button { startSession() } label: {
-                HStack {
-                    Image(systemName: "play.fill")
+                HStack(spacing: 8) {
                     Text("Begin · \(exercise.totalSeconds >= 60 ? "\(exercise.totalSeconds / 60) min" : "\(exercise.totalSeconds) sec")")
+                        .font(.system(size: 16, weight: .semibold, design: .rounded))
+                    Image(systemName: "chevron.right")
+                        .font(.system(size: 13, weight: .semibold))
                 }
-                .font(.system(size: 16, weight: .semibold, design: .rounded))
-                .foregroundColor(.calmDeep)
+                .foregroundColor(.calmAccent)
                 .frame(maxWidth: .infinity)
                 .padding(.vertical, 16)
-                .background(Capsule().fill(Color.calmAccent).shadow(color: Color.calmAccent.opacity(0.35), radius: 12))
+                .background(Capsule().fill(Color.white).shadow(color: .black.opacity(0.10), radius: 12))
             }
         }
     }
@@ -352,10 +353,10 @@ struct QuickReliefView: View {
             Button(action: stopSession) {
                 Text("End Session")
                     .font(.system(size: 14, weight: .regular))
-                    .foregroundColor(.calmDeep)
+                    .foregroundColor(.calmAccent)
                     .padding(.horizontal, 24)
                     .padding(.vertical, 10)
-                    .background(Capsule().fill(Color(red: 0.87, green: 0.89, blue: 0.96)))
+                    .background(Capsule().fill(Color(red: 0.87, green: 0.89, blue: 0.96)).shadow(color: .black.opacity(0.08), radius: 8))
             }
         }
     }
@@ -372,7 +373,7 @@ struct QuickReliefView: View {
                 .font(.system(size: 26, weight: .semibold, design: .rounded))
                 .foregroundColor(.white)
 
-            Text("You completed \(exercise.totalSeconds >= 60 ? "\(exercise.totalSeconds / 60) minute" : "\(exercise.totalSeconds) seconds") of \(exercise.subtitle).")
+            Text("You've taken a moment to breathe. Your body and mind thank you.")
                 .font(.system(size: 15, weight: .regular))
                 .foregroundColor(.white.opacity(0.85))
                 .multilineTextAlignment(.center)
@@ -409,10 +410,7 @@ struct QuickReliefView: View {
             }
 
             Button {
-                isDone = false
-                cycleCount = 0
-                phaseIndex = 0
-                scale = 1.0
+                dismiss()
             } label: {
                 Text("Done")
                     .font(.system(size: 16, weight: .semibold, design: .rounded))
@@ -445,11 +443,9 @@ struct QuickReliefView: View {
     private func playVoiceAudio() -> Bool {
         let filename: String
         switch exercise.name {
-        case "Stress Relief":  filename = "stress_relief_breathing"
-        case "Anxiety Relief": filename = "anxiety_relief_breathing"
-        case "Focus Boost":    filename = "focus_boost_breathing"
-        case "Calm Down":      filename = "calm_down_breathing"
-        case "Pain Relief":    filename = "pain_relief_breathing"
+        case "Stress Relief": filename = "stress_relief_breathing"
+        case "Calm Down":     filename = "calm_down_breathing"
+        case "Pain Relief":   filename = "pain_relief_breathing"
         default: return false
         }
         guard let url = Bundle.main.url(forResource: filename, withExtension: "mp3", subdirectory: "Audio"),
@@ -514,6 +510,7 @@ struct QuickReliefView: View {
             scale = phase.targetScale
         }
         HapticManager.breathe(phase: phase.label)
+        playCue(phase.label)
 
         countdownTimer?.invalidate()
         countdownTimer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { _ in
@@ -569,6 +566,23 @@ struct QuickReliefView: View {
         UIApplication.shared.isIdleTimerDisabled = false
     }
 
+    private func playCue(_ label: String) {
+        let filename: String
+        switch label {
+        case "Inhale", "Sniff": filename = "inhale_cue"
+        case "Hold":            filename = "hold_cue"
+        case "Exhale":          filename = "exhale_cue"
+        default: return
+        }
+        guard let url = Bundle.main.url(forResource: filename, withExtension: "mp3", subdirectory: "Audio"),
+              let player = try? AVAudioPlayer(contentsOf: url) else { return }
+        player.numberOfLoops = 0
+        player.volume = 0.85
+        player.prepareToPlay()
+        player.play()
+        cuePlayer = player
+    }
+
     private func stopTimers() {
         phaseTimer?.invalidate()
         countdownTimer?.invalidate()
@@ -582,12 +596,12 @@ struct QuickReliefView: View {
         bgPlayer         = nil
         completionPlayer?.stop()
         completionPlayer = nil
+        prepareBgMusic()
     }
 
-    private func startBgMusic() {
+    private func prepareBgMusic() {
         let name: String
         if selectedMusic.filename.isEmpty {
-            // Default: per-exercise track
             switch exercise.name {
             case "Stress Relief":  name = "spiritual_yoga"
             case "Anxiety Relief": name = "quietphase-yoga-ambient-485882"
@@ -603,8 +617,11 @@ struct QuickReliefView: View {
         bg.numberOfLoops = -1
         bg.volume = 0.05
         bg.prepareToPlay()
-        bg.play()
         bgPlayer = bg
+    }
+
+    private func startBgMusic() {
+        bgPlayer?.play()
     }
 }
 
@@ -623,6 +640,7 @@ private extension HapticManager {
 
 // MARK: - Hub (exercise picker)
 struct QuickReliefHubView: View {
+    @Environment(\.dismiss) private var dismiss
     private let purple = Color(red: 0.541, green: 0.357, blue: 0.804)
 
     var body: some View {
@@ -676,5 +694,66 @@ struct QuickReliefHubView: View {
         }
         .navigationTitle("")
         .navigationBarTitleDisplayMode(.inline)
+        .toolbar {
+            ToolbarItem(placement: .navigationBarLeading) {
+                Button { dismiss() } label: {
+                    Image(systemName: "chevron.left")
+                        .font(.system(size: 16, weight: .semibold))
+                        .foregroundColor(.white.opacity(0.85))
+                }
+            }
+        }
+        .toolbarBackground(.hidden, for: .navigationBar)
+    }
+}
+
+// MARK: - Quick Relief Settings Sheet
+
+private struct QuickReliefSettingsSheet: View {
+    @Binding var selectedMusic: BgMusicOption
+    @Environment(\.dismiss) private var dismiss
+    private let purple = Color(red: 0.541, green: 0.357, blue: 0.804)
+
+    var body: some View {
+        ZStack {
+            CalmBackground()
+            VStack(spacing: 0) {
+                Capsule()
+                    .fill(Color.white.opacity(0.40))
+                    .frame(width: 36, height: 4)
+                    .padding(.top, 12)
+
+                Text("Background Sound")
+                    .font(.system(size: 17, weight: .semibold, design: .rounded))
+                    .foregroundColor(.white)
+                    .padding(.top, 12)
+                    .padding(.bottom, 16)
+
+                HStack(spacing: 12) {
+                    Image(systemName: "music.note")
+                        .font(.system(size: 14))
+                        .foregroundColor(.white)
+                        .frame(width: 20)
+                    Text("Music")
+                        .font(.system(size: 14, weight: .medium, design: .rounded))
+                        .foregroundColor(.white.opacity(0.85))
+                    Spacer()
+                    Picker("", selection: $selectedMusic) {
+                        ForEach(breathingMusicOptions, id: \.filename) { opt in
+                            Text(opt.name).tag(opt)
+                        }
+                    }
+                    .pickerStyle(.menu)
+                    .tint(purple)
+                    .font(.system(size: 14, weight: .medium))
+                }
+                .padding(.horizontal, 16)
+                .padding(.vertical, 12)
+                .background(RoundedRectangle(cornerRadius: 14).fill(Color.white.opacity(0.08)))
+                .padding(.horizontal, 24)
+
+                Spacer()
+            }
+        }
     }
 }

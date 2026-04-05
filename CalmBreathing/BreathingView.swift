@@ -51,6 +51,7 @@ enum BreathingPattern: String, CaseIterable {
 struct BreathingView: View {
     @Environment(\.dismiss) private var dismiss
     @EnvironmentObject var premium: PremiumStore
+    @State private var showSettings = false
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @State private var showPaywall = false
 
@@ -102,14 +103,16 @@ struct BreathingView: View {
     @State private var scale: CGFloat = 0.48
     @State private var animationDuration: Double = 1.0
     @State private var isRunning = false
+    @State private var showEarlyEndMessage = false
     @State private var cycleCount = 0
     @State private var phaseTimer: Timer?
     @State private var countdown: Int = 4
     @State private var countdownTimer: Timer?
     @State private var audioPlayer: AVAudioPlayer?
+    @State private var bgPlayer: AVAudioPlayer?
+    @State private var completionPlayer: AVAudioPlayer?
     @State private var lastAudioPhase: Phase = .ready
     @State private var audioSyncTimer: Timer?
-    private let speechSynth = AVSpeechSynthesizer()
 
     // Exact timestamps measured via silence detection
     private let boxCycleDuration:  TimeInterval = 15.672
@@ -138,78 +141,22 @@ struct BreathingView: View {
                             .contentShape(Rectangle())
                     }
                     Spacer()
-                    if !premium.isPremium {
-                        Button { showPaywall = true } label: {
-                            HStack(spacing: 4) {
-                                Image(systemName: "crown.fill").font(.system(size: 11))
-                                Text("Premium").font(.system(size: 12, weight: .semibold))
-                            }
-                            .foregroundColor(.calmDeep)
-                            .padding(.horizontal, 10).padding(.vertical, 5)
-                            .background(Capsule().fill(Color.calmAccent))
-                        }
+                    Text("Breathing Exercises")
+                        .font(.system(size: 17, weight: .semibold, design: .rounded))
+                        .foregroundColor(.white)
+                    Spacer()
+                    Button { showSettings = true } label: {
+                        Image(systemName: "slider.horizontal.3")
+                            .font(.system(size: 16, weight: .semibold))
+                            .foregroundColor(.white)
+                            .frame(width: 44, height: 44)
+                            .background(Circle().fill(Color.white.opacity(0.20)))
+                            .contentShape(Circle())
                     }
                 }
                 .padding(.horizontal, 16)
                 .padding(.top, 16)
-
-                // Header
-                VStack(spacing: 6) {
-                    AppLogoView(size: 52)
-                        .padding(.top, 4)
-                    Text("Need Calm Now?")
-                        .font(.system(size: 24, weight: .bold, design: .rounded))
-                        .foregroundColor(.white)
-                    Text("Breathe through it")
-                        .font(.system(size: 13, weight: .medium, design: .rounded))
-                        .foregroundColor(.white.opacity(0.65))
-
-                    // Pattern picker pills
-                    HStack(spacing: 8) {
-                        ForEach(BreathingPattern.allCases, id: \.self) { p in
-                            let isLocked = p != .box && !premium.isPremium
-                            Button {
-                                if !isRunning {
-                                    if isLocked { showPaywall = true }
-                                    else { selectedPattern = p }
-                                }
-                            } label: {
-                                HStack(spacing: 4) {
-                                    Text(p.rawValue)
-                                        .font(.system(size: 13, weight: selectedPattern == p ? .semibold : .medium))
-                                        .foregroundColor(selectedPattern == p ? .calmDeep : (isLocked ? .white.opacity(0.45) : .white))
-                                    if isLocked {
-                                        Image(systemName: "lock.fill")
-                                            .font(.system(size: 9))
-                                            .foregroundColor(.white.opacity(0.45))
-                                    }
-                                }
-                                .padding(.horizontal, 18)
-                                .padding(.vertical, 10)
-                                .frame(minHeight: 40)
-                                .contentShape(Rectangle())
-                                .background(Capsule().fill(selectedPattern == p ? Color.white : Color.white.opacity(isLocked ? 0.06 : 0.12)))
-                            }
-                        }
-                    }
-
-                    Text(selectedPattern.subtitle)
-                        .font(.system(size: 12))
-                        .foregroundColor(.white.opacity(0.70))
-
-                    // Custom duration sliders
-                    if selectedPattern == .custom && !isRunning {
-                        VStack(spacing: 10) {
-                            customSlider("Inhale", value: $customInhale, color: .calmAccent)
-                            customSlider("Hold",   value: $customHold,   color: .calmPurple)
-                            customSlider("Exhale", value: $customExhale, color: .calmTeal)
-                        }
-                        .padding(.horizontal, 8)
-                        .padding(.top, 4)
-                        .transition(.opacity)
-                    }
-                }
-                .padding(.top, 12)
+                .padding(.bottom, 14)
 
                 Spacer()
 
@@ -259,20 +206,24 @@ struct BreathingView: View {
                         Button(action: stopWithCompletion) {
                             Label("Stop", systemImage: "stop.fill")
                                 .font(.system(size: 15, weight: .medium))
-                                .foregroundColor(.white)
+                                .foregroundColor(.calmAccent)
                                 .padding(.horizontal, 36)
                                 .padding(.vertical, 14)
-                                .background(Capsule().fill(Color.white.opacity(0.12)))
+                                .background(Capsule().fill(Color(red: 0.87, green: 0.89, blue: 0.96)).shadow(color: .black.opacity(0.08), radius: 8))
                         }
                     } else {
                         Button(action: startBreathing) {
-                            Label("Begin", systemImage: "play.fill")
-                                .font(.system(size: 15, weight: .semibold))
-                                .foregroundColor(.calmDeep)
-                                .padding(.horizontal, 44)
-                                .padding(.vertical, 14)
-                                .background(Capsule().fill(Color.calmAccent))
-                                .shadow(color: .calmAccent.opacity(0.35), radius: 10)
+                            HStack(spacing: 8) {
+                                Text("Begin")
+                                    .font(.system(size: 15, weight: .semibold))
+                                Image(systemName: "chevron.right")
+                                    .font(.system(size: 13, weight: .semibold))
+                            }
+                            .foregroundColor(.calmAccent)
+                            .padding(.horizontal, 44)
+                            .padding(.vertical, 14)
+                            .background(Capsule().fill(Color.white))
+                            .shadow(color: .black.opacity(0.12), radius: 10)
                         }
                     }
                 }
@@ -290,11 +241,41 @@ struct BreathingView: View {
                     .padding(.bottom, 28)
             }
             .padding(.horizontal, 24)
+
+            // Early-end nudge
+            if showEarlyEndMessage {
+                VStack {
+                    Spacer()
+                    Text("Please finish your breathing session")
+                        .font(.system(size: 14, weight: .medium, design: .rounded))
+                        .foregroundColor(.white)
+                        .padding(.horizontal, 24)
+                        .padding(.vertical, 12)
+                        .background(Capsule().fill(Color.black.opacity(0.55)))
+                        .padding(.bottom, 100)
+                        .transition(.opacity.combined(with: .move(edge: .bottom)))
+                }
+            }
         }
         .navigationBarHidden(true)
+        .sheet(isPresented: $showSettings) {
+            BreathingSettingsSheet(
+                selectedPattern: $selectedPattern,
+                customInhale: $customInhale,
+                customHold: $customHold,
+                customExhale: $customExhale,
+                isRunning: isRunning,
+                showPaywall: $showPaywall
+            )
+            .environmentObject(premium)
+            .presentationDetents([selectedPattern == .custom ? .height(490) : .height(340)])
+            .presentationDragIndicator(.visible)
+        }
         .fullScreenCover(isPresented: $showPaywall) {
             PaywallView(isPresented: $showPaywall).environmentObject(premium)
         }
+        .onAppear { prepareBgMusic() }
+        .onChange(of: selectedPattern) { _ in if !isRunning { prepareBgMusic() } }
         .onDisappear { stopBreathing() }
         .onReceive(NotificationCenter.default.publisher(for: .watchStopBreathing)) { _ in
             stopBreathing()
@@ -322,7 +303,7 @@ struct BreathingView: View {
         VStack(spacing: 4) {
             Text(dur)
                 .font(.system(size: 18, weight: .semibold, design: .rounded))
-                .foregroundColor(color)
+                .foregroundColor(.white)
             Text(name)
                 .font(.caption2)
                 .foregroundColor(.white.opacity(0.92))
@@ -336,11 +317,12 @@ struct BreathingView: View {
         sessionStartDate = Date()
         HapticManager.start()
         UIApplication.shared.isIdleTimerDisabled = true
+        startBgMusic()
         playBreathingAudio()
         if (selectedPattern == .box || selectedPattern == .f478), audioPlayer != nil {
             startAudioSync()
         } else {
-            runPhase(.inhale)
+            runPhase(.inhale)   // custom: speech cues drive phases
         }
     }
 
@@ -355,7 +337,9 @@ struct BreathingView: View {
         audioSyncTimer = nil
         audioPlayer?.stop()
         audioPlayer = nil
-        speechSynth.stopSpeaking(at: .immediate)
+        bgPlayer?.stop()
+        bgPlayer = nil
+        prepareBgMusic()
         PhoneSession.shared.sendBreathingState(phase: "Ready", countdown: 0,
                                                phaseDuration: 0, pattern: "", isRunning: false)
         let elapsed = Date().timeIntervalSince(sessionStartDate)
@@ -422,43 +406,77 @@ struct BreathingView: View {
         }
     }
 
-    private func playCompletionSpeech() {
-        let utt = AVSpeechUtterance(string: "Well done. You have finished your breathing session.")
-        utt.voice = AVSpeechSynthesisVoice(identifier: "com.apple.ttsbundle.Nicky-compact")
-                   ?? AVSpeechSynthesisVoice(language: "en-US")
-        utt.rate = 0.42
-        utt.pitchMultiplier = 0.9
-        utt.volume = 0.85
-        speechSynth.speak(utt)
-    }
 
     private func stopWithCompletion() {
+        let elapsed = Date().timeIntervalSince(sessionStartDate)
+        if elapsed < 30 {
+            withAnimation { showEarlyEndMessage = true }
+            DispatchQueue.main.asyncAfter(deadline: .now() + 2.5) {
+                withAnimation { showEarlyEndMessage = false }
+            }
+            return
+        }
         stopBreathing()
-        playCompletionSpeech()
+        playCompletionAudio()
+    }
+
+    private func playCompletionAudio() {
+        guard let url = Bundle.main.url(forResource: "breathing_complete", withExtension: "mp3", subdirectory: "Audio"),
+              let player = try? AVAudioPlayer(contentsOf: url) else { return }
+        player.numberOfLoops = 0
+        player.volume = 0.85
+        player.prepareToPlay()
+        player.play()
+        completionPlayer = player
+    }
+
+    private func prepareBgMusic() {
+        let track: String
+        switch selectedPattern {
+        case .box:    track = "serene_mindfulness"
+        case .f478:   track = "peaceful_mind"
+        case .custom: track = "zen_water"
+        }
+        guard let url = Bundle.main.url(forResource: track, withExtension: "mp3", subdirectory: "Audio"),
+              let player = try? AVAudioPlayer(contentsOf: url) else { return }
+        player.numberOfLoops = -1
+        player.volume = 0.07
+        player.prepareToPlay()
+        bgPlayer = player
+    }
+
+    private func startBgMusic() {
+        bgPlayer?.play()
     }
 
     private func playBreathingAudio() {
+        // Custom uses per-phase cue clips — no looping background audio
+        guard selectedPattern != .custom else { return }
         let filename: String
         switch selectedPattern {
         case .box:    filename = "box_breathing"
         case .f478:   filename = "breathing_478"
-        case .custom: return   // no audio guide for custom
+        case .custom: return
         }
-        guard let url = Bundle.main.url(forResource: filename, withExtension: "mp3") else {
-            print("⚠️ breathing audio not found in bundle: \(filename).mp3")
-            return
-        }
-        print("✅ playing breathing audio: \(url)")
+        guard let url = Bundle.main.url(forResource: filename, withExtension: "mp3") else { return }
         do {
             try AVAudioSession.sharedInstance().setCategory(.playback, mode: .default)
             try AVAudioSession.sharedInstance().setActive(true)
             audioPlayer = try AVAudioPlayer(contentsOf: url)
-            audioPlayer?.numberOfLoops = -1   // loop forever
+            audioPlayer?.numberOfLoops = -1
             audioPlayer?.volume = 0.85
             audioPlayer?.play()
-        } catch {
-            // Audio unavailable — exercise continues silently
-        }
+        } catch {}
+    }
+
+    private func playCueAudio(_ name: String) {
+        guard let url = Bundle.main.url(forResource: name, withExtension: "mp3", subdirectory: "Audio"),
+              let player = try? AVAudioPlayer(contentsOf: url) else { return }
+        player.numberOfLoops = 0
+        player.volume = 0.85
+        player.prepareToPlay()
+        player.play()
+        completionPlayer = player  // hold strong reference
     }
 
     private func runPhase(_ next: Phase) {
@@ -472,26 +490,17 @@ struct BreathingView: View {
         case .ready:  break
         }
 
-        // Speak phase cue for custom pattern
+        // Play Salli cue clips for custom pattern
         if selectedPattern == .custom {
-            let word: String
             switch next {
-            case .inhale: word = "Inhale"
-            case .hold:   word = "Hold"
-            case .exhale: word = "Exhale"
-            case .ready:  word = ""
-            }
-            if !word.isEmpty {
-                let utt = AVSpeechUtterance(string: word)
-                utt.voice = AVSpeechSynthesisVoice(identifier: "com.apple.ttsbundle.Nicky-compact")
-                           ?? AVSpeechSynthesisVoice(language: "en-US")
-                utt.rate = 0.42
-                utt.pitchMultiplier = 0.9
-                utt.volume = 0.85
-                speechSynth.stopSpeaking(at: .immediate)
-                speechSynth.speak(utt)
+            case .inhale: playCueAudio("inhale_cue")
+            case .hold:   playCueAudio("hold_cue")
+            case .exhale: playCueAudio("exhale_cue")
+            case .ready:  break
             }
         }
+
+
 
         let dur = selectedPattern.duration(for: next, custom: (customInhale, customHold, customExhale))
         phase = next
@@ -543,40 +552,69 @@ struct BreathingView: View {
 // MARK: - Breathing Hub
 struct BreathingHubView: View {
     @EnvironmentObject var premium: PremiumStore
+    @Environment(\.dismiss) private var dismiss
+    @Environment(\.presentationMode) private var presentationMode
     @State private var showPaywall = false
     private let brandPurple = Color(red: 0.541, green: 0.357, blue: 0.804)
 
     var body: some View {
         ZStack {
             CalmBackground()
-            ScrollView(showsIndicators: false) {
-                VStack(spacing: 14) {
-                    // Breathing Exercise
-                    NavigationLink(destination: BreathingView()) {
-                        HubRow(icon: "lungs.fill", title: "Breathing Exercise",
-                               subtitle: "Box · 4-7-8 · Custom patterns", purple: brandPurple)
-                    }
-
-                    // Quick Relief
-                    if premium.isPremium {
-                        NavigationLink(destination: QuickReliefHubView()) {
-                            HubRow(icon: "bolt.heart.fill", title: "Quick Relief",
-                                   subtitle: "Stress · Anxiety · Focus · Pain Relief", purple: brandPurple)
+            VStack(spacing: 0) {
+                // Nav header
+                HStack {
+                    if presentationMode.wrappedValue.isPresented {
+                        Button { dismiss() } label: {
+                            Image(systemName: "chevron.left")
+                                .font(.system(size: 16, weight: .semibold))
+                                .foregroundColor(.white)
+                                .frame(width: 44, height: 44)
+                                .contentShape(Rectangle())
                         }
                     } else {
-                        Button { showPaywall = true } label: {
-                            HubRow(icon: "bolt.heart.fill", title: "Quick Relief",
-                                   subtitle: "Stress · Anxiety · Focus · Pain Relief", purple: brandPurple, locked: true)
-                        }.buttonStyle(.plain)
+                        Color.clear.frame(width: 44, height: 44)
                     }
+                    Spacer()
+                    Text("Breathing")
+                        .font(.system(size: 17, weight: .semibold, design: .rounded))
+                        .foregroundColor(.white)
+                    Spacer()
+                    Color.clear.frame(width: 44, height: 44)
                 }
-                .padding(.horizontal, 24)
+                .padding(.horizontal, 16)
                 .padding(.top, 16)
+                .padding(.bottom, 14)
+
+                ScrollView(showsIndicators: false) {
+                    VStack(spacing: 14) {
+                        NavigationLink(destination: BreathingView().environmentObject(premium)) {
+                            HubRow(icon: "lungs.fill", title: "Breathing Exercise",
+                                   subtitle: "Box · 4-7-8 · Custom patterns", purple: brandPurple)
+                        }.buttonStyle(.plain)
+
+                        ForEach(QuickReliefExercise.all) { exercise in
+                            if premium.isPremium {
+                                NavigationLink(destination: QuickReliefView(exercise: exercise)) {
+                                    HubRow(icon: exercise.icon, title: exercise.name,
+                                           subtitle: exercise.subtitle, purple: brandPurple)
+                                }
+                            } else {
+                                Button { showPaywall = true } label: {
+                                    HubRow(icon: exercise.icon, title: exercise.name,
+                                           subtitle: exercise.subtitle, purple: brandPurple, locked: true)
+                                }.buttonStyle(.plain)
+                            }
+                        }
+                    }
+                    .padding(.horizontal, 24)
+                    .padding(.top, 4)
+                }
             }
         }
-        .navigationTitle("Breathe")
-        .navigationBarTitleDisplayMode(.large)
-        .sheet(isPresented: $showPaywall) { PaywallView(isPresented: $showPaywall) }
+        .navigationBarHidden(true)
+        .fullScreenCover(isPresented: $showPaywall) {
+            PaywallView(isPresented: $showPaywall).environmentObject(premium)
+        }
     }
 }
 
@@ -626,3 +664,124 @@ private struct HubRow: View {
     }
 }
 
+// MARK: - Breathing Settings Sheet
+private struct BreathingSettingsSheet: View {
+    @EnvironmentObject var premium: PremiumStore
+    @Binding var selectedPattern: BreathingPattern
+    @Binding var customInhale: Double
+    @Binding var customHold: Double
+    @Binding var customExhale: Double
+    let isRunning: Bool
+    @Binding var showPaywall: Bool
+    @Environment(\.dismiss) private var dismiss
+
+    private let brandPurple = Color(red: 0.541, green: 0.357, blue: 0.804)
+
+    var body: some View {
+        ZStack {
+            CalmBackground()
+            VStack(spacing: 0) {
+                Capsule()
+                    .fill(Color.white.opacity(0.40))
+                    .frame(width: 36, height: 4)
+                    .padding(.top, 12)
+
+                Text("Breathing Pattern")
+                    .font(.system(size: 17, weight: .semibold, design: .rounded))
+                    .foregroundColor(.white)
+                    .padding(.top, 12)
+                    .padding(.bottom, 12)
+
+                VStack(spacing: 10) {
+                    ForEach(BreathingPattern.allCases, id: \.self) { p in
+                        let isLocked = p != .box && !premium.isPremium
+                        Button {
+                            if isRunning { return }
+                            if isLocked { showPaywall = true; dismiss() }
+                            else {
+                                selectedPattern = p
+                                if p != .custom { dismiss() }
+                            }
+                        } label: {
+                            HStack(spacing: 14) {
+                                VStack(alignment: .leading, spacing: 3) {
+                                    HStack(spacing: 6) {
+                                        Text(p.rawValue)
+                                            .font(.system(size: 15, weight: .semibold, design: .rounded))
+                                            .foregroundColor(isLocked ? Color(red: 0.10, green: 0.10, blue: 0.12).opacity(0.40) : Color(red: 0.10, green: 0.10, blue: 0.12))
+                                        if isLocked {
+                                            Image(systemName: "lock.fill")
+                                                .font(.system(size: 11))
+                                                .foregroundColor(Color(red: 0.10, green: 0.10, blue: 0.12).opacity(0.40))
+                                        }
+                                    }
+                                    Text(p.subtitle)
+                                        .font(.system(size: 12, weight: .regular))
+                                        .foregroundColor(Color(red: 0.10, green: 0.10, blue: 0.12).opacity(0.55))
+                                }
+                                Spacer()
+                                if selectedPattern == p {
+                                    Image(systemName: "checkmark.circle.fill")
+                                        .font(.system(size: 20))
+                                        .foregroundColor(brandPurple)
+                                }
+                            }
+                            .padding(.horizontal, 18)
+                            .padding(.vertical, 11)
+                            .background(
+                                RoundedRectangle(cornerRadius: 14)
+                                    .fill(Color(red: 0.87, green: 0.89, blue: 0.96))
+                                    .overlay(RoundedRectangle(cornerRadius: 14)
+                                        .stroke(selectedPattern == p ? brandPurple.opacity(0.60) : Color.clear, lineWidth: 1.5))
+                            )
+                        }
+                        .buttonStyle(.plain)
+                        .disabled(isRunning)
+                        .opacity(isRunning ? 0.50 : 1)
+                    }
+                }
+                .padding(.horizontal, 24)
+
+                if selectedPattern == .custom {
+                    VStack(spacing: 12) {
+                        Text("CUSTOM DURATIONS")
+                            .font(.system(size: 11, weight: .semibold))
+                            .foregroundColor(.white.opacity(0.55))
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .padding(.top, 16)
+                        settingsSlider("Inhale", value: $customInhale, color: .calmAccent)
+                        settingsSlider("Hold",   value: $customHold,   color: .calmPurple)
+                        settingsSlider("Exhale", value: $customExhale, color: .calmTeal)
+                    }
+                    .padding(.horizontal, 24)
+                    .disabled(isRunning)
+                    .opacity(isRunning ? 0.50 : 1)
+                }
+
+                if isRunning {
+                    Text("Stop the session to change pattern")
+                        .font(.system(size: 12, weight: .regular))
+                        .foregroundColor(.white.opacity(0.55))
+                        .padding(.top, 20)
+                }
+
+                Spacer()
+            }
+        }
+    }
+
+    private func settingsSlider(_ label: String, value: Binding<Double>, color: Color) -> some View {
+        HStack(spacing: 12) {
+            Text(label)
+                .font(.system(size: 13, weight: .medium))
+                .foregroundColor(.white)
+                .frame(width: 52, alignment: .leading)
+            Slider(value: value, in: 2...12, step: 1)
+                .tint(.white)
+            Text("\(Int(value.wrappedValue))s")
+                .font(.system(size: 13, weight: .semibold))
+                .foregroundColor(.white)
+                .frame(width: 32, alignment: .trailing)
+        }
+    }
+}
