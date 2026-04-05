@@ -331,22 +331,28 @@ struct SleepStoriesView: View {
             }
 
             // Custom nav bar overlay
-            if selectedStory == nil {
-                VStack {
-                    HStack {
-                        Button { dismiss() } label: {
-                            Image(systemName: "chevron.left")
-                                .font(.system(size: 16, weight: .semibold))
-                                .foregroundColor(.white.opacity(0.85))
-                                .frame(width: 44, height: 44)
-                                .contentShape(Rectangle())
-                        }
-                        Spacer()
+            VStack {
+                HStack {
+                    Button {
+                        if selectedStory != nil { selectedStory = nil }
+                        else { dismiss() }
+                    } label: {
+                        Image(systemName: "chevron.left")
+                            .font(.system(size: 16, weight: .semibold))
+                            .foregroundColor(.white.opacity(0.85))
+                            .frame(width: 44, height: 44)
+                            .contentShape(Rectangle())
                     }
-                    .padding(.horizontal, 16)
-                    .padding(.top, 16)
                     Spacer()
+                    Text(selectedStory?.title ?? "Sleep Stories")
+                        .font(.system(size: 17, weight: .semibold, design: .rounded))
+                        .foregroundColor(.white)
+                    Spacer()
+                    Color.clear.frame(width: 44, height: 44)
                 }
+                .padding(.horizontal, 16)
+                .padding(.top, 16)
+                Spacer()
             }
         }
         .navigationBarHidden(true)
@@ -476,14 +482,6 @@ private struct StoryPlayerView: View {
     private var playerView: some View {
         VStack(spacing: 0) {
             Spacer()
-
-            // Story title above orb
-            Text(story.title)
-                .font(.system(size: 18, weight: .semibold, design: .rounded))
-                .foregroundColor(.white)
-                .multilineTextAlignment(.center)
-                .padding(.horizontal, 32)
-                .padding(.bottom, 16)
 
             // Progress orb
             ZStack {
