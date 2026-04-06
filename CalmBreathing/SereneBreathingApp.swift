@@ -66,6 +66,11 @@ struct SereneBreathingApp: App {
                     }
                 }
             }
+            .onChange(of: hasSeenOnboarding) { _, newValue in
+                if newValue && hasAgreedToTerms && !hasRequestedHealth {
+                    showHealthPermission = true
+                }
+            }
             .fullScreenCover(isPresented: $showHealthPermission) {
                 HealthPermissionView {
                     // Allow tapped — request system permission
