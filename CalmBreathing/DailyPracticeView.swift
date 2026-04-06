@@ -513,7 +513,7 @@ struct DailyPracticeView: View {
                     .foregroundColor(.white.opacity(0.75))
                     .multilineTextAlignment(.center)
                     .padding(.horizontal, 28)
-                    .padding(.top, 18)
+                    .padding(.top, 38)
 
                 // Begin button
                 Button {

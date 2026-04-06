@@ -45,7 +45,8 @@ struct SleepMeditationView: View {
     @State private var bgPlayer: AVAudioPlayer?
     @State private var isInterrupted = false
     @State private var reachedNearEnd = false
-    @State private var selectedBgMusic: BgMusicOption = BgMusicOption(name: "Sleep Calm", filename: "sleep_meditation_bg")
+    @AppStorage("preferredBgMusicFilename") private var preferredBgMusicFilename: String = "serene_mindfulness"
+    @State private var selectedBgMusic: BgMusicOption = BgMusicOption(name: "Serene", filename: "serene_mindfulness")
     @State private var showMusicPicker = false
 
     private var totalDuration: Double { prompts.map(\.duration).reduce(0, +) }
@@ -114,8 +115,12 @@ struct SleepMeditationView: View {
             }
         }
         .navigationBarHidden(true)
-        .onAppear { prepareBgMusic() }
+        .onAppear {
+            selectedBgMusic = meditationMusicOptions.first { $0.filename == preferredBgMusicFilename } ?? BgMusicOption(name: "Serene", filename: "serene_mindfulness")
+            prepareBgMusic()
+        }
         .onChange(of: selectedBgMusic) { _, _ in
+            preferredBgMusicFilename = selectedBgMusic.filename
             bgPlayer?.stop()
             bgPlayer = nil
             prepareBgMusic()

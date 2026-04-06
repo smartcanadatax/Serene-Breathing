@@ -337,6 +337,7 @@ struct PersonalizedMeditationPlayerView: View {
     @State private var showCompletion = false
     @State private var orbPulse = false
     @State private var hasStarted = false
+    @AppStorage("preferredBgMusicFilename") private var preferredBgMusicFilename: String = "serene_mindfulness"
     @State private var bgPlayer: AVAudioPlayer?
     @State private var selectedBgMusic: BgMusicOption = BgMusicOption(name: "Serene", filename: "serene_mindfulness")
     @State private var showMusicPicker = false
@@ -479,7 +480,11 @@ struct PersonalizedMeditationPlayerView: View {
                 }
             }
         }
+        .onAppear {
+            selectedBgMusic = meditationMusicOptions.first { $0.filename == preferredBgMusicFilename } ?? BgMusicOption(name: "Serene", filename: "serene_mindfulness")
+        }
         .onChange(of: selectedBgMusic) { _, _ in
+            preferredBgMusicFilename = selectedBgMusic.filename
             guard engine.isPlaying else { return }
             bgPlayer?.stop()
             bgPlayer = makeBgPlayer(for: selectedBgMusic)

@@ -26,7 +26,6 @@ class SoundPlayer: ObservableObject {
         case meditationBlue        = "Blue Meditation"
         case deepRelaxation        = "Deep Relaxation"
         case balanceEnergy         = "Balance & Energy"
-        case sleepMeditation       = "Sleep Meditation"
         case angelicMeditation     = "Angelic"
         case meditationRelaxation  = "Meditation & Relax"
         case deepMeditation        = "Journey Within"
@@ -39,7 +38,6 @@ class SoundPlayer: ObservableObject {
         case meditationMonda       = "Monda Meditation"
         case meditationFree        = "Calm Meditation"
         case downpour              = "Downpour"
-        case planetFrequencies     = "Planet Frequencies"
         case sereneMindfulness     = "Inner Peace"
         // New nature
         case immersiveNature       = "Immersive Nature"
@@ -68,7 +66,7 @@ class SoundPlayer: ObservableObject {
         case dreamscape            = "Dreamscape"
         case cinematicCalm         = "Cinematic Calm"
         case ambientBliss          = "Ambient Bliss"
-        case cinematicAmbient      = "Cinematic Ambient"
+        case cinematicAmbient      = "Ambient Tones"
         case relaxingRain          = "Relaxing Rain"
         // New nature additions
         case quietphaseAmbientMeditation = "Ambient Meditation"
@@ -97,7 +95,6 @@ class SoundPlayer: ObservableObject {
             case .meditationBlue:        return "circle.hexagongrid.fill"
             case .deepRelaxation:        return "bed.double.fill"
             case .balanceEnergy:         return "bolt.heart.fill"
-            case .sleepMeditation:       return "moon.fill"
             case .angelicMeditation:     return "staroflife.fill"
             case .meditationRelaxation:  return "heart.fill"
             case .deepMeditation:        return "waveform.path"
@@ -110,7 +107,6 @@ class SoundPlayer: ObservableObject {
             case .meditationMonda:       return "waveform"
             case .meditationFree:        return "cloud"
             case .downpour:              return "cloud.heavyrain.fill"
-            case .planetFrequencies:     return "globe"
             case .sereneMindfulness:     return "sparkles"
             case .immersiveNature:       return "tree.fill"
             case .relaxingNature:        return "leaf.fill"
@@ -160,7 +156,6 @@ class SoundPlayer: ObservableObject {
             case .meditationBlue:        return "Tranquil blue tones"
             case .deepRelaxation:        return "Nervous system healing"
             case .balanceEnergy:         return "Balance & deep meditation"
-            case .sleepMeditation:       return "Sleep background music"
             case .angelicMeditation:     return "Angelic calm tones"
             case .meditationRelaxation:  return "Meditation & relaxation"
             case .deepMeditation:        return "Deep meditation journey"
@@ -173,7 +168,6 @@ class SoundPlayer: ObservableObject {
             case .meditationMonda:       return "Calm meditation sounds"
             case .meditationFree:        return "Free-flowing calm"
             case .downpour:              return "Dramatic rain atmosphere"
-            case .planetFrequencies:     return "Uranus frequency 207.36 Hz"
             case .sereneMindfulness:     return "Serene mindfulness journey"
             case .immersiveNature:       return "Immersive nature soundscape"
             case .relaxingNature:        return "Relaxing music with nature"
@@ -223,7 +217,6 @@ class SoundPlayer: ObservableObject {
             case .meditationBlue:        return Color(red: 0.10, green: 0.25, blue: 0.70)
             case .deepRelaxation:        return Color(red: 0.18, green: 0.35, blue: 0.55)
             case .balanceEnergy:         return Color(red: 0.45, green: 0.20, blue: 0.55)
-            case .sleepMeditation:       return Color(red: 0.08, green: 0.15, blue: 0.45)
             case .angelicMeditation:     return Color(red: 0.60, green: 0.45, blue: 0.20)
             case .meditationRelaxation:  return Color(red: 0.50, green: 0.20, blue: 0.35)
             case .deepMeditation:        return Color(red: 0.20, green: 0.15, blue: 0.50)
@@ -236,7 +229,6 @@ class SoundPlayer: ObservableObject {
             case .meditationMonda:       return Color(red: 0.25, green: 0.35, blue: 0.60)
             case .meditationFree:        return Color(red: 0.15, green: 0.35, blue: 0.60)
             case .downpour:              return Color(red: 0.15, green: 0.20, blue: 0.40)
-            case .planetFrequencies:     return Color(red: 0.30, green: 0.10, blue: 0.55)
             case .sereneMindfulness:     return Color(red: 0.20, green: 0.35, blue: 0.60)
             case .immersiveNature:       return Color(red: 0.08, green: 0.40, blue: 0.25)
             case .relaxingNature:        return Color(red: 0.10, green: 0.42, blue: 0.28)
@@ -324,7 +316,6 @@ class SoundPlayer: ObservableObject {
             case .meditationBlue:        return ("meditation_blue",    "mp3")
             case .deepRelaxation:        return ("deep_relaxation",    "mp3")
             case .balanceEnergy:         return ("balance_energy",     "mp3")
-            case .sleepMeditation:       return ("sleep_meditation",   "mp3")
             case .angelicMeditation:     return ("angelic_meditation", "mp3")
             case .meditationRelaxation:  return ("meditation_relaxation", "mp3")
             case .deepMeditation:        return ("deep_meditation",    "mp3")
@@ -337,7 +328,6 @@ class SoundPlayer: ObservableObject {
             case .meditationMonda:       return ("meditation_monda",   "mp3")
             case .meditationFree:        return ("meditation_free",    "mp3")
             case .downpour:              return ("downpour",                "mp3")
-            case .planetFrequencies:     return ("planet_frequencies_uranus", "mp3")
             case .sereneMindfulness:     return ("serene_mindfulness",   "mp3")
             case .immersiveNature:       return ("immersive_nature",     "mp3")
             case .relaxingNature:        return ("relaxing_nature",      "mp3")

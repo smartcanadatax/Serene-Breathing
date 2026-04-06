@@ -28,18 +28,7 @@ struct AmbientTrack: Identifiable {
 
 let allAmbientTracks: [AmbientTrack] = [
     // Focus
-    AmbientTrack(title: "Cinematic Focus",   subtitle: "Deep concentration",    filename: "yevhenastafiev-cinematic-ambient-481810",                              category: .focus),
-    AmbientTrack(title: "Inspiring Flow",    subtitle: "Creative momentum",     filename: "the_mountain-ambient-inspiring-music-141464",                          category: .focus),
-    AmbientTrack(title: "Deep Space",        subtitle: "Limitless focus",       filename: "monume-space-ambient-498030",                                          category: .focus),
     AmbientTrack(title: "Ambient Flow",      subtitle: "Steady concentration",  filename: "paulyudin-ambient-ambient-music-482398",                               category: .focus),
-    AmbientTrack(title: "Cinematic Depth",   subtitle: "Emotional clarity",     filename: "desifreemusic-emotional-ambient-piece-with-slow-cinematic-textures-370144", category: .focus),
-    AmbientTrack(title: "Focus Pulse",       subtitle: "Sharp & energised",     filename: "focus_pulse",                                                          category: .focus),
-    AmbientTrack(title: "Focus Drift",       subtitle: "Effortless attention",  filename: "focus_drift",                                                          category: .focus),
-    AmbientTrack(title: "Focus Clarity",     subtitle: "Clear mind, open flow", filename: "focus_clarity",                                                        category: .focus),
-    AmbientTrack(title: "Focus Flow",        subtitle: "Enter the zone",        filename: "focus_flow",                                                           category: .focus),
-    AmbientTrack(title: "Focus Immersion",   subtitle: "Deep work state",       filename: "focus_immersion",                                                      category: .focus),
-    AmbientTrack(title: "Focus Journey",     subtitle: "Extended concentration",filename: "focus_journey",                                                        category: .focus),
-    AmbientTrack(title: "Deep Work",         subtitle: "Long session focus",    filename: "focus_deep_work",                                                      category: .focus),
 
     // Sleep
     AmbientTrack(title: "Dreamscape",        subtitle: "Drift into deep sleep", filename: "mondamusic-dark-ambient-soundscape-dreamscape-2-487315",               category: .sleep),
@@ -61,13 +50,18 @@ let allAmbientTracks: [AmbientTrack] = [
     AmbientTrack(title: "Meditation Bloom",  subtitle: "Inner inspiration",     filename: "quietphase-meditation-ambient-484356",                                 category: .creativity),
     AmbientTrack(title: "Yoga Flow",         subtitle: "Fluid and free",        filename: "quietphase-yoga-ambient-485882",                                       category: .creativity),
     AmbientTrack(title: "Peaceful Mind",     subtitle: "Clear creative space",  filename: "playstarz_music-ambient-meditation-486609",                            category: .creativity),
-    AmbientTrack(title: "Morning Yoga",      subtitle: "Energised & open",      filename: "the_mountain-yoga-meditation-165602",                                  category: .creativity),
+    AmbientTrack(title: "Mountain Calm",     subtitle: "Grounded & still",      filename: "the_mountain-yoga-meditation-165602",                                  category: .creativity),
     AmbientTrack(title: "Nature Soundscape", subtitle: "Immersive outdoors",    filename: "immersive_nature",                                                     category: .creativity),
     AmbientTrack(title: "Nature & Music",    subtitle: "Relax with nature",     filename: "relaxing_nature",                                                      category: .creativity),
     AmbientTrack(title: "Spiritual Music",   subtitle: "Sacred creative space", filename: "creativity_spiritual",                                                 category: .creativity),
-    AmbientTrack(title: "Navajo Night",      subtitle: "Ancient & free",        filename: "creativity_navajo",                                                    category: .creativity),
     AmbientTrack(title: "Healing Sphere",    subtitle: "Open & expansive",      filename: "creativity_healing",                                                   category: .creativity),
     AmbientTrack(title: "River Zen",         subtitle: "Flowing inspiration",   filename: "creativity_river_zen",                                                 category: .creativity),
+    AmbientTrack(title: "Dragon Meditation", subtitle: "Mystic calm",           filename: "dragon-studio-meditation-music-sound-bite-339735",                     category: .creativity),
+    AmbientTrack(title: "Deep Calm",         subtitle: "Grounding texture",     filename: "gigidelaromusic-deep-calm-texture-short-450960",                       category: .creativity),
+    AmbientTrack(title: "Sacred Chant",      subtitle: "Ancient resonance",     filename: "pankajsethjmt-chant-5-481438",                                         category: .creativity),
+    AmbientTrack(title: "Peaceful Highlands",subtitle: "Open skies & calm",     filename: "prettysleepy-peaceful-highlands-by-prettysleepy-art-10733",            category: .creativity),
+    AmbientTrack(title: "Light Ray",         subtitle: "Soft & luminous",       filename: "gigidelaromusic-peaceful-light-ray-short-450966",                      category: .creativity),
+    AmbientTrack(title: "Soul Frequencies",  subtitle: "Ancient vibrations",    filename: "soul_frequencies-tibetan-bowls-498961",                                category: .creativity),
 ]
 
 // MARK: - Player Engine

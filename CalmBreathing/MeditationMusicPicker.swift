@@ -4,14 +4,18 @@ import AVFoundation
 // MARK: - Meditation Background Music Options
 // Order: tracks first, None last
 let meditationMusicOptions: [BgMusicOption] = [
-    BgMusicOption(name: "Serene",      filename: "serene_mindfulness"),
-    BgMusicOption(name: "Sleep Calm",  filename: "sleep_meditation_bg"),
-    BgMusicOption(name: "Ocean",       filename: "ocean",              ext: "m4a"),
-    BgMusicOption(name: "Zen Water",   filename: "zen_water"),
-    BgMusicOption(name: "Forest",      filename: "forest"),
-    BgMusicOption(name: "Ohm",         filename: "ohm"),
-    BgMusicOption(name: "Rain",        filename: "rain_sleep_holizna"),
-    BgMusicOption(name: "None",        filename: ""),
+    BgMusicOption(name: "Serene",          filename: "serene_mindfulness"),
+    BgMusicOption(name: "Sleep Calm",      filename: "sleep_meditation_bg"),
+    BgMusicOption(name: "Ocean",           filename: "ocean",              ext: "m4a"),
+    BgMusicOption(name: "Zen Water",       filename: "zen_water"),
+    BgMusicOption(name: "Forest",          filename: "forest"),
+    BgMusicOption(name: "Ohm",             filename: "ohm"),
+    BgMusicOption(name: "Rain",            filename: "rain_sleep_holizna"),
+    BgMusicOption(name: "Ambience",        filename: "ambience"),
+    BgMusicOption(name: "Soothing Nature", filename: "soothing_nature"),
+    BgMusicOption(name: "Immersive Nature",filename: "immersive_nature"),
+    BgMusicOption(name: "Relaxing Nature", filename: "relaxing_nature"),
+    BgMusicOption(name: "None",            filename: ""),
 ]
 
 private func icon(for option: BgMusicOption) -> String {
@@ -23,6 +27,10 @@ private func icon(for option: BgMusicOption) -> String {
     case "forest":              return "leaf.fill"
     case "ohm":                 return "waveform"
     case "rain_sleep_holizna":  return "cloud.rain.fill"
+    case "ambience":            return "building.2.fill"
+    case "soothing_nature":     return "tree.fill"
+    case "immersive_nature":    return "mountain.2.fill"
+    case "relaxing_nature":     return "sun.and.horizon.fill"
     default:                    return "speaker.slash.fill"  // None
     }
 }

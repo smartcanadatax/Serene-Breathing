@@ -36,6 +36,7 @@ struct BodyScanView: View {
     @State private var bgPlayer: AVAudioPlayer?
     @State private var isInterrupted = false
     @State private var reachedNearEnd = false
+    @AppStorage("preferredBgMusicFilename") private var preferredBgMusicFilename: String = "serene_mindfulness"
     @State private var selectedBgMusic: BgMusicOption = BgMusicOption(name: "Serene", filename: "serene_mindfulness")
     @State private var showMusicPicker = false
 
@@ -105,8 +106,12 @@ struct BodyScanView: View {
             }
         }
         .navigationBarHidden(true)
-        .onAppear { prepareBgMusic() }
+        .onAppear {
+            selectedBgMusic = meditationMusicOptions.first { $0.filename == preferredBgMusicFilename } ?? BgMusicOption(name: "Serene", filename: "serene_mindfulness")
+            prepareBgMusic()
+        }
         .onChange(of: selectedBgMusic) { _, _ in
+            preferredBgMusicFilename = selectedBgMusic.filename
             bgPlayer?.stop()
             bgPlayer = nil
             prepareBgMusic()
@@ -195,6 +200,7 @@ struct BodyScanView: View {
                 .foregroundColor(.white.opacity(0.75))
                 .multilineTextAlignment(.center)
                 .padding(.horizontal, 8)
+                .padding(.top, 20)
 
             Button {
                 startScan()

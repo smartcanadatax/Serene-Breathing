@@ -98,7 +98,8 @@ struct StillWatersView: View {
     @State private var bgPlayer: AVAudioPlayer?
     @State private var isInterrupted = false
     @State private var lastAudioTime: Double = 0
-    @State private var selectedBgMusic: BgMusicOption = BgMusicOption(name: "Zen Water", filename: "zen_water")
+    @AppStorage("preferredBgMusicFilename") private var preferredBgMusicFilename: String = "serene_mindfulness"
+    @State private var selectedBgMusic: BgMusicOption = BgMusicOption(name: "Serene", filename: "serene_mindfulness")
     @State private var showMusicPicker = false
 
     private var currentPrompt: String { prompts[min(currentIndex, prompts.count - 1)] }
@@ -195,8 +196,12 @@ struct StillWatersView: View {
             }
         }
         .navigationBarHidden(true)
-        .onAppear { prepareBgMusic() }
+        .onAppear {
+            selectedBgMusic = meditationMusicOptions.first { $0.filename == preferredBgMusicFilename } ?? BgMusicOption(name: "Serene", filename: "serene_mindfulness")
+            prepareBgMusic()
+        }
         .onChange(of: selectedBgMusic) { _, _ in
+            preferredBgMusicFilename = selectedBgMusic.filename
             bgPlayer?.stop()
             bgPlayer = nil
             prepareBgMusic()
@@ -244,6 +249,7 @@ struct StillWatersView: View {
                 .foregroundColor(.white.opacity(0.75))
                 .multilineTextAlignment(.center)
                 .padding(.horizontal, 8)
+                .padding(.top, 20)
 
             Button { startSession() } label: {
                 HStack(spacing: 8) {

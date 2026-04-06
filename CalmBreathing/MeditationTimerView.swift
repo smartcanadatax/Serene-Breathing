@@ -101,10 +101,10 @@ struct MeditationBgView: View {
 extension SoundPlayer.SoundType {
     var suggestedBackground: MeditationBackground {
         switch self {
-        case .rainSleep, .sleepMeditation, .relaxSleep, .deepRelaxation, .deepMeditation:
+        case .rainSleep, .relaxSleep, .deepRelaxation, .deepMeditation:
             return .night
         case .spiritualYoga, .ohm, .spiritualMeditation, .angelicMeditation,
-             .planetFrequencies, .meditationRelaxation, .meditationDelos,
+             .meditationRelaxation, .meditationDelos,
              .meditationPlaystarz, .meditationMiromax, .meditationFree:
             return .sunset
         case .forest, .natureMeditate, .meditationRiver:
@@ -434,6 +434,10 @@ struct MeditationTimerView: View {
         .navigationBarHidden(true)
         .onAppear {
             UIApplication.shared.isIdleTimerDisabled = true
+            // Default to Inner Peace if no sound has been chosen yet
+            if selectedSoundRaw.isEmpty {
+                selectedSoundRaw = SoundPlayer.SoundType.sereneMindfulness.rawValue
+            }
         }
         .onReceive(NotificationCenter.default.publisher(for: .watchToggleTimer)) { _ in
             toggleTimer()
@@ -808,15 +812,8 @@ private struct SettingsSheet: View {
     private var selectedBg: MeditationBackground { MeditationBackground(rawValue: selectedBgRaw) ?? .sky }
     @Environment(\.dismiss) private var dismiss
 
-    private let natureSounds:     [SoundPlayer.SoundType] = [.ocean, .forest, .meditationRiver, .downpour]
-    private let meditationSounds: [SoundPlayer.SoundType] = [
-        .rainSleep, .ohm, .ambience, .natureMeditate, .peacefulMind, .spiritualYoga,
-        .zenWater, .mindfulnessMeditation, .focusMeditation, .meditationBlue,
-        .deepRelaxation, .balanceEnergy, .sleepMeditation, .angelicMeditation,
-        .meditationRelaxation, .deepMeditation, .spiritualMeditation, .meditationMiromax,
-        .relaxSleep, .meditationDelos, .meditationPlaystarz, .yogaRelaxing,
-        .meditationMonda, .meditationFree, .planetFrequencies, .sereneMindfulness
-    ]
+    private let natureSounds:     [SoundPlayer.SoundType] = [.ocean, .forest, .meditationRiver, .downpour, .soothingNature, .immersiveNature, .relaxingNature, .alexNatureAmbient]
+    private let meditationSounds: [SoundPlayer.SoundType] = SoundPlayer.SoundType.allCases
 
     private let brandPurple = Color(red: 0.541, green: 0.357, blue: 0.804)
 
@@ -855,7 +852,7 @@ private struct SettingsSheet: View {
                             VStack(alignment: .leading, spacing: 14) {
                                 Text("SESSION DURATION")
                                     .font(.system(size: 11, weight: .semibold))
-                                    .foregroundColor(.white.opacity(0.60))
+                                    .foregroundColor(Color(red: 0.40, green: 0.38, blue: 0.48))
                                     .tracking(0.8)
                                 let cols = [GridItem(.adaptive(minimum: 72), spacing: 10)]
                                 LazyVGrid(columns: cols, spacing: 10) {
@@ -872,7 +869,7 @@ private struct SettingsSheet: View {
                                             HStack(spacing: 4) {
                                                 Text("\(mins) min")
                                                     .font(.system(size: 14, weight: selectedDuration == mins ? .semibold : .regular, design: .rounded))
-                                                    .foregroundColor(locked ? .white.opacity(0.30) : (selectedDuration == mins ? brandPurple : .white))
+                                                    .foregroundColor(locked ? Color(red: 0.10, green: 0.10, blue: 0.15).opacity(0.30) : (selectedDuration == mins ? brandPurple : Color(red: 0.10, green: 0.10, blue: 0.15)))
                                                 if locked {
                                                     Image(systemName: "lock.fill")
                                                         .font(.system(size: 10))
@@ -883,7 +880,7 @@ private struct SettingsSheet: View {
                                             .padding(.vertical, 10)
                                             .background(
                                                 RoundedRectangle(cornerRadius: 10)
-                                                    .fill(selectedDuration == mins ? brandPurple.opacity(0.30) : Color.white.opacity(0.12))
+                                                    .fill(selectedDuration == mins ? brandPurple.opacity(0.18) : Color(red: 0.87, green: 0.89, blue: 0.96))
                                                     .overlay(RoundedRectangle(cornerRadius: 10)
                                                         .stroke(selectedDuration == mins ? brandPurple.opacity(0.50) : Color.clear, lineWidth: 1.5))
                                             )
@@ -900,7 +897,7 @@ private struct SettingsSheet: View {
                             VStack(alignment: .leading, spacing: 14) {
                                 Text("VISUAL THEME")
                                     .font(.system(size: 11, weight: .semibold))
-                                    .foregroundColor(.white.opacity(0.60))
+                                    .foregroundColor(Color(red: 0.40, green: 0.38, blue: 0.48))
                                     .tracking(0.8)
                                 let cols = [GridItem(.adaptive(minimum: 52), spacing: 14)]
                                 LazyVGrid(columns: cols, spacing: 14) {
@@ -914,7 +911,7 @@ private struct SettingsSheet: View {
                                                     .shadow(color: .black.opacity(0.12), radius: 4)
                                                 Text(theme.label)
                                                     .font(.system(size: 9, weight: selectedBg == theme ? .semibold : .regular, design: .rounded))
-                                                    .foregroundColor(selectedBg == theme ? brandPurple : .white.opacity(0.65))
+                                                    .foregroundColor(selectedBg == theme ? brandPurple : Color(red: 0.40, green: 0.38, blue: 0.48))
                                             }
                                         }
                                         .buttonStyle(.plain)
@@ -929,14 +926,9 @@ private struct SettingsSheet: View {
                             VStack(alignment: .leading, spacing: 12) {
                                 Text("AMBIENT SOUNDS")
                                     .font(.system(size: 11, weight: .semibold))
-                                    .foregroundColor(.white.opacity(0.60))
+                                    .foregroundColor(Color(red: 0.40, green: 0.38, blue: 0.48))
                                     .tracking(0.8)
 
-                                soundRow(label: "None", icon: "speaker.slash.fill",
-                                         isSelected: !silentBellMode && selectedSound == nil && selectedAmbientTrack == nil) {
-                                    silentBellMode = false; selectedSound = nil; selectedAmbientTrack = nil
-                                }
-                                Divider()
                                 soundRow(label: "Silent Bell", icon: "bell.fill", isSelected: silentBellMode) {
                                     silentBellMode = true; selectedSound = nil; selectedAmbientTrack = nil
                                 }
@@ -955,7 +947,25 @@ private struct SettingsSheet: View {
                                              isSelected: selectedSound == sound && !silentBellMode) {
                                         silentBellMode = false; selectedSound = sound; selectedAmbientTrack = nil
                                     }
-                                    if idx < meditationSounds.count - 1 { Divider() }
+                                    Divider()
+                                }
+                                // ── Ambient Music Tracks ─────��───────────
+                                Text("AMBIENT MUSIC")
+                                    .font(.system(size: 11, weight: .semibold))
+                                    .foregroundColor(Color(red: 0.40, green: 0.38, blue: 0.48))
+                                    .tracking(0.8)
+                                    .padding(.top, 8)
+                                Divider()
+                                ForEach(allAmbientTracks) { track in
+                                    soundRow(label: track.title, icon: track.category.icon,
+                                             isSelected: selectedAmbientTrack?.id == track.id && !silentBellMode) {
+                                        silentBellMode = false; selectedSound = nil; selectedAmbientTrack = track
+                                    }
+                                    Divider()
+                                }
+                                soundRow(label: "None", icon: "speaker.slash.fill",
+                                         isSelected: !silentBellMode && selectedSound == nil && selectedAmbientTrack == nil) {
+                                    silentBellMode = false; selectedSound = nil; selectedAmbientTrack = nil
                                 }
                             }
                             .padding(16)
@@ -973,26 +983,27 @@ private struct SettingsSheet: View {
     @ViewBuilder
     private func settingsCard<Content: View>(@ViewBuilder content: () -> Content) -> some View {
         content()
-            .background(RoundedRectangle(cornerRadius: 16).fill(Color.white.opacity(0.14)))
+            .background(RoundedRectangle(cornerRadius: 16).fill(Color(red: 0.93, green: 0.94, blue: 0.97)))
     }
 
     private func soundRow(label: String, icon: String, locked: Bool = false, isSelected: Bool, action: @escaping () -> Void) -> some View {
-        Button(action: { if !locked { action() } }) {
+        let darkText = Color(red: 0.10, green: 0.10, blue: 0.15)
+        return Button(action: { if !locked { action() } }) {
             HStack(spacing: 12) {
                 ZStack {
                     Circle()
-                        .fill(isSelected ? brandPurple.opacity(0.35) : Color.white.opacity(0.15))
+                        .fill(isSelected ? brandPurple.opacity(0.20) : Color(red: 0.87, green: 0.89, blue: 0.96))
                         .frame(width: 32, height: 32)
                     Image(systemName: icon)
                         .font(.system(size: 13))
-                        .foregroundColor(locked ? .white.opacity(0.25) : (isSelected ? .white : .white.opacity(0.75)))
+                        .foregroundColor(locked ? darkText.opacity(0.25) : (isSelected ? brandPurple : Color(red: 0.40, green: 0.38, blue: 0.48)))
                 }
                 Text(label)
                     .font(.system(size: 14, weight: isSelected ? .semibold : .regular, design: .rounded))
-                    .foregroundColor(locked ? .white.opacity(0.35) : .white)
+                    .foregroundColor(locked ? darkText.opacity(0.35) : darkText)
                 Spacer()
                 if locked {
-                    Image(systemName: "lock.fill").font(.system(size: 11)).foregroundColor(.white.opacity(0.30))
+                    Image(systemName: "lock.fill").font(.system(size: 11)).foregroundColor(darkText.opacity(0.30))
                 } else if isSelected {
                     Image(systemName: "speaker.wave.2.fill").font(.system(size: 12)).foregroundColor(brandPurple)
                 }
@@ -1095,15 +1106,8 @@ private struct SoundPickerSheet: View {
     @Environment(\.dismiss) private var dismiss
 
 
-    private let natureSounds:     [SoundPlayer.SoundType] = [.ocean, .forest, .meditationRiver, .downpour]
-    private let meditationSounds: [SoundPlayer.SoundType] = [
-        .rainSleep, .ohm, .ambience, .natureMeditate, .peacefulMind, .spiritualYoga,
-        .zenWater, .mindfulnessMeditation, .focusMeditation, .meditationBlue,
-        .deepRelaxation, .balanceEnergy, .sleepMeditation, .angelicMeditation,
-        .meditationRelaxation, .deepMeditation, .spiritualMeditation, .meditationMiromax,
-        .relaxSleep, .meditationDelos, .meditationPlaystarz, .yogaRelaxing,
-        .meditationMonda, .meditationFree, .planetFrequencies, .sereneMindfulness
-    ]
+    private let natureSounds:     [SoundPlayer.SoundType] = [.ocean, .forest, .meditationRiver, .downpour, .soothingNature, .immersiveNature, .relaxingNature, .alexNatureAmbient]
+    private let meditationSounds: [SoundPlayer.SoundType] = SoundPlayer.SoundType.allCases
 
     private let brandPurple = Color(red: 0.541, green: 0.357, blue: 0.804)
 
@@ -1131,14 +1135,14 @@ private struct SoundPickerSheet: View {
                         // ── Silence / Bell ───────────────────────────────
                         sectionHeader("Basic")
                         VStack(spacing: 0) {
-                            row(label: "None", subtitle: "Complete silence", icon: "speaker.slash.fill",
-                                isSelected: !silentBellMode && selectedSound == nil && selectedAmbientTrack == nil) {
-                                silentBellMode = false; selectedSound = nil; selectedAmbientTrack = nil; dismiss()
-                            }
-                            Divider().padding(.leading, 52)
                             row(label: "Silent Bell", subtitle: "Bell rings every 5 min", icon: "bell.fill",
                                 isSelected: silentBellMode) {
                                 silentBellMode = true; selectedSound = nil; selectedAmbientTrack = nil; dismiss()
+                            }
+                            Divider().padding(.leading, 52)
+                            row(label: "None", subtitle: "Complete silence", icon: "speaker.slash.fill",
+                                isSelected: !silentBellMode && selectedSound == nil && selectedAmbientTrack == nil) {
+                                silentBellMode = false; selectedSound = nil; selectedAmbientTrack = nil; dismiss()
                             }
                         }
                         .background(RoundedRectangle(cornerRadius: 14).fill(Color.white))

@@ -40,6 +40,7 @@ struct DisclaimerFooter: View {
             .multilineTextAlignment(.center)
             .padding(.horizontal, 28)
             .padding(.vertical, 10)
+            .padding(.top, 20)
     }
 }
 

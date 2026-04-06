@@ -16,11 +16,18 @@ struct BgMusicOption: Hashable, Equatable {
 }
 
 private let breathingMusicOptions: [BgMusicOption] = [
-    BgMusicOption(name: "None",       filename: ""),
-    BgMusicOption(name: "Ohm",        filename: "ohm"),
-    BgMusicOption(name: "Forest",     filename: "forest"),
-    BgMusicOption(name: "Zen Water",  filename: "zen_water"),
-    BgMusicOption(name: "Ambience",   filename: "ambience"),
+    BgMusicOption(name: "Serene",           filename: "serene_mindfulness"),
+    BgMusicOption(name: "Ohm",              filename: "ohm"),
+    BgMusicOption(name: "Forest",           filename: "forest"),
+    BgMusicOption(name: "Zen Water",        filename: "zen_water"),
+    BgMusicOption(name: "Ambience",         filename: "ambience"),
+    BgMusicOption(name: "Ocean",            filename: "ocean",   ext: "m4a"),
+    BgMusicOption(name: "Rain",             filename: "rain_sleep_holizna"),
+    BgMusicOption(name: "Soothing Nature",  filename: "soothing_nature"),
+    BgMusicOption(name: "Immersive Nature", filename: "immersive_nature"),
+    BgMusicOption(name: "Relaxing Nature",  filename: "relaxing_nature"),
+    BgMusicOption(name: "Sleep Calm",       filename: "sleep_meditation_bg"),
+    BgMusicOption(name: "None",             filename: ""),
 ]
 
 // MARK: - Exercise Config
@@ -146,6 +153,7 @@ struct QuickReliefView: View {
     @State private var countdownTimer: Timer?
     @State private var audioPlayer:    AVAudioPlayer?
     @State private var audioSyncTimer: Timer?
+    @AppStorage("preferredBgMusicFilename") private var preferredBgMusicFilename: String = "serene_mindfulness"
     @State private var selectedMusic:  BgMusicOption = breathingMusicOptions[0]
     @State private var bgPlayer:       AVAudioPlayer?
     @State private var cuePlayer:      AVAudioPlayer?
@@ -235,8 +243,14 @@ struct QuickReliefView: View {
             }
         }
         .navigationBarHidden(true)
-        .onAppear { prepareBgMusic() }
-        .onChange(of: selectedMusic) { _, _ in prepareBgMusic() }
+        .onAppear {
+            selectedMusic = breathingMusicOptions.first { $0.filename == preferredBgMusicFilename } ?? breathingMusicOptions[0]
+            prepareBgMusic()
+        }
+        .onChange(of: selectedMusic) { _, _ in
+            preferredBgMusicFilename = selectedMusic.filename
+            prepareBgMusic()
+        }
         .onDisappear { stopSession() }
         .sheet(isPresented: $showSettings) {
             QuickReliefSettingsSheet(selectedMusic: $selectedMusic)
