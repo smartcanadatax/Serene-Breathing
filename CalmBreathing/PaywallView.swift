@@ -63,7 +63,7 @@ struct PaywallView: View {
                             featureRow(icon: "book.fill",            text: "Sleep Stories")
                             featureRow(icon: "sparkles",             text: "Personalized Meditation")
                             featureRow(icon: "music.note",           text: "Ambient Music — Focus · Sleep · Creativity")
-                            featureRow(icon: "waveform",             text: "All 30+ meditation & nature sounds")
+                            featureRow(icon: "waveform",             text: "All 50+ meditation & nature sounds")
                             featureRow(icon: "bell.fill",            text: "Silent Meditation with interval bells")
                             featureRow(icon: "timer",                text: "Full meditation timer — up to 60 min")
                             featureRow(icon: "moon.fill",            text: "Sleep Journal & unlimited mood history")
@@ -77,7 +77,7 @@ struct PaywallView: View {
                                 planButton(
                                     title:    "Yearly",
                                     price:    yearly.displayPrice + "/year",
-                                    subtitle: "Best value — save over 50%",
+                                    subtitle: "Best value — save over 35%",
                                     badge:    "BEST VALUE",
                                     isSelected: selectedProduct?.id == yearly.id
                                 ) { selectedProduct = yearly }
@@ -121,15 +121,15 @@ struct PaywallView: View {
                                 } else {
                                     Text("Start Premium")
                                         .font(.system(size: 17, weight: .bold, design: .rounded))
-                                        .foregroundColor(.calmDeep)
+                                        .foregroundColor(Color(red: 0.36, green: 0.22, blue: 0.60))
                                 }
                             }
                             .frame(maxWidth: .infinity)
                             .padding(.vertical, 16)
                             .background(
                                 Capsule()
-                                    .fill(Color.calmAccent)
-                                    .shadow(color: .calmAccent.opacity(0.40), radius: 14)
+                                    .fill(Color.white)
+                                    .shadow(color: .black.opacity(0.15), radius: 14)
                             )
                         }
                         .disabled(selectedProduct == nil || premium.isPurchasing)
