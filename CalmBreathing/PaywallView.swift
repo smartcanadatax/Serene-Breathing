@@ -58,8 +58,8 @@ struct PaywallView: View {
 
                         // Feature list
                         VStack(spacing: 13) {
-                            featureRow(icon: "sunrise.fill",         text: "Morning Meditation")
                             featureRow(icon: "moon.stars.fill",      text: "Sleep Meditation")
+                            featureRow(icon: "figure.mind.and.body", text: "Body Scan")
                             featureRow(icon: "book.fill",            text: "Sleep Stories")
                             featureRow(icon: "sparkles",             text: "Personalized Meditation")
                             featureRow(icon: "music.note",           text: "Ambient Music — Focus · Sleep · Creativity")
@@ -67,6 +67,8 @@ struct PaywallView: View {
                             featureRow(icon: "bell.fill",            text: "Silent Meditation with interval bells")
                             featureRow(icon: "timer",                text: "Full meditation timer — up to 60 min")
                             featureRow(icon: "moon.fill",            text: "Sleep Journal & unlimited mood history")
+                            featureRow(icon: "brain.head.profile",   text: "Mood Pattern Coach")
+                            featureRow(icon: "zzz",                  text: "Sleep Pattern Coach")
                         }
                         .padding(18)
                         .background(RoundedRectangle(cornerRadius: 20).fill(Color.white.opacity(0.10)))
@@ -148,6 +150,15 @@ struct PaywallView: View {
                                 .font(.system(size: 13, weight: .medium))
                                 .foregroundColor(.white.opacity(0.60))
                         }
+
+                        // Legal links (required by App Store Guideline 3.1.2c)
+                        HStack(spacing: 16) {
+                            Link("Privacy Policy", destination: URL(string: "https://serenebreathing.online/#privacy")!)
+                            Text("·").foregroundColor(.white.opacity(0.30))
+                            Link("Terms of Use", destination: URL(string: "https://serenebreathing.online/#terms")!)
+                        }
+                        .font(.system(size: 12, weight: .medium))
+                        .foregroundColor(.white.opacity(0.60))
 
                         // Legal
                         Text("Subscriptions auto-renew unless cancelled at least 24 hours before the end of the current period. Manage or cancel anytime in your Apple ID settings.")
