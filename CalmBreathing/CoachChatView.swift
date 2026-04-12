@@ -63,6 +63,7 @@ If there is any immediate danger, please contact your local emergency services.
 
 // MARK: - Monthly Message Limit
 
+private let freeMessageLimit = 3
 private let monthlyMessageLimit = 30
 
 private func currentMonthKey() -> String {
@@ -93,7 +94,9 @@ private func incrementMessageCount() {
 struct CoachChatView: View {
     @Environment(\.dismiss) private var dismiss
     @EnvironmentObject var journal: JournalStore
+    @EnvironmentObject var premium: PremiumStore
     @AppStorage("hasSeenChatDisclaimer") private var hasSeenDisclaimer = false
+    @State private var showPaywall = false
 
     @State private var messages: [CoachChatMessage] = [
         CoachChatMessage(role: "assistant",
@@ -159,7 +162,7 @@ struct CoachChatView: View {
                     ScrollView(showsIndicators: false) {
                         LazyVStack(spacing: 14) {
                             ForEach(messages) { msg in
-                                ChatBubble(message: msg, onFeatureTap: { feature in
+                                ChatBubble(message: msg, showFeatures: premium.isPremium, onFeatureTap: { feature in
                                     handleFeatureTap(feature)
                                 })
                                 .id(msg.id)
@@ -229,6 +232,10 @@ struct CoachChatView: View {
         .onAppear {
             if !hasSeenDisclaimer { activeFeature = .disclaimer }
         }
+        .fullScreenCover(isPresented: $showPaywall) {
+            PaywallView(isPresented: $showPaywall)
+                .environmentObject(premium)
+        }
         .fullScreenCover(item: $activeFeature) { feature in
             switch feature {
             case .disclaimer:
@@ -278,8 +285,16 @@ struct CoachChatView: View {
     private func sendMessage() {
         let text = inputText.trimmingCharacters(in: .whitespaces)
         guard !text.isEmpty, !isResponding else { return }
+
+        // Enforce free message limit
+        if !premium.isPremium && monthlyMessageCount() >= freeMessageLimit {
+            showPaywall = true
+            return
+        }
+
         inputText = ""
         inputFocused = false
+        incrementMessageCount()
 
         messages.append(CoachChatMessage(role: "user", content: text))
         isResponding = true
@@ -344,6 +359,7 @@ struct CoachChatView: View {
 
 private struct ChatBubble: View {
     let message: CoachChatMessage
+    var showFeatures: Bool = true
     let onFeatureTap: (SuggestedFeature) -> Void
     private var isUser: Bool { message.role == "user" }
 
@@ -379,8 +395,8 @@ private struct ChatBubble: View {
                 if !isUser { Spacer(minLength: 56) }
             }
 
-            // Feature suggestion buttons
-            if !isUser && !message.isStreaming && !message.suggestedFeatures.isEmpty {
+            // Feature suggestion buttons (premium only)
+            if showFeatures && !isUser && !message.isStreaming && !message.suggestedFeatures.isEmpty {
                 ScrollView(.horizontal, showsIndicators: false) {
                     HStack(spacing: 8) {
                         ForEach(message.suggestedFeatures, id: \.rawValue) { feature in

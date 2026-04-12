@@ -97,7 +97,7 @@ private let practicePool: [DailyPractice] = [
         quote: "Some of us think holding on makes us strong, but sometimes it is letting go.",
         author: "Herman Hesse",
         patternName: "Box Breathing", patternDescription: "Equal counts on all four sides — calms and centres the mind",
-        inhale: 4, holdIn: 7, exhale: 8, holdOut: 0, cycles: 4,
+        inhale: 4, holdIn: 4, exhale: 4, holdOut: 4, cycles: 4,
         reflection: "Notice what just loosened in your chest. You do not have to carry everything.",
         accentColor: Color(red: 0.60, green: 0.75, blue: 1.00)),
 
@@ -178,7 +178,7 @@ private let practicePool: [DailyPractice] = [
         quote: "Peace is not the absence of conflict, but the ability to handle it by peaceful means.",
         author: "Ronald Reagan",
         patternName: "Box Breathing", patternDescription: "Equal counts on all four sides — calms and centres the mind",
-        inhale: 4, holdIn: 7, exhale: 8, holdOut: 0, cycles: 4,
+        inhale: 4, holdIn: 4, exhale: 4, holdOut: 4, cycles: 4,
         reflection: "Between any event and your response, there is a space. You just practised living in it.",
         accentColor: Color(red: 0.70, green: 0.85, blue: 0.75)),
 
@@ -232,7 +232,7 @@ private let practicePool: [DailyPractice] = [
         quote: "Nothing can disturb your peace of mind unless you allow it to.",
         author: "Roy T. Bennett",
         patternName: "Box Breathing", patternDescription: "Equal counts on all four sides — calms and centres the mind",
-        inhale: 4, holdIn: 7, exhale: 8, holdOut: 0, cycles: 4,
+        inhale: 4, holdIn: 4, exhale: 4, holdOut: 4, cycles: 4,
         reflection: "You just changed your physiology with your breath. You can do this anywhere, anytime.",
         accentColor: Color(red: 0.60, green: 0.80, blue: 1.00)),
 
@@ -241,7 +241,7 @@ private let practicePool: [DailyPractice] = [
         quote: "Forgiveness is giving up the hope that the past could have been any different.",
         author: "Oprah Winfrey",
         patternName: "Box Breathing", patternDescription: "Equal counts on all four sides — calms and centres the mind",
-        inhale: 4, holdIn: 7, exhale: 8, holdOut: 0, cycles: 4,
+        inhale: 4, holdIn: 4, exhale: 4, holdOut: 4, cycles: 4,
         reflection: "Letting go is not excusing. It is freeing yourself from what weighs you down.",
         accentColor: Color(red: 1.00, green: 0.75, blue: 0.70)),
 

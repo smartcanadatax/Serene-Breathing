@@ -68,7 +68,7 @@ struct AICoachHubView: View {
                         .padding(.horizontal, 24)
 
                     // Daily Check-In card
-                    Button { showCheckIn = true } label: {
+                    Button { if premium.isPremium { showCheckIn = true } else { showPaywall = true } } label: {
                         AICoachCard(
                             icon: "sun.and.horizon.fill",
                             title: "Daily Check-In",
@@ -80,7 +80,7 @@ struct AICoachHubView: View {
                     .padding(.horizontal, 24)
 
                     // Mood Pattern Coach card
-                    Button { showMood = true } label: {
+                    Button { if premium.isPremium { showMood = true } else { showPaywall = true } } label: {
                         AICoachCard(
                             icon: "chart.line.uptrend.xyaxis",
                             title: "Mood Pattern Coach",
@@ -92,7 +92,7 @@ struct AICoachHubView: View {
                     .padding(.horizontal, 24)
 
                     // Sleep Pattern Coach card
-                    Button { showSleep = true } label: {
+                    Button { if premium.isPremium { showSleep = true } else { showPaywall = true } } label: {
                         AICoachCard(
                             icon: "moon.zzz.fill",
                             title: "Sleep Pattern Coach",

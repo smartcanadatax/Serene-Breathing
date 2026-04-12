@@ -46,7 +46,7 @@ struct MorningMeditationView: View {
     @State private var audioPlayer: AVAudioPlayer?
     @State private var bgPlayer: AVAudioPlayer?
     @State private var isInterrupted = false
-    @State private var reachedNearEnd = false
+    @State private var audioHasPlayed = false
     @AppStorage("preferredBgMusicFilename") private var preferredBgMusicFilename: String = "serene_mindfulness"
     @State private var selectedBgMusic: BgMusicOption = BgMusicOption(name: "Serene", filename: "serene_mindfulness")
     @State private var showMusicPicker = false
@@ -315,7 +315,7 @@ struct MorningMeditationView: View {
         sessionStartDate = Date()
         currentIndex = 0
         progress = 0
-        reachedNearEnd = false
+        audioHasPlayed = false
         UIApplication.shared.isIdleTimerDisabled = true
         HapticManager.start()
         playAudio()
@@ -342,6 +342,7 @@ struct MorningMeditationView: View {
         audioPlayer = player
         DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
             player.play()
+            self.audioHasPlayed = true
         }
     }
 
@@ -365,8 +366,8 @@ struct MorningMeditationView: View {
                         }
                     }
                 }
-                if self.progress > 0.97 { self.reachedNearEnd = true }
-                if !player.isPlaying && self.reachedNearEnd && !self.isInterrupted {
+                if player.isPlaying { self.audioHasPlayed = true }
+                if !player.isPlaying && self.audioHasPlayed && self.isRunning && !self.isInterrupted {
                     self.isRunning = false
                     self.isDone = true
                     self.syncTimer?.invalidate()

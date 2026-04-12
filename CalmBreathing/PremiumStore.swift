@@ -5,10 +5,10 @@ import SwiftUI
 @MainActor
 class PremiumStore: ObservableObject {
 
-    static let monthlyID = "com.serenebreathing.app.premium.monthly"
-    static let yearlyID  = "com.serenebreathing.app.premium.yearly"
+    static let monthlyID = "com.serenebreathing.ios.premium.monthly"
+    static let yearlyID  = "com.serenebreathing.ios.premium.yearly"
 
-    @Published var isPremium    = true
+    @Published var isPremium    = false
     @Published var products:    [Product] = []
     @Published var isPurchasing = false
     @Published var errorMessage: String?
@@ -81,8 +81,7 @@ class PremiumStore: ObservableObject {
                 active = true
             }
         }
-        // Keep unlocked — all features available
-        isPremium = true
+        isPremium = active
     }
 
     private func checkVerified<T>(_ result: VerificationResult<T>) throws -> T {

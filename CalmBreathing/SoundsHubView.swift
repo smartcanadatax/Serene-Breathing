@@ -48,7 +48,11 @@ struct SoundsHubView: View {
                 HStack(spacing: 0) {
                     ForEach([("Sounds", 0), ("Ambient", 1)], id: \.1) { label, idx in
                         Button {
-                            withAnimation(.easeInOut(duration: 0.2)) { topTab = idx }
+                            if idx == 1 && !premium.isPremium {
+                                showPaywall = true
+                            } else {
+                                withAnimation(.easeInOut(duration: 0.2)) { topTab = idx }
+                            }
                         } label: {
                             Text(label)
                                 .font(.system(size: 15, weight: topTab == idx ? .semibold : .regular, design: .rounded))

@@ -69,6 +69,7 @@ struct PaywallView: View {
                             featureRow(icon: "moon.fill",            text: "Sleep Journal & unlimited mood history")
                             featureRow(icon: "brain.head.profile",   text: "Mood Pattern Coach")
                             featureRow(icon: "zzz",                  text: "Sleep Pattern Coach")
+                            featureRow(icon: "message.fill",         text: "AI Coach — unlimited conversations")
                         }
                         .padding(18)
                         .background(RoundedRectangle(cornerRadius: 20).fill(Color.white.opacity(0.10)))

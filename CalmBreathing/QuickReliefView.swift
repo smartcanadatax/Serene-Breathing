@@ -100,8 +100,8 @@ extension QuickReliefExercise {
             science: "Activates the vagus nerve — releases emotional tension and lowers heart rate.",
             color: Color(red: 0.541, green: 0.357, blue: 0.804),
             phases: [
-                ReliefPhase(label: "Inhale",  duration: 4, targetScale: 1.30),
-                ReliefPhase(label: "Exhale",  duration: 8, targetScale: 0.68),
+                ReliefPhase(label: "Inhale",  duration: 5, targetScale: 1.30),
+                ReliefPhase(label: "Exhale",  duration: 5, targetScale: 0.68),
             ],
             cycles: 5
         ),
@@ -166,13 +166,13 @@ struct QuickReliefView: View {
             ("Exhale", 4.5,  0.68),
         ]),
         "Pain Relief": (15.408, [
-            ("Inhale", 0.3,  1.30),
-            ("Hold",   6.3,  1.30),
-            ("Exhale", 8.6,  0.68),
+            ("Inhale", 0.356, 1.30),
+            ("Hold",   6.976, 1.30),
+            ("Exhale", 9.463, 0.68),
         ]),
         "Calm Down": (10.944, [
-            ("Inhale", 0.3,  1.30),
-            ("Exhale", 4.5,  0.68),
+            ("Inhale", 0.356, 1.30),
+            ("Exhale", 5.924, 0.68),
         ]),
         "Focus Boost": (18.288, [
             ("Inhale", 0.3,  1.30),
@@ -489,15 +489,20 @@ struct QuickReliefView: View {
 
                 let phaseIdx  = phases.lastIndex(where: { cyclePos >= $0.start }) ?? 0
                 let phaseEnd  = phaseIdx + 1 < phases.count ? phases[phaseIdx + 1].start : cycleDur
+                let p         = phases[phaseIdx]
                 if phaseIdx != lastPhaseIdx {
-                    let p        = phases[phaseIdx]
                     let phaseDur = phaseEnd - p.start
                     self.phaseIndex = phaseIdx
                     withAnimation(.easeInOut(duration: phaseDur)) { self.scale = p.scale }
                     HapticManager.breathe(phase: p.label)
                     lastPhaseIdx = phaseIdx
                 }
-                self.countdown = max(0, Int(ceil(phaseEnd - cyclePos)))
+                // Map audio progress within the phase to the declared exercise duration
+                let audioPhaseDur    = phaseEnd - p.start
+                let timeInPhase      = max(0, cyclePos - p.start) // clamp to avoid negative at cycle start
+                let fraction         = audioPhaseDur > 0 ? timeInPhase / audioPhaseDur : 0
+                let exercisePhaseDur = Double(self.exercise.phases[min(phaseIdx, self.exercise.phases.count - 1)].duration)
+                self.countdown = max(0, Int(ceil(exercisePhaseDur * (1.0 - fraction))))
             }
         }
 

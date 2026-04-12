@@ -76,7 +76,12 @@ class SoundPlayer: ObservableObject {
 
         var id: String { rawValue }
 
-        var isFree: Bool { return true }
+        var isFree: Bool {
+            switch self {
+            case .ocean, .forest, .rainSleep, .ohm, .ambience: return true
+            default: return false
+            }
+        }
 
         var icon: String {
             switch self {

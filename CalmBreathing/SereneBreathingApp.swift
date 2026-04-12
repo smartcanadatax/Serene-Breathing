@@ -16,6 +16,8 @@ struct SereneBreathingApp: App {
 
     init() {
         _ = PhoneSession.shared   // activate WatchConnectivity on launch
+        // TODO: Remove before submitting — testing only
+        // premium.forceUnlock()
 
         // Liquid glass tab bar
         let appearance = UITabBarAppearance()
