@@ -156,6 +156,11 @@ struct HomeView: View {
                         HomeButton(icon: "sparkles", title: "AI Coach", subtitle: "Chat with your wellness coach")
                     }
 
+                    // Settings card
+                    NavigationLink(destination: SettingsView()) {
+                        HomeButton(icon: "gearshape.fill", title: "Settings", subtitle: "Reminders, appearance & more")
+                    }
+
                 }
                 .padding(.horizontal, 24)
 
