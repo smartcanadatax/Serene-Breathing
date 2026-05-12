@@ -1,6 +1,6 @@
 # Serene Breathing — SR&ED Technical Development Log
 
-**Company:** [Your Company Name]
+**Company:** 1000936219 Ontario Inc.
 **Project:** Serene Breathing — AI-Powered Mental Wellness iOS Application
 **Platform:** iOS (SwiftUI), watchOS
 **SR&ED Claim Period:** March 2026 – ongoing
@@ -168,7 +168,7 @@ The following questions remain unresolved and are subject to active investigatio
 
 ## Technical Personnel
 
-- **Lead Developer / AI Systems:** [Your name or husband's name]
+- **Lead Developer / AI Systems:** [Developer name — add your husband's name here]
 - **Role:** Full-stack iOS development, AI prompt engineering, HealthKit integration, audio systems
 
 ---
