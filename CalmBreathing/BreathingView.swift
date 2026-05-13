@@ -1,6 +1,7 @@
 import SwiftUI
 import UIKit
 import AVFoundation
+import StoreKit
 
 // MARK: - Breathing Pattern
 enum BreathingPattern: String, CaseIterable {
@@ -477,6 +478,21 @@ struct BreathingView: View {
         player.prepareToPlay()
         player.play()
         completionPlayer = player
+        requestReviewIfAppropriate()
+    }
+
+    private func requestReviewIfAppropriate() {
+        let key = "completedSessionCount"
+        let count = UserDefaults.standard.integer(forKey: key) + 1
+        UserDefaults.standard.set(count, forKey: key)
+        if count == 3 || count == 10 || count == 25 {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
+                if let scene = UIApplication.shared.connectedScenes
+                    .first(where: { $0.activationState == .foregroundActive }) as? UIWindowScene {
+                    SKStoreReviewController.requestReview(in: scene)
+                }
+            }
+        }
     }
 
     private func prepareBgMusic() {
