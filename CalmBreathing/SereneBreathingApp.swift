@@ -42,7 +42,7 @@ struct SereneBreathingApp: App {
         UITabBar.appearance().tintColor = UIColor(red: 0.04, green: 0.14, blue: 0.36, alpha: 1)
     }
 
-    
+
     var body: some Scene {
         WindowGroup {
             ZStack {
